@@ -1,18 +1,18 @@
 language: node_js
 node_js:
-- node
-- '9'
-- '8'
-- '7'
+  - node
+  - '9'
+  - '8'
+  - '7'
 after_success:
-- npm run coveralls
+  - npm run coveralls
 jobs:
-    include:
-	- stage: npm release
-	  node_js: node
-	  deploy:
-	      on:
-		branch: master
-	      provider: npm
-	      api_key:
-		  secure: B0F+huK1UIPSF5yUYeo4FHhY3avAfWc9G4d+f+SJYSGGkm2XYGrTJgtiohDRILu+yBZFs5aJp9+StC6FC5/9o5Fza7Pfqgefm3hpjjGGPOCr6de4TioRZzq/qqGsXhbGleG6TLUtbOxIGyWKEHGsegJ1bOPU35/Fg0Wo0YGazs5cL6vjrPi+5by9Wz7ixomM5Ov9lrNtxnd1idmj4sizOBULMu8FKIYfW4qYalosyjD1X43n1HXEcmEbSyVnehckg+0DFqAVBuX0tD2gI6YiRWAUaU+gPSkrtfcpgnRn8A4iRcAOuPl+hBHxSuw9hKDnCGccIz8ogi3BHU0WzJz2Hhld6q7+7woKiRXy2hNC8BHYpntQYOYLYiL2+I6wvQR+Qn9RTTbDfIe6KB/WEXeTUq5lOePXUUIE07rWAE/A9xh3ojyPPKtENeJjy6Ii+3HxUYGx0T0+++hJ8CmOo8rBhbppzlQ9p4bKPLiS0EztoNv/OEkQpcl4K8dNaed1YcO7UGhzoD+A7xVXsr3e4FnhdgnET8nRAvjCxW+pIyKPEH2EqMkS3YMVt4fP4rnyRDsUQAUIa4BpLkEAqqxTiWMw6EjjSBzG2iE6pf1v5zna8rBK+OFaaY2h5lB21HUjcjMQEAtGgamyHfYyZxu9wLpkKJUlaSz0kXea/kUa4lVCgTg=
+  include:
+    - stage: npm release
+      node_js: node
+      deploy:
+        on:
+          branch: master
+        provider: npm
+        api_key:
+          secure: B0F+huK1UIPSF5yUYeo4FHhY3avAfWc9G4d+f+SJYSGGkm2XYGrTJgtiohDRILu+yBZFs5aJp9+StC6FC5/9o5Fza7Pfqgefm3hpjjGGPOCr6de4TioRZzq/qqGsXhbGleG6TLUtbOxIGyWKEHGsegJ1bOPU35/Fg0Wo0YGazs5cL6vjrPi+5by9Wz7ixomM5Ov9lrNtxnd1idmj4sizOBULMu8FKIYfW4qYalosyjD1X43n1HXEcmEbSyVnehckg+0DFqAVBuX0tD2gI6YiRWAUaU+gPSkrtfcpgnRn8A4iRcAOuPl+hBHxSuw9hKDnCGccIz8ogi3BHU0WzJz2Hhld6q7+7woKiRXy2hNC8BHYpntQYOYLYiL2+I6wvQR+Qn9RTTbDfIe6KB/WEXeTUq5lOePXUUIE07rWAE/A9xh3ojyPPKtENeJjy6Ii+3HxUYGx0T0+++hJ8CmOo8rBhbppzlQ9p4bKPLiS0EztoNv/OEkQpcl4K8dNaed1YcO7UGhzoD+A7xVXsr3e4FnhdgnET8nRAvjCxW+pIyKPEH2EqMkS3YMVt4fP4rnyRDsUQAUIa4BpLkEAqqxTiWMw6EjjSBzG2iE6pf1v5zna8rBK+OFaaY2h5lB21HUjcjMQEAtGgamyHfYyZxu9wLpkKJUlaSz0kXea/kUa4lVCgTg=
