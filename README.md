@@ -1,4 +1,7 @@
 # node-tado-client
+[![Build Status](https://travis-ci.org/mattdavis90/node-tado-client.svg?branch=master)](https://travis-ci.org/mattdavis90/node-tado-client)
+[![Coverage Status](https://coveralls.io/repos/github/mattdavis90/node-tado-client/badge.svg?branch=master)](https://coveralls.io/github/mattdavis90/node-tado-client?branch=master)
+
 A Tado API client for Node
 
 Based on the work of SCPhillips on his [blog](http://blog.scphillips.com/posts/2017/01/the-tado-api-v2/)
