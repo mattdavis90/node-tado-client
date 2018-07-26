@@ -5,7 +5,7 @@ after_success:
   - npm run coveralls
 deploy:
   provider: npm
-  user: mattdavis90
+  email: mattdavis90@googlemail.com
   on:
     branch: master
   api_key:
