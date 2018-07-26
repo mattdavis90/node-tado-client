@@ -3,17 +3,6 @@
   "version": "0.1.0",
   "description": "A Tado client for nodejs",
   "main": "index.js",
-  "scripts": {
-    "test": "nyc mocha",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "test-html": "nyc --reporter=html mocha"
-  },
-  "repository": {
-    "type": "git",
-    "url": "github.com/mattdavis90/tado-client"
-  },
-  "author": "Matt Davis <mattdavis90@googlemail.com>",
-  "license": "MIT",
   "dependencies": {
     "axios": "^0.18.0",
     "simple-oauth2": "^2.2.0"
@@ -24,5 +13,24 @@
     "mocha": "^5.2.0",
     "nock": "^9.4.3",
     "nyc": "^12.0.2"
-  }
+  },
+  "scripts": {
+    "test": "nyc mocha",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
+    "test-html": "nyc --reporter=html mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattdavis90/node-tado-client.git"
+  },
+  "keywords": [
+      "tado",
+      "tado-api"
+  ],
+  "author": "Matt Davis <mattdavis90@googlemail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mattdavis90/node-tado-client/issues"
+  },
+  "homepage": "https://github.com/mattdavis90/node-tado-client#readme"
 }
