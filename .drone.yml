@@ -1,0 +1,13 @@
+pipeline:
+  build:
+    image: node:${NODE_VERSION}
+    commands:
+      - npm install
+      - npm run test
+
+matrix:
+  NODE_VERSION:
+    - latest
+    - "9"
+    - "8"
+    - "7"
