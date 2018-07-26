@@ -1,0 +1,453 @@
+const expect = require('chai').expect;
+const nock = require('nock');
+
+const Tado = require('../index');
+const auth_response = require('./response.auth');
+const me_response = require('./response.me');
+const home_response = require('./response.home');
+const weather_response = require('./response.weather');
+const devices_response = require('./response.devices');
+const installations_response = require('./response.installations');
+const users_response = require('./response.users');
+const mobileDevices_response = require('./response.mobileDevices');
+const mobileDevice_response = require('./response.mobileDevice');
+const mobileDevice_settings_response = require('./response.mobileDevice.settings');
+const zones_response = require('./response.zones');
+const zone_state_response = require('./response.zone.state');
+const zone_capabilities_response = require('./response.zone.capabilities');
+const zone_overlay_response = require('./response.zone.overlay');
+
+describe('OAuth2 tests', () => {
+    it('Should login', (done) => {
+        nock('https://auth.tado.com')
+            .post('/oauth/token')
+            .reply(200, auth_response);
+
+        var tado = new Tado();
+
+        tado.login('username', 'password')
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                expect(response.token.access_token).to.equal('eyJraW0UQ')
+                expect(response.token.token_type).to.equal('bearer')
+
+                done();
+            });
+    });
+
+    it('Should fail to login', (done) => {
+        nock('https://auth.tado.com')
+            .post('/oauth/token')
+            .reply(500, {});
+
+        var tado = new Tado();
+
+        tado.login('username', 'password')
+            .catch(error => {
+                done();
+            });
+    });
+
+    it('Should login then refresh token', (done) => {
+        nock('https://auth.tado.com')
+            .post('/oauth/token')
+            .reply(200, auth_response);
+
+        var tado = new Tado();
+
+        tado.login('username', 'password')
+            .then(response => {
+                nock('https://auth.tado.com')
+                    .post('/oauth/token')
+                    .reply(200, auth_response);
+
+                // Force a refresh
+                tado._accessToken.token.expires_at = new Date();
+                tado._refreshToken().then(res => {
+                    done();
+                });
+            });
+    });
+
+    it('Should login then fail to refresh token', (done) => {
+        nock('https://auth.tado.com')
+            .post('/oauth/token')
+            .reply(200, auth_response);
+
+        var tado = new Tado();
+
+        tado.login('username', 'password')
+            .then(response => {
+                nock('https://auth.tado.com')
+                    .post('/oauth/token')
+                    .reply(500, {});
+
+                // Force a refresh
+                tado._accessToken.token.expires_at = new Date();
+                tado._refreshToken().catch(res => {
+                    done();
+                });
+            });
+    });
+});
+
+describe('Low-level API tests', () => {
+    it('Login and get "me"', (done) => {
+        var tado = new Tado();
+
+        nock('https://auth.tado.com')
+            .post('/oauth/token')
+            .reply(200, auth_response);
+        nock('https://my.tado.com')
+            .get('/api/v2/me')
+            .reply(200, me_response);
+
+        tado.login('username', 'password')
+            .then(response => {
+                tado.apiCall('/api/v2/me')
+                    .then(response => {
+                        expect(typeof response).to.equal('object');
+                        expect(response.name).to.equal('John Doe');
+
+                        done();
+                    });
+            });
+    });
+
+    it('Don\'t login and get "me"', (done) => {
+        var tado = new Tado();
+
+        tado.apiCall('/api/v2/me')
+            .catch(error => {
+                done();
+            })
+    });
+
+    it('Login and fail to get "me"', (done) => {
+        var tado = new Tado();
+
+        nock('https://auth.tado.com')
+            .post('/oauth/token')
+            .reply(200, auth_response);
+        nock('https://my.tado.com')
+            .get('/api/v2/me')
+            .reply(500, {});
+
+        tado.login('username', 'password')
+            .then(response => {
+                tado.apiCall('/api/v2/me')
+                    .catch(error => {
+                        done();
+                    });
+            });
+    });
+});
+
+describe('High-level API tests', () => {
+    var tado;
+
+    beforeEach((ready) => {
+        tado = new Tado();
+
+        nock('https://auth.tado.com')
+            .post('/oauth/token')
+            .reply(200, auth_response);
+
+        tado.login('username', 'password').then(res => {
+            ready();
+        });
+    });
+
+    it('Should get the current user', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/me')
+            .reply(200, me_response);
+
+        tado.getMe()
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                expect(response.name).to.equal('John Doe');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should get home', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907')
+            .reply(200, home_response);
+
+        tado.getHome(1907)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                expect(response.length).to.equal(1);
+                expect(response[0].devices.length).to.equal(1);
+                expect(response[0].devices[0].shortSerialNo).to.equal('RU04932458');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should get the weather', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/weather')
+            .reply(200, weather_response);
+
+        tado.getWeather(1907)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                expect(response.weatherState.value).to.equal('DRIZZLE');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should get the devices', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/devices')
+            .reply(200, devices_response);
+
+        tado.getDevices(1907)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                expect(response.length).to.equal(1);
+                expect(response[0].shortSerialNo).to.equal('RU04932458');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should get the installations', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/installations')
+            .reply(200, installations_response);
+
+        tado.getInstallations(1907)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                expect(response.length).to.equal(1);
+                expect(response[0].devices.length).to.equal(1);
+                expect(response[0].devices[0].shortSerialNo).to.equal('RU04932458');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should get the users', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/users')
+            .reply(200, users_response);
+
+        tado.getUsers(1907)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                expect(response.length).to.equal(1);
+                expect(response[0].name).to.equal('John Doe');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should get the mobile devices', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/mobileDevices')
+            .reply(200, mobileDevices_response);
+
+        tado.getMobileDevices(1907)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should get a mobile device', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/mobileDevices/644583')
+            .reply(200, mobileDevice_response);
+
+        tado.getMobileDevice(1907, 644583)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should get a mobile device settings', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/mobileDevices/644583/settings')
+            .reply(200, mobileDevice_settings_response);
+
+        tado.getMobileDeviceSettings(1907, 644583)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should get zones', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/zones')
+            .reply(200, zones_response);
+
+        tado.getZones(1907)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should get a zone\'s state', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/zones/1/state')
+            .reply(200, zone_state_response);
+
+        tado.getZoneState(1907, 1)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should get a zone\'s capabilities', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/zones/1/capabilities')
+            .reply(200, zone_capabilities_response);
+
+        tado.getZoneCapabilities(1907, 1)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should get a zone\'s overlay', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/zones/1/overlay')
+            .reply(200, zone_overlay_response);
+
+        tado.getZoneOverlay(1907, 1)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should clear a zone\'s overlay', (done) => {
+        nock('https://my.tado.com')
+            .delete('/api/v2/homes/1907/zones/1/overlay')
+            .reply(200, {});
+
+        tado.clearZoneOverlay(1907, 1)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should set a zone\'s overlay to Off', (done) => {
+        nock('https://my.tado.com')
+            .put('/api/v2/homes/1907/zones/1/overlay')
+            .reply(200, (uri, req) => {
+                return req;
+            });
+
+        tado.setZoneOverlay(1907, 1, 'off')
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should set a zone\'s overlay to On with no temperature', (done) => {
+        nock('https://my.tado.com')
+            .put('/api/v2/homes/1907/zones/1/overlay')
+            .reply(200, (uri, req) => {
+                return req;
+            });
+
+        tado.setZoneOverlay(1907, 1, 'on')
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should set a zone\'s overlay to On with Timer resume', (done) => {
+        nock('https://my.tado.com')
+            .put('/api/v2/homes/1907/zones/1/overlay')
+            .reply(200, (uri, req) => {
+                return req;
+            });
+
+        tado.setZoneOverlay(1907, 1, 'on', 20, 300)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should set a zone\'s overlay to On with Auto resume', (done) => {
+        nock('https://my.tado.com')
+            .put('/api/v2/homes/1907/zones/1/overlay')
+            .reply(200, (uri, req) => {
+                return req;
+            });
+
+        tado.setZoneOverlay(1907, 1, 'on', 20, 'auto')
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should get identify a device', (done) => {
+        nock('https://my.tado.com')
+            .post('/api/v2/devices/RU04932458/identify')
+            .reply(200, {});
+
+        tado.identifyDevice('RU04932458')
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+});
