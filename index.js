@@ -166,7 +166,7 @@ class Tado {
             config.setting.power = 'OFF';
         }
 
-        if (Number.isInteger(termination)) {
+        if (!isNaN(parseInt(termination))) {
             config.termination.type = 'TIMER';
             config.termination.durationInSeconds = termination;
         } else if(termination && termination.toLowerCase() == 'auto') {
