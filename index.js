@@ -146,6 +146,14 @@ class Tado {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'delete');
     }
 
+    getTimeTables(home_id, zone_id) {
+        return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/schedule/activeTimetable`);
+    }
+
+    getTimeTable(home_id, zone_id, timetable_id) {
+        return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/schedule/timetables/${timetable_id}/blocks`);
+    }
+
     setZoneOverlay(home_id, zone_id, power, temperature, termination) {
         var config = {
             setting: {
