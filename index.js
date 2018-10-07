@@ -114,6 +114,10 @@ class Tado {
         return this.apiCall(`/api/v2/homes/${home_id}/users`);
     }
 
+    getState(home_id) {
+        return this.apiCall(`/api/v2/homes/${home_id}/state`);
+    }
+
     getMobileDevices(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices`);
     }
@@ -142,16 +146,20 @@ class Tado {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`);
     }
 
-    clearZoneOverlay(home_id, zone_id) {
-        return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'delete');
-    }
-
     getTimeTables(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/schedule/activeTimetable`);
     }
 
+    getAwayConfiguration(home_id, zone_id) {
+        return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/awayConfiguration`);
+    }
+
     getTimeTable(home_id, zone_id, timetable_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/schedule/timetables/${timetable_id}/blocks`);
+    }
+
+    clearZoneOverlay(home_id, zone_id) {
+        return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'delete');
     }
 
     setZoneOverlay(home_id, zone_id, power, temperature, termination) {
