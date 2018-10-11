@@ -20,7 +20,7 @@ var tado = new Tado();
 tado.login('username', 'password');
 
 // Get the User's information
-tado.getMe();
+tado.getMe().then(resp => { console.log(resp); });
 ```
 
 This call will return something similar to the following Javascript object.
@@ -82,6 +82,7 @@ tado.getWeather(home_id);
 tado.getDevices(home_id);
 tado.getInstallations(home_id);
 tado.getUsers(home_id);
+tado.getState(home_id);
 tado.getMobileDevices(home_id);
 tado.getMobileDevice(home_id, device_id);
 tado.getMobileDeviceSettings(home_id, device_id);
@@ -89,6 +90,9 @@ tado.getZones(home_id);
 tado.getZoneState(home_id, zone_id);
 tado.getZoneCapabilities(home_id, zone_id);
 tado.getZoneOverlay(home_id, zone_id);
+tado.getTimeTables(home_id, zone_id);
+tado.getAwayConfiguration(home_id, zone_id);
+tado.getTimeTable(home_id, zone_id, timetable_id);
 tado.clearZoneOverlay(home_id, zone_id);
 tado.setZoneOverlay(home_id, zone_id, power, temperature, termination);
 tado.identifyDevice(device_id);
