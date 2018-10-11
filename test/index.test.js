@@ -12,9 +12,13 @@ const users_response = require('./response.users');
 const mobileDevices_response = require('./response.mobileDevices');
 const mobileDevice_response = require('./response.mobileDevice');
 const mobileDevice_settings_response = require('./response.mobileDevice.settings');
+const state_response = require('./response.state');
 const zones_response = require('./response.zones');
 const zone_state_response = require('./response.zone.state');
 const zone_capabilities_response = require('./response.zone.capabilities');
+const timetables_response = require('./response.timetables');
+const away_configuration_response = require('./response.away');
+const timetable_response = require('./response.timetable');
 const zone_overlay_response = require('./response.zone.overlay');
 
 describe('OAuth2 tests', () => {
@@ -261,6 +265,20 @@ describe('High-level API tests', () => {
             .catch(err => {});
     });
 
+    it('should get the home state', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/state')
+            .reply(200, state_response);
+
+        tado.getState(1907)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
     it('Should get the mobile devices', (done) => {
         nock('https://my.tado.com')
             .get('/api/v2/homes/1907/mobileDevices')
@@ -351,6 +369,48 @@ describe('High-level API tests', () => {
             .reply(200, zone_overlay_response);
 
         tado.getZoneOverlay(1907, 1)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('should get a zone\'s timetables', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/zones/1/schedule/activeTimetable')
+            .reply(200, timetables_response);
+
+        tado.getTimeTables(1907, 1)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('should get a zone\'s away configuration', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/zones/1/awayConfiguration')
+            .reply(200, away_configuration_response);
+
+        tado.getAwayConfiguration(1907, 1)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('should get a timetable', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/zones/1/schedule/timetables/0/blocks')
+            .reply(200, timetable_response);
+
+        tado.getTimeTable(1907, 1, 0)
             .then(response => {
                 expect(typeof response).to.equal('object');
 
