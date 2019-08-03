@@ -90,6 +90,7 @@ tado.getZones(home_id);
 tado.getZoneState(home_id, zone_id);
 tado.getZoneCapabilities(home_id, zone_id);
 tado.getZoneOverlay(home_id, zone_id);
+tado.getZoneDayReport(home_id, zone_id, reportDate)
 tado.getTimeTables(home_id, zone_id);
 tado.getAwayConfiguration(home_id, zone_id);
 tado.getTimeTable(home_id, zone_id, timetable_id);
