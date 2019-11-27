@@ -80,6 +80,7 @@ tado.getMe();
 tado.getHome(home_id);
 tado.getWeather(home_id);
 tado.getDevices(home_id);
+tado.getDeviceTemperatureOffset(device_id);
 tado.getInstallations(home_id);
 tado.getUsers(home_id);
 tado.getState(home_id);
@@ -96,6 +97,7 @@ tado.getAwayConfiguration(home_id, zone_id);
 tado.getTimeTable(home_id, zone_id, timetable_id);
 tado.clearZoneOverlay(home_id, zone_id);
 tado.setZoneOverlay(home_id, zone_id, power, temperature, termination);
+tado.setDeviceTemperatureOffset(device_id, temperatureOffset);
 tado.identifyDevice(device_id);
 ```
 

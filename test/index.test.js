@@ -7,6 +7,7 @@ const me_response = require('./response.me');
 const home_response = require('./response.home');
 const weather_response = require('./response.weather');
 const devices_response = require('./response.devices');
+const devices_offset_response = require('./response.devices.offset');
 const installations_response = require('./response.installations');
 const users_response = require('./response.users');
 const mobileDevices_response = require('./response.mobileDevices');
@@ -228,6 +229,23 @@ describe('High-level API tests', () => {
                 done();
             })
             .catch(err => {});
+    });
+
+    it('Should get the device temperature offset', (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/devices/RU04932458/temperatureOffset')
+            .reply(200, devices_offset_response);
+
+        tado.getDeviceTemperatureOffset('RU04932458')
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                expect(response.celsius).to.equal(0.2);
+                expect(response.farenheit).to.equal(0.2);
+
+                done();
+            })
+            .catch(err => {console.log(err);});
     });
 
     it('Should get the installations', (done) => {
@@ -489,6 +507,22 @@ describe('High-level API tests', () => {
             });
 
         tado.setZoneOverlay(1907, 1, 'on', 20, 'auto')
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
+    it('Should set a device\'s temperature offset', (done) => {
+        nock('https://my.tado.com')
+            .put('/api/v2/devices/RU04932458/temperatureOffset')
+            .reply(200, (uri, req) => {
+                return req;
+            });
+
+        tado.setDeviceTemperatureOffset('RU04932458', 0.2)
             .then(response => {
                 expect(typeof response).to.equal('object');
 

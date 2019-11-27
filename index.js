@@ -106,6 +106,10 @@ class Tado {
         return this.apiCall(`/api/v2/homes/${home_id}/devices`);
     }
 
+    getDeviceTemperatureOffset(device_id) {
+        return this.apiCall(`/api/v2/devices/${device_id}/temperatureOffset`);
+    }
+
     getInstallations(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/installations`);
     }
@@ -196,6 +200,14 @@ class Tado {
         }
 
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'put', config);
+    }
+
+    setDeviceTemperatureOffset(device_id, temperatureOffset) {
+        var config = {
+            celsius: temperatureOffset,
+        }
+
+        return this.apiCall(`/api/v2/devices/${device_id}/temperatureOffset`, 'put', config);
     }
 
     identifyDevice(device_id) {
