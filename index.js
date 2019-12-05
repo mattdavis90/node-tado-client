@@ -213,6 +213,18 @@ class Tado {
     identifyDevice(device_id) {
         return this.apiCall(`/api/v2/devices/${device_id}/identify`, 'post');
     }
+
+    setPresence(home_id, presence) {
+        if(presence !== 'HOME' && presence !== 'AWAY') {
+            return Promise.reject(new Error(`Invalid presence "${presence}" must be "HOME" or "AWAY"`));
+        }
+
+        var config = {
+            homePresence: presence
+        }
+
+        return this.apiCall(`/api/v2/homes/${home_id}/presence`, 'put', config);
+    }
 }
 
 module.exports = Tado;
