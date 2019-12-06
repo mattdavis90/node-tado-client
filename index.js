@@ -225,6 +225,28 @@ class Tado {
 
         return this.apiCall(`/api/v2/homes/${home_id}/presence`, 'put', config);
     }
+
+    async updatePresence(home_id) {
+        const state = await this.getState(home_id);
+        const devices = await this.getMobileDevices(home_id);
+
+        const presenceHome = state.presence === 'HOME';
+        let anyoneHome = false;
+
+        for(const device of devices) {
+            if(device.settings.geoTrackingEnabled && device.location.atHome) {
+                anyoneHome = true;
+                break;
+            }
+        }
+
+        if(anyoneHome !== presenceHome) {
+            return this.setPresence(home_id, anyoneHome ? 'HOME' : 'AWAY');
+        } 
+        else {
+            return "already up to date";
+        }
+    }
 }
 
 module.exports = Tado;
