@@ -11,7 +11,7 @@ Based on the work of SCPhillips on his [blog](http://blog.scphillips.com/posts/2
 ## Usage
 ```javascript
 // Import the Tado client
-const Tado = requre('node-tado-client');
+const Tado = require('node-tado-client');
 
 // Create a new Tado instance
 var tado = new Tado();
@@ -99,6 +99,8 @@ tado.clearZoneOverlay(home_id, zone_id);
 tado.setZoneOverlay(home_id, zone_id, power, temperature, termination);
 tado.setDeviceTemperatureOffset(device_id, temperatureOffset);
 tado.identifyDevice(device_id);
+tado.setPresence(home_id, presence);
+tado.updatePresence(home_id);
 ```
 
 The ```setZoneOverlay``` method call takes the following arguments
@@ -106,3 +108,7 @@ The ```setZoneOverlay``` method call takes the following arguments
 * *power* - **on** or **off** (case insensitive) [**default:** off]
 * *temperature* - *Integer* temperature in Celsius
 * *termination* - *Integer* , **auto**, or **manual** (case insensitive, integer denotes a timer in seconds) [**default:** manual]
+
+The ```setPresence``` method call takes the following arguments
+
+* *presence* - **HOME** or **AWAY**
