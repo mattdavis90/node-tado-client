@@ -1,6 +1,6 @@
 {
   "name": "node-tado-client",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A Tado client for nodejs",
   "main": "index.js",
   "dependencies": {
@@ -24,8 +24,8 @@
     "url": "git+https://github.com/mattdavis90/node-tado-client.git"
   },
   "keywords": [
-      "tado",
-      "tado-api"
+    "tado",
+    "tado-api"
   ],
   "author": "Matt Davis <mattdavis90@googlemail.com>",
   "license": "MIT",
