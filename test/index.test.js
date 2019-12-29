@@ -515,6 +515,22 @@ describe('High-level API tests', () => {
             .catch(err => {});
     });
 
+    it('Should set a zone\'s overlay to On until next time block ', (done) => {
+        nock('https://my.tado.com')
+            .put('/api/v2/homes/1907/zones/1/overlay')
+            .reply(200, (uri, req) => {
+                return req;
+            });
+
+        tado.setZoneOverlay(1907, 1, 'on', 20, 'next_time_block')
+            .then(response => {
+                expect(typeof response).to.equal('object');
+
+                done();
+            })
+            .catch(err => {});
+    });
+
     it('Should set a device\'s temperature offset', (done) => {
         nock('https://my.tado.com')
             .put('/api/v2/devices/RU04932458/temperatureOffset')

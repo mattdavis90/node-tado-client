@@ -195,6 +195,9 @@ class Tado {
             config.termination.durationInSeconds = termination;
         } else if(termination && termination.toLowerCase() == 'auto') {
             config.termination.type = 'TADO_MODE';
+        } else if(termination && termination.toLowerCase() == 'next_time_block') {
+            config.type = 'MANUAL';
+            config.termination.typeSkillBasedApp = 'NEXT_TIME_BLOCK';
         } else {
             config.termination.type = 'MANUAL';
         }
