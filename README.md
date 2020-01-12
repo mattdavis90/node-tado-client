@@ -107,7 +107,7 @@ The ```setZoneOverlay``` method call takes the following arguments
 
 * *power* - **on** or **off** (case insensitive) [**default:** off]
 * *temperature* - *Integer* temperature in Celsius
-* *termination* - *Integer* , **auto**, or **manual** (case insensitive, integer denotes a timer in seconds) [**default:** manual]
+* *termination* - *Integer* , **auto**, **next_time_block**, or **manual** (case insensitive, integer denotes a timer in seconds) [**default:** manual]
 
 The ```setPresence``` method call takes the following arguments
 
