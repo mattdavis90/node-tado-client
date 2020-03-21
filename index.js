@@ -134,6 +134,12 @@ class Tado {
         return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices/${device_id}/settings`);
     }
 
+    async setGeoTracking(home_id, device_id, geoTrackingEnabled) {
+        var settings = await this.getMobileDeviceSettings(home_id, device_id);
+        settings['geoTrackingEnabled'] = geoTrackingEnabled;
+        return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices/${device_id}/settings`, 'put', settings);
+    }
+
     getZones(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones`);
     }
