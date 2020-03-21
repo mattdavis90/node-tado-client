@@ -176,11 +176,11 @@ class Tado {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'delete');
     }
 
-    setZoneOverlay(home_id, zone_id, power, temperature, termination) {
+    async setZoneOverlay(home_id, zone_id, power, temperature, termination) {
+        var zone_state = await this.getZoneState(home_id, zone_id);
+
         var config = {
-            setting: {
-                type: "HEATING",
-            },
+            setting: zone_state.setting,
             termination: {
             }
         }
@@ -188,9 +188,8 @@ class Tado {
         if (power.toLowerCase() == 'on') {
             config.setting.power = 'ON';
 
-            if (temperature) {
-                config.setting.temperature = {};
-                config.setting.temperature.celsius = temperature;
+            if (config.setting.type == 'HEATING' && temperature) {
+                config.setting.temperature = {celsius: temperature};
             }
         } else {
             config.setting.power = 'OFF';
