@@ -458,6 +458,10 @@ describe('High-level API tests', () => {
                 return req;
             });
 
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/zones/1/state')
+            .reply(200, zone_state_response);
+
         tado.setZoneOverlay(1907, 1, 'off')
             .then(response => {
                 expect(typeof response).to.equal('object');
@@ -473,6 +477,10 @@ describe('High-level API tests', () => {
             .reply(200, (uri, req) => {
                 return req;
             });
+
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/zones/1/state')
+            .reply(200, zone_state_response);
 
         tado.setZoneOverlay(1907, 1, 'on')
             .then(response => {
@@ -490,6 +498,10 @@ describe('High-level API tests', () => {
                 return req;
             });
 
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/zones/1/state')
+            .reply(200, zone_state_response);
+
         tado.setZoneOverlay(1907, 1, 'on', 20, 300)
             .then(response => {
                 expect(typeof response).to.equal('object');
@@ -506,6 +518,10 @@ describe('High-level API tests', () => {
                 return req;
             });
 
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/zones/1/state')
+            .reply(200, zone_state_response);
+
         tado.setZoneOverlay(1907, 1, 'on', 20, 'auto')
             .then(response => {
                 expect(typeof response).to.equal('object');
@@ -521,6 +537,10 @@ describe('High-level API tests', () => {
             .reply(200, (uri, req) => {
                 return req;
             });
+
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/zones/1/state')
+            .reply(200, zone_state_response);
 
         tado.setZoneOverlay(1907, 1, 'on', 20, 'next_time_block')
             .then(response => {
