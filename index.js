@@ -223,15 +223,18 @@ class Tado {
     }
 
     setPresence(home_id, presence) {
-        if(presence !== 'HOME' && presence !== 'AWAY') {
-            return Promise.reject(new Error(`Invalid presence "${presence}" must be "HOME" or "AWAY"`));
+        presence = presence.toUpperCase();
+
+        if(!['HOME', 'AWAY', 'AUTO'].includes(presence)) {
+            return Promise.reject(new Error(`Invalid presence "${presence}" must be "HOME", "AWAY", or "AUTO"`));
         }
 
+        var method = presence == 'AUTO' ? 'delete' : 'put';
         var config = {
             homePresence: presence
         }
 
-        return this.apiCall(`/api/v2/homes/${home_id}/presence`, 'put', config);
+        return this.apiCall(`/api/v2/homes/${home_id}/presenceLock`, method, config);
     }
 
     async updatePresence(home_id) {
