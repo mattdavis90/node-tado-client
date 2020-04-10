@@ -17,10 +17,13 @@ const Tado = require('node-tado-client');
 var tado = new Tado();
 
 // Login to the Tado Web API
-tado.login('username', 'password');
+tado.login('username', 'password').then((token) => {
+    tado.getMe().then(resp => {
+        console.log(resp);
+    });
+};
 
 // Get the User's information
-tado.getMe().then(resp => { console.log(resp); });
 ```
 
 This call will return something similar to the following Javascript object.
@@ -101,12 +104,15 @@ tado.setDeviceTemperatureOffset(device_id, temperatureOffset);
 tado.identifyDevice(device_id);
 tado.setPresence(home_id, presence);
 tado.updatePresence(home_id);
+tado.setWindowDetection(home_id, zone_id, enabled, timeout);
 ```
 
 The ```setZoneOverlay``` method call takes the following arguments
 
+**Note:** It will automatically determine the type of system that it is affecting
+
 * *power* - **on** or **off** (case insensitive) [**default:** off]
-* *temperature* - *Integer* temperature in Celsius
+* *temperature* - *Integer* temperature in Celsius, if affecting a HEATING system
 * *termination* - *Integer* , **auto**, **next_time_block**, or **manual** (case insensitive, integer denotes a timer in seconds) [**default:** manual]
 
 The ```setPresence``` method call takes the following arguments

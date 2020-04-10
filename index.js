@@ -258,6 +258,14 @@ class Tado {
             return "already up to date";
         }
     }
+
+    setWindowDetection(home_id, zone_id, enabled, timeout) {
+        var config = {
+            'enabled': enabled,
+            'timeoutInSeconds': timeout,
+        }
+        return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/openWindowDetection`, 'PUT', config);
+    }
 }
 
 module.exports = Tado;
