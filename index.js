@@ -266,6 +266,14 @@ class Tado {
         }
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/openWindowDetection`, 'PUT', config);
     }
+
+    setOpenWindowMode(home_id, zone_id, activate) {
+        if (activate) {
+            return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow/activate`, 'POST');
+        } else {
+            return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow`, 'DELETE');
+        }
+    }
 }
 
 module.exports = Tado;
