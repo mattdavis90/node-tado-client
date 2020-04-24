@@ -99,6 +99,7 @@ tado.getTimeTables(home_id, zone_id);
 tado.getAwayConfiguration(home_id, zone_id);
 tado.getTimeTable(home_id, zone_id, timetable_id);
 tado.clearZoneOverlay(home_id, zone_id);
+tado.isAnyoneAtHome(home_id);
 tado.setZoneOverlay(home_id, zone_id, power, temperature, termination);
 tado.setDeviceTemperatureOffset(device_id, temperatureOffset);
 tado.identifyDevice(device_id);
@@ -117,4 +118,4 @@ The ```setZoneOverlay``` method call takes the following arguments
 
 The ```setPresence``` method call takes the following arguments
 
-* *presence* - **HOME** or **AWAY**
+* *presence* - **home**, **away** or **auto**

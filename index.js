@@ -19,11 +19,28 @@ const oauth2 = require('simple-oauth2').create(tado_config);
 const axios = require('axios');
 
 class Tado {
-    constructor() {
+    constructor(username, password) {
+        this._username = username;
+        this._password = password;
         this._accessToken;
     }
 
-    _refreshToken() {
+    async _login() {
+        const credentials = {
+            scope: 'home.user',
+            username: this._username,
+            password: this._password
+        };
+
+        const result = await oauth2.ownerPassword.getToken(credentials);
+        this._accessToken = oauth2.accessToken.create(result);
+    }
+
+    async _refreshToken() {
+        if (!this._accessToken) {
+            await this._login();
+        }
+
         const { token } = this._accessToken;
         const expirationTimeInSeconds = token.expires_at.getTime() / 1000;
         const expirationWindowStart = expirationTimeInSeconds - EXPIRATION_WINDOW_IN_SECONDS;
@@ -32,164 +49,142 @@ class Tado {
         const nowInSeconds = (new Date()).getTime() / 1000;
         const shouldRefresh = nowInSeconds >= expirationWindowStart;
 
-        return new Promise((resolve, reject) => {
-            if (shouldRefresh) {
-                this._accessToken.refresh()
-                    .then(result => {
-                        this._accessToken = result;
-                        resolve(this._accessToken);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    });
-            } else {
-                resolve(this._accessToken);
+        if (shouldRefresh) {
+            try {
+                this._accessToken = await this._accessToken.refresh();
+            } catch (error) {
+                this._accessToken = null;
+                await this._login();
+            }
+        }
+    }
+
+    async login(username, password) {
+        this._username = username;
+        this._password = password;
+        await this._login();
+    }
+
+    async apiCall(url, method = 'get', data = {}) {
+        await this._refreshToken();
+
+        const response = await axios({
+            url: tado_url + url,
+            method: method,
+            data: data,
+            headers: {
+                Authorization: 'Bearer ' + this._accessToken.token.access_token
             }
         });
+
+        return response.data;
     }
 
-    login(username, password) {
-        return new Promise((resolve, reject) => {
-            const credentials = {
-                scope: 'home.user',
-                username: username,
-                password: password
-            };
-
-            oauth2.ownerPassword.getToken(credentials)
-                .then(result => {
-                    this._accessToken = oauth2.accessToken.create(result);
-                    resolve(this._accessToken);
-                })
-                .catch(error => {
-                    reject(error);
-                });
-        });
-    }
-
-    apiCall(url, method='get', data={}) {
-        return new Promise((resolve, reject) => {
-            if (this._accessToken) {
-                this._refreshToken().then(() => {
-                    axios({
-                        url: tado_url + url,
-                        method: method,
-                        data: data,
-                        headers: {
-                            Authorization: 'Bearer ' + this._accessToken.token.access_token
-                        }
-                    }).then(response => {
-                        resolve(response.data);
-                    }).catch(error => {
-                        reject(error);
-                    });
-                });
-            } else {
-                reject(new Error('Not yet logged in'));
-            }
-        });
-    }
-
-    getMe() {
+    async getMe() {
         return this.apiCall('/api/v2/me');
     }
 
-    getHome(home_id) {
+    async getHome(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}`);
     }
 
-    getWeather(home_id) {
+    async getWeather(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/weather`);
     }
 
-    getDevices(home_id) {
+    async getDevices(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/devices`);
     }
 
-    getDeviceTemperatureOffset(device_id) {
+    async getDeviceTemperatureOffset(device_id) {
         return this.apiCall(`/api/v2/devices/${device_id}/temperatureOffset`);
     }
 
-    getInstallations(home_id) {
+    async getInstallations(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/installations`);
     }
 
-    getUsers(home_id) {
+    async getUsers(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/users`);
     }
 
-    getState(home_id) {
+    async getState(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/state`);
     }
 
-    getMobileDevices(home_id) {
+    async getMobileDevices(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices`);
     }
 
-    getMobileDevice(home_id, device_id) {
+    async getMobileDevice(home_id, device_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices/${device_id}`);
     }
 
-    getMobileDeviceSettings(home_id, device_id) {
+    async getMobileDeviceSettings(home_id, device_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices/${device_id}/settings`);
     }
 
     async setGeoTracking(home_id, device_id, geoTrackingEnabled) {
-        var settings = await this.getMobileDeviceSettings(home_id, device_id);
+        const settings = await this.getMobileDeviceSettings(home_id, device_id);
         settings['geoTrackingEnabled'] = geoTrackingEnabled;
         return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices/${device_id}/settings`, 'put', settings);
     }
 
-    getZones(home_id) {
+    async getZones(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones`);
     }
 
-    getZoneState(home_id, zone_id) {
+    async getZoneState(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state`);
     }
 
-    getZoneCapabilities(home_id, zone_id) {
+    async getZoneCapabilities(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/capabilities`);
     }
 
-    getZoneOverlay(home_id, zone_id) {
-        return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`);
+    async getZoneOverlay(home_id, zone_id) {
+        return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`).catch(error => {
+            if (error.response.status === 404) {
+                return {};
+            }
+
+            throw error;
+        });
     }
 
-    getZoneDayReport(home_id, zone_id, reportDate) {
+    async getZoneDayReport(home_id, zone_id, reportDate) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/dayReport?date=${reportDate}`);
     }
 
-    getTimeTables(home_id, zone_id) {
+    async getTimeTables(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/schedule/activeTimetable`);
     }
 
-    getAwayConfiguration(home_id, zone_id) {
+    async getAwayConfiguration(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/awayConfiguration`);
     }
 
-    getTimeTable(home_id, zone_id, timetable_id) {
+    async getTimeTable(home_id, zone_id, timetable_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/schedule/timetables/${timetable_id}/blocks`);
     }
 
-    clearZoneOverlay(home_id, zone_id) {
+    async clearZoneOverlay(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'delete');
     }
 
     async setZoneOverlay(home_id, zone_id, power, temperature, termination) {
-        var zone_state = await this.getZoneState(home_id, zone_id);
+        const zone_state = await this.getZoneState(home_id, zone_id);
 
-        var config = {
+        const config = {
             setting: zone_state.setting,
-            termination: {
-            }
-        }
+            termination: {},
+        };
 
         if (power.toLowerCase() == 'on') {
             config.setting.power = 'ON';
 
             if (config.setting.type == 'HEATING' && temperature) {
-                config.setting.temperature = {celsius: temperature};
+                config.setting.temperature = { celsius: temperature };
             }
         } else {
             config.setting.power = 'OFF';
@@ -198,9 +193,9 @@ class Tado {
         if (!isNaN(parseInt(termination))) {
             config.termination.type = 'TIMER';
             config.termination.durationInSeconds = termination;
-        } else if(termination && termination.toLowerCase() == 'auto') {
+        } else if (termination && termination.toLowerCase() == 'auto') {
             config.termination.type = 'TADO_MODE';
-        } else if(termination && termination.toLowerCase() == 'next_time_block') {
+        } else if (termination && termination.toLowerCase() == 'next_time_block') {
             config.type = 'MANUAL';
             config.termination.typeSkillBasedApp = 'NEXT_TIME_BLOCK';
         } else {
@@ -210,64 +205,66 @@ class Tado {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'put', config);
     }
 
-    setDeviceTemperatureOffset(device_id, temperatureOffset) {
-        var config = {
+    async setDeviceTemperatureOffset(device_id, temperatureOffset) {
+        const config = {
             celsius: temperatureOffset,
         }
 
         return this.apiCall(`/api/v2/devices/${device_id}/temperatureOffset`, 'put', config);
     }
 
-    identifyDevice(device_id) {
+    async identifyDevice(device_id) {
         return this.apiCall(`/api/v2/devices/${device_id}/identify`, 'post');
     }
 
-    setPresence(home_id, presence) {
+    async setPresence(home_id, presence) {
         presence = presence.toUpperCase();
 
-        if(!['HOME', 'AWAY', 'AUTO'].includes(presence)) {
-            return Promise.reject(new Error(`Invalid presence "${presence}" must be "HOME", "AWAY", or "AUTO"`));
+        if (!['HOME', 'AWAY', 'AUTO'].includes(presence)) {
+            throw new Error(`Invalid presence "${presence}" must be "HOME", "AWAY", or "AUTO"`);
         }
 
-        var method = presence == 'AUTO' ? 'delete' : 'put';
-        var config = {
+        const method = presence == 'AUTO' ? 'delete' : 'put';
+        const config = {
             homePresence: presence
-        }
+        };
 
         return this.apiCall(`/api/v2/homes/${home_id}/presenceLock`, method, config);
     }
 
-    async updatePresence(home_id) {
-        const state = await this.getState(home_id);
+    async isAnyoneAtHome(home_id) {
         const devices = await this.getMobileDevices(home_id);
 
-        const presenceHome = state.presence === 'HOME';
-        let anyoneHome = false;
-
-        for(const device of devices) {
-            if(device.settings.geoTrackingEnabled && device.location.atHome) {
-                anyoneHome = true;
-                break;
+        for (const device of devices) {
+            if (device.settings.geoTrackingEnabled && device.location.atHome) {
+                return true;
             }
         }
 
-        if(anyoneHome !== presenceHome) {
-            return this.setPresence(home_id, anyoneHome ? 'HOME' : 'AWAY');
-        } 
+        return false;
+    }
+
+    async updatePresence(home_id) {
+        const isPresenceAtHome = await this.getState(home_id).presence === 'HOME';
+        const isAnyoneAtHome = await this.isAnyoneAtHome(home_id);
+
+        if (isAnyoneAtHome !== isPresenceAtHome) {
+            return this.setPresence(home_id, isAnyoneAtHome ? 'HOME' : 'AWAY');
+        }
         else {
             return "already up to date";
         }
     }
 
-    setWindowDetection(home_id, zone_id, enabled, timeout) {
-        var config = {
+    async setWindowDetection(home_id, zone_id, enabled, timeout) {
+        const config = {
             'enabled': enabled,
             'timeoutInSeconds': timeout,
         }
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/openWindowDetection`, 'PUT', config);
     }
 
-    setOpenWindowMode(home_id, zone_id, activate) {
+    async setOpenWindowMode(home_id, zone_id, activate) {
         if (activate) {
             return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow/activate`, 'POST');
         } else {
