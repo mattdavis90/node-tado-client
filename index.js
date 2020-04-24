@@ -271,6 +271,10 @@ class Tado {
             return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow`, 'DELETE');
         }
     }
+
+    async getAirComfort(home_id) {
+        return this.apiCall(`/api/v2/homes/${home_id}/airComfort`);
+    }
 }
 
 module.exports = Tado;

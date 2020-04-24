@@ -106,6 +106,7 @@ tado.identifyDevice(device_id);
 tado.setPresence(home_id, presence);
 tado.updatePresence(home_id);
 tado.setWindowDetection(home_id, zone_id, enabled, timeout);
+tado.getAirComfort(home_id);
 ```
 
 The ```setZoneOverlay``` method call takes the following arguments
