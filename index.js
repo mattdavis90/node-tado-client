@@ -15,7 +15,10 @@ const tado_config = {
     }
 }
 
-const oauth2 = require('simple-oauth2').create(tado_config);
+const { ResourceOwnerPassword } = require('simple-oauth2');
+
+const client = new ResourceOwnerPassword(tado_config);
+
 const axios = require('axios');
 
 class Tado {
@@ -23,48 +26,35 @@ class Tado {
         this._accessToken;
     }
 
-    _refreshToken() {
-        const { token } = this._accessToken;
-        const expirationTimeInSeconds = token.expires_at.getTime() / 1000;
-        const expirationWindowStart = expirationTimeInSeconds - EXPIRATION_WINDOW_IN_SECONDS;
-
+    async _refreshToken() {
         // If the start of the window has passed, refresh the token
-        const nowInSeconds = (new Date()).getTime() / 1000;
-        const shouldRefresh = nowInSeconds >= expirationWindowStart;
+        const shouldRefresh = this._accessToken.expired(EXPIRATION_WINDOW_IN_SECONDS);
 
-        return new Promise((resolve, reject) => {
-            if (shouldRefresh) {
-                this._accessToken.refresh()
-                    .then(result => {
-                        this._accessToken = result;
-                        resolve(this._accessToken);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    });
-            } else {
-                resolve(this._accessToken);
+        if (shouldRefresh) {
+            try {
+                this._accessToken = await this._accessToken.refresh();
+                return this._accessToken;
+            } catch (error) {
+                throw error;
             }
-        });
+        } else {
+            return this._accessToken;
+        }
     }
 
-    login(username, password) {
-        return new Promise((resolve, reject) => {
-            const credentials = {
-                scope: 'home.user',
-                username: username,
-                password: password
-            };
+    async login(username, password) {
+        const tokenParams = {
+            username: username,
+            password: password,
+            scope: 'home.user',
+        };
 
-            oauth2.ownerPassword.getToken(credentials)
-                .then(result => {
-                    this._accessToken = oauth2.accessToken.create(result);
-                    resolve(this._accessToken);
-                })
-                .catch(error => {
-                    reject(error);
-                });
-        });
+        try {
+            this._accessToken = await client.getToken(tokenParams);
+            return this._accessToken;
+        } catch(error) {
+            throw error;
+        };
     }
 
     apiCall(url, method='get', data={}) {
