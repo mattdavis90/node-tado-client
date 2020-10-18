@@ -31,11 +31,11 @@ describe('OAuth2 tests', () => {
         var tado = new Tado();
 
         tado.login('username', 'password')
-            .then(response => {
-                expect(typeof response).to.equal('object');
+            .then(() => {
+                expect(typeof tado._accessToken).to.equal('object');
 
-                expect(response.token.access_token).to.equal('eyJraW0UQ')
-                expect(response.token.token_type).to.equal('bearer')
+                expect(tado._accessToken.token.access_token).to.equal('eyJraW0UQ')
+                expect(tado._accessToken.token.token_type).to.equal('bearer')
 
                 done();
             });
@@ -70,27 +70,6 @@ describe('OAuth2 tests', () => {
                 // Force a refresh
                 tado._accessToken.token.expires_at = new Date();
                 tado._refreshToken().then(res => {
-                    done();
-                });
-            });
-    });
-
-    it('Should login then fail to refresh token', (done) => {
-        nock('https://auth.tado.com')
-            .post('/oauth/token')
-            .reply(200, auth_response);
-
-        var tado = new Tado();
-
-        tado.login('username', 'password')
-            .then(response => {
-                nock('https://auth.tado.com')
-                    .post('/oauth/token')
-                    .reply(500, {});
-
-                // Force a refresh
-                tado._accessToken.token.expires_at = new Date();
-                tado._refreshToken().catch(res => {
                     done();
                 });
             });

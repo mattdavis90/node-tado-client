@@ -15,8 +15,11 @@ const tado_config = {
     }
 }
 
-const oauth2 = require('simple-oauth2').create(tado_config);
+const { ResourceOwnerPassword } = require('simple-oauth2');
+const client = new ResourceOwnerPassword(tado_config);
+
 const axios = require('axios');
+
 
 class Tado {
     constructor(username, password) {
@@ -26,14 +29,17 @@ class Tado {
     }
 
     async _login() {
-        const credentials = {
-            scope: 'home.user',
+        const tokenParams = {
             username: this._username,
-            password: this._password
+            password: this._password,
+            scope: 'home.user',
         };
 
-        const result = await oauth2.ownerPassword.getToken(credentials);
-        this._accessToken = oauth2.accessToken.create(result);
+        try {
+            this._accessToken = await client.getToken(tokenParams);
+        } catch(error) {
+            throw error;
+        }
     }
 
     async _refreshToken() {
@@ -41,13 +47,8 @@ class Tado {
             await this._login();
         }
 
-        const { token } = this._accessToken;
-        const expirationTimeInSeconds = token.expires_at.getTime() / 1000;
-        const expirationWindowStart = expirationTimeInSeconds - EXPIRATION_WINDOW_IN_SECONDS;
-
         // If the start of the window has passed, refresh the token
-        const nowInSeconds = (new Date()).getTime() / 1000;
-        const shouldRefresh = nowInSeconds >= expirationWindowStart;
+        const shouldRefresh = this._accessToken.expired(EXPIRATION_WINDOW_IN_SECONDS);
 
         if (shouldRefresh) {
             try {
