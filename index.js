@@ -246,8 +246,9 @@ class Tado {
     }
 
     async updatePresence(home_id) {
-        const isPresenceAtHome = await this.getState(home_id).presence === 'HOME';
         const isAnyoneAtHome = await this.isAnyoneAtHome(home_id);
+        let isPresenceAtHome = await this.getState(home_id);
+        isPresenceAtHome = isPresenceAtHome.presence === 'HOME';
 
         if (isAnyoneAtHome !== isPresenceAtHome) {
             return this.setPresence(home_id, isAnyoneAtHome ? 'HOME' : 'AWAY');
