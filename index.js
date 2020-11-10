@@ -237,7 +237,7 @@ class Tado {
         const devices = await this.getMobileDevices(home_id);
 
         for (const device of devices) {
-            if (device.settings.geoTrackingEnabled && device.location.atHome) {
+            if (device.settings.geoTrackingEnabled && device.location && device.location.atHome) {
                 return true;
             }
         }
@@ -246,9 +246,9 @@ class Tado {
     }
 
     async updatePresence(home_id) {
-        let isPresenceAtHome = await this.getState(home_id);
-	    isPresenceAtHome = isPresenceAtHome.presence === 'HOME';
         const isAnyoneAtHome = await this.isAnyoneAtHome(home_id);
+        let isPresenceAtHome = await this.getState(home_id);
+        isPresenceAtHome = isPresenceAtHome.presence === 'HOME';
 
         if (isAnyoneAtHome !== isPresenceAtHome) {
             return this.setPresence(home_id, isAnyoneAtHome ? 'HOME' : 'AWAY');

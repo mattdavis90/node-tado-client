@@ -21,7 +21,7 @@ tado.login('username', 'password').then((token) => {
     tado.getMe().then(resp => {
         console.log(resp);
     });
-};
+});
 
 // Get the User's information
 ```
