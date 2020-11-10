@@ -237,7 +237,7 @@ class Tado {
         const devices = await this.getMobileDevices(home_id);
 
         for (const device of devices) {
-            if (device.settings.geoTrackingEnabled && device.location.atHome) {
+            if (device.settings.geoTrackingEnabled && device.location && device.location.atHome) {
                 return true;
             }
         }
