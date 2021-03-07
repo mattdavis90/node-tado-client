@@ -277,6 +277,14 @@ class Tado {
     async getAirComfort(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/airComfort`);
     }
+
+    async getAirComfortDetailed(home_id) {
+        const home = await this.getHome(home_id);
+        const location = `latitude=${home.geolocation.latitude}&longitude=${home.geolocation.longitude}`;
+        const login = `username=${this._username}&password=${this._password}`;
+        const resp = await axios(`https://acme.tado.com/v1/homes/${home_id}/airComfort?${location}&${login}`);
+        return resp.data;
+    }
 }
 
 module.exports = Tado;
