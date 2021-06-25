@@ -1,6 +1,6 @@
 # node-tado-client
-[![Build Status](https://travis-ci.org/mattdavis90/node-tado-client.svg?branch=master)](https://travis-ci.org/mattdavis90/node-tado-client)
-[![Coverage Status](https://coveralls.io/repos/github/mattdavis90/node-tado-client/badge.svg?branch=master)](https://coveralls.io/github/mattdavis90/node-tado-client?branch=master)
+[![Node.js Package](https://github.com/mattdavis90/node-tado-client/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/mattdavis90/node-tado-client/actions/workflows/npm-publish.yml)
+[![CodeQL](https://github.com/mattdavis90/node-tado-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/mattdavis90/node-tado-client/actions/workflows/codeql-analysis.yml)
 
 A Tado API client for Node
 
@@ -45,7 +45,7 @@ This call will return something similar to the following Javascript object.
         {
             "name": "John's Phone",
             "id": 644583,
-            "settings": {                      
+            "settings": {
                 "geoTrackingEnabled": true
             },
             "location": {
