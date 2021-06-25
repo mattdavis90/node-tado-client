@@ -173,7 +173,7 @@ class Tado {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'delete');
     }
 
-    async setZoneOverlay(home_id, zone_id, power, temperature, termination) {
+    async setZoneOverlay(home_id, zone_id, power, temperature, termination, fan_speed) {
         const zone_state = await this.getZoneState(home_id, zone_id);
 
         const config = {
@@ -184,23 +184,30 @@ class Tado {
         if (power.toLowerCase() == 'on') {
             config.setting.power = 'ON';
 
-            if (config.setting.type == 'HEATING' && temperature) {
+            if ((config.setting.type == 'HEATING' || config.setting.type == 'AIR_CONDITIONING') && temperature) {
                 config.setting.temperature = { celsius: temperature };
+            }
+            if (config.setting.type == 'AIR_CONDITIONING' && fan_speed) {
+                config.setting.fanSpeed = fan_speed;
             }
         } else {
             config.setting.power = 'OFF';
         }
 
         if (!isNaN(parseInt(termination))) {
-            config.termination.type = 'TIMER';
+            config.type = 'MANUAL';
+            config.termination.typeSkillBasedApp = 'TIMER';
             config.termination.durationInSeconds = termination;
         } else if (termination && termination.toLowerCase() == 'auto') {
+            // Not sure how to test this is the web app
+            // But seems to by a combo of 'next_time_block' and geo
             config.termination.type = 'TADO_MODE';
         } else if (termination && termination.toLowerCase() == 'next_time_block') {
             config.type = 'MANUAL';
             config.termination.typeSkillBasedApp = 'NEXT_TIME_BLOCK';
         } else {
-            config.termination.type = 'MANUAL';
+            config.type = 'MANUAL';
+            config.termination.typeSkillBasedApp = 'MANUAL';
         }
 
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'put', config);
