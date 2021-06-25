@@ -173,7 +173,7 @@ class Tado {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'delete');
     }
 
-    async setZoneOverlay(home_id, zone_id, power, temperature, termination, fan_speed) {
+    async setZoneOverlay(home_id, zone_id, power, temperature, termination, fan_speed, ac_mode) {
         const zone_state = await this.getZoneState(home_id, zone_id);
 
         const config = {
@@ -184,11 +184,24 @@ class Tado {
         if (power.toLowerCase() == 'on') {
             config.setting.power = 'ON';
 
-            if ((config.setting.type == 'HEATING' || config.setting.type == 'AIR_CONDITIONING') && temperature) {
+            if (config.setting.type == 'HEATING' && temperature) {
                 config.setting.temperature = { celsius: temperature };
             }
-            if (config.setting.type == 'AIR_CONDITIONING' && fan_speed) {
-                config.setting.fanSpeed = fan_speed;
+
+            if (config.setting.type == 'AIR_CONDITIONING') {
+                if (ac_mode) {
+                    config.setting.mode = ac_mode;
+                }
+
+                if (config.setting.mode.toLowerCase() == 'heat' || config.setting.mode.toLowerCase() == 'cool') {
+                    if (temperature) {
+                        config.setting.temperature = { celsius: temperature };
+                    }
+
+                    if (fan_speed) {
+                        config.setting.fanSpeed = fan_speed;
+                    }
+                }
             }
         } else {
             config.setting.power = 'OFF';
