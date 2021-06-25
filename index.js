@@ -190,7 +190,7 @@ class Tado {
 
             if (config.setting.type == 'AIR_CONDITIONING') {
                 if (ac_mode) {
-                    config.setting.mode = ac_mode;
+                    config.setting.mode = ac_mode.toUpperCase();
                 }
 
                 if (config.setting.mode.toLowerCase() == 'heat' || config.setting.mode.toLowerCase() == 'cool') {
@@ -199,7 +199,7 @@ class Tado {
                     }
 
                     if (fan_speed) {
-                        config.setting.fanSpeed = fan_speed;
+                        config.setting.fanSpeed = fan_speed.toUpperCase();
                     }
                 }
             }
