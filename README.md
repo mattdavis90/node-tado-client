@@ -8,6 +8,8 @@ Based on the work of SCPhillips on his [blog](http://blog.scphillips.com/posts/2
 
 *Please note: This is based on reverse engineering the Tado Web App's API and hence may be unstable*
 
+*DEPRECATION notice: The Zone Overlay API calls are being deprecated, see below for further information*
+
 ## Usage
 ```javascript
 // Import the Tado client
@@ -98,25 +100,56 @@ tado.getZoneDayReport(home_id, zone_id, reportDate)
 tado.getTimeTables(home_id, zone_id);
 tado.getAwayConfiguration(home_id, zone_id);
 tado.getTimeTable(home_id, zone_id, timetable_id);
-tado.clearZoneOverlay(home_id, zone_id);
 tado.isAnyoneAtHome(home_id);
-tado.setZoneOverlay(home_id, zone_id, power, temperature, termination);
 tado.setDeviceTemperatureOffset(device_id, temperatureOffset);
 tado.identifyDevice(device_id);
 tado.setPresence(home_id, presence);
 tado.updatePresence(home_id);
 tado.setWindowDetection(home_id, zone_id, enabled, timeout);
 tado.getAirComfort(home_id);
+tado.clearZoneOverlays(home_id, [zone_id, ...]);
+tado.setZoneOverlays(home_id, [overlays, ...], termination);
+
+/**********************/
+/* Deprecated methods */
+/**********************/
+tado.clearZoneOverlay(home_id, zone_id);
+tado.setZoneOverlay(home_id, zone_id, power, temperature, termination);
 ```
 
-The ```setZoneOverlay``` method call takes the following arguments
+### Setting Zone Overlays
 
-**Note:** It will automatically determine the type of system that it is affecting
+The `setZoneOverlay` and `clearZoneOverlay` methods have been deprecated in favour of `setZoneOverlays` and `clearZoneOverlays` repspectively.
 
-* *power* - **on** or **off** (case insensitive) [**default:** off]
-* *temperature* - *Integer* temperature in Celsius, if affecting a HEATING system
-* *termination* - *Integer* , **auto**, **next_time_block**, or **manual** (case insensitive, integer denotes a timer in seconds) [**default:** manual]
+The `setZoneOverlays` method takes an array of `overlays` in the form of
 
-The ```setPresence``` method call takes the following arguments
+```javascript
+{
+    zone_id: 123,           # Required
+    power: "ON",            # HEATING and AC
+    temperature: {          # HEATING and AC
+        celsius: 24,
+        fahrenheit: 75.2
+    },
+    mode: "HEAT",           # AC only
+    fanLevel: "LEVEL1",     # AC only
+    verticalSwing: "OFF",   # AC only
+    horizontalSwing: "OFF", # AC only
+    light: "OFF",           # AC only
+}
+```
+
+It is not required to use upper case in the values, the library will convert the strings for you. It is also not required to supply both celsius and fahrenheit, the Tado API is able to convert for you.
+
+The `termination` argument should be one of the following:
+
+* A positive integer - this will be interpreted as the number of seconds to set the overlay for
+* "auto" - this will put the overlay into "TADO_MODE" *Note: I haven't been able to replicate this mode in the Tado App so not sure what it does*
+* ""next_time_block" - overlay until the next scheduled event
+* Anything else - the overlay will exist indefinitely and will need manually clearing
+
+### Setting Geo Presence
+
+The `setPresence` method call takes the following arguments
 
 * *presence* - **home**, **away** or **auto**

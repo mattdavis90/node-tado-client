@@ -170,10 +170,14 @@ class Tado {
     }
 
     async clearZoneOverlay(home_id, zone_id) {
+        console.warn("This method of clearing zone overlays will soon be deprecated, please use clearZoneOverlays");
+
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'delete');
     }
 
     async setZoneOverlay(home_id, zone_id, power, temperature, termination, fan_speed, ac_mode) {
+        console.warn("This method of setting zone overlays will soon be deprecated, please use setZoneOverlays");
+
         const zone_state = await this.getZoneState(home_id, zone_id);
 
         const config = {
@@ -224,6 +228,60 @@ class Tado {
         }
 
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'put', config);
+    }
+
+    async clearZoneOverlays(home_id, zone_ids) {
+        const rooms = zone_ids.join(",");
+        return this.apiCall(`/api/v2/homes/${home_id}/overlay?rooms=${rooms}`, 'delete');
+    }
+
+    async setZoneOverlays(home_id, overlays, termination) {
+        let termination_config = {};
+
+        if (!isNaN(parseInt(termination))) {
+            termination_config.typeSkillBasedApp = 'TIMER';
+            termination_config.durationInSeconds = termination;
+        } else if (termination && termination.toLowerCase() == 'auto') {
+            termination_config.typeSkillBasedApp = 'TADO_MODE';
+        } else if (termination && termination.toLowerCase() == 'next_time_block') {
+            termination_config.typeSkillBasedApp = 'NEXT_TIME_BLOCK';
+        } else {
+            termination_config.typeSkillBasedApp = 'MANUAL';
+        }
+
+        let config = {
+            overlays: [],
+        }
+
+        for (let overlay of overlays) {
+            const zone_state = await this.getZoneState(home_id, overlay.zone_id);
+
+            const overlay_config = {
+                overlay: {
+                    setting: zone_state.setting,
+                    termination: termination_config,
+                },
+                room: overlay.zone_id,
+            };
+
+            [
+                "power",
+                "mode",
+                "temperature",
+                "fanLevel",
+                "verticalSwing",
+                "horizontalSwing",
+                "light",
+            ].forEach((prop) => {
+                if (overlay.hasOwnProperty(prop)) {
+                    overlay_config.overlay.setting[prop] = overlay[prop].toUpperCase();
+                }
+            });
+
+            config.overlays.push(overlay_config);
+        }
+
+        return this.apiCall(`/api/v2/homes/${home_id}/overlay`, 'post', config);
     }
 
     async setDeviceTemperatureOffset(device_id, temperatureOffset) {
