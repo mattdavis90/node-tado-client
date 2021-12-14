@@ -17,7 +17,7 @@ const Tado = require('node-tado-client');
 var tado = new Tado();
 
 // Login to the Tado Web API
-tado.login('username', 'password').then((token) => {
+tado.login('username', 'password').then(() => {
     tado.getMe().then(resp => {
         console.log(resp);
     });
