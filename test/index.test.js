@@ -621,8 +621,25 @@ describe('High-level API tests', () => {
             .get('/api/homes/1907/meterReadings')
             .reply(200, eneryIQ_meter_readings_response);
 
+        tado.getEnergyIQMeterReadings('1907')
+            .then(response => {
+                expect(typeof response).to.equal('object');
+                done();
+            })
+            .catch(err => {
+                console.log(err);
+                done();
+            });
+    });
 
-        tado.getEnergyIQMeterReaadings('1907')
+    it('Should add energyIQ meter readings', (done) => {
+        nock('https://energy-insights.tado.com')
+            .post('/api/homes/1907/meterReadings')
+            .reply(200, (uri, req) => {
+                return req;
+            })
+
+        tado.addEnergyIQMeterReading('1907','2022-01-05',6813)
             .then(response => {
                 expect(typeof response).to.equal('object');
                 done();

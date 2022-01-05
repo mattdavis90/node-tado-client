@@ -328,8 +328,16 @@ class Tado {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariff`, 'put',{ unit: unit, tariffInCents: tariffInCents});
     }
 
-    async getEnergyIQMeterReaadings(home_id) {
+    async getEnergyIQMeterReadings(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`);
+    }
+
+    async addEnergyIQMeterReading(home_id, date, reading){
+        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`, 'post',{ date: date, reading: reading});
+    }
+
+    async deleteEnergyIQMeterReading(home_id, reading_id){
+        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings/${reading_id}`, 'delete',{});
     }
 }
 
