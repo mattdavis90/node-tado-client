@@ -107,6 +107,17 @@ tado.setPresence(home_id, presence);
 tado.updatePresence(home_id);
 tado.setWindowDetection(home_id, zone_id, enabled, timeout);
 tado.getAirComfort(home_id);
+
+/**********************/
+/* EnergyIQ & Savings methods */
+/**********************/
+tado.getEnergyIQ(home_id);
+tado.getEnergyIQtariff(home_id)
+tado.updateEnergyIQtariff(home_id, unit, tariffInCents)
+tado.getEnergyIQMeterReadings(home_id)
+tado.addEnergyIQMeterReading(home_id, date, reading);
+tado.deleteEnergyIQMeterReading(home_id, reading_id)
+tado.getEnergySavingsReport(home_id);
 ```
 
 The ```setZoneOverlay``` method call takes the following arguments
