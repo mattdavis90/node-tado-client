@@ -320,6 +320,13 @@ class Tado {
     async getEnergyIQtariff(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariff`);
     }
+
+    async updateEnergyIQtariff(home_id, unit, tariffInCents){
+        if (!['m3', 'kWh'].includes(unit)) {
+            throw new Error(`Invalid unit "${unit}" must be "m3", or "kWh"`);
+        }
+        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariff`, 'put',{ unit: unit, tariffInCents: tariffInCents});
+    }
 }
 
 module.exports = Tado;
