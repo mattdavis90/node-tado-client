@@ -317,6 +317,9 @@ class Tado {
     async getEnergyIQ(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/consumption`);
     }
+    async getEnergyIQtariff(home_id) {
+        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariff`);
+    }
 }
 
 module.exports = Tado;
