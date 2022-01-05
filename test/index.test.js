@@ -23,6 +23,7 @@ const timetable_response = require('./response.timetable');
 const zone_overlay_response = require('./response.zone.overlay');
 const eneryIQ_response = require('./response.eneryIQ');
 const eneryIQ_tariff_response = require('./response.eneryIQ.tariff');
+const eneryIQ_meter_readings_response = require('./response.eneryIQ.meterReadings');
 
 describe('OAuth2 tests', () => {
     it('Should login', (done) => {
@@ -605,6 +606,23 @@ describe('High-level API tests', () => {
             })
 
         tado.updateEnergyIQtariff('1907', 'm3',303)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+                done();
+            })
+            .catch(err => {
+                console.log(err);
+                done();
+            });
+    });
+
+    it('Should get energyIQ meter readings', (done) => {
+        nock('https://energy-insights.tado.com')
+            .get('/api/homes/1907/meterReadings')
+            .reply(200, eneryIQ_meter_readings_response);
+
+
+        tado.getEnergyIQMeterReaadings('1907')
             .then(response => {
                 expect(typeof response).to.equal('object');
                 done();
