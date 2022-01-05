@@ -21,7 +21,7 @@ const timetables_response = require('./response.timetables');
 const away_configuration_response = require('./response.away');
 const timetable_response = require('./response.timetable');
 const zone_overlay_response = require('./response.zone.overlay');
-
+const eneryIQ_response = require('./response.eneryIQ');
 describe('OAuth2 tests', () => {
     it('Should login', (done) => {
         nock('https://auth.tado.com')
@@ -559,4 +559,23 @@ describe('High-level API tests', () => {
             })
             .catch(err => {});
     });
+
+    it('Should get energyIQ', (done) => {
+        nock('https://energy-insights.tado.com')
+            .get('/api/homes/1907/consumption')
+            .reply(200, eneryIQ_response);
+
+
+        tado.getEnergyIQ('1907')
+            .then(response => {
+                expect(typeof response).to.equal('object');
+                done();
+            })
+            .catch(err => {
+                console.log(err);
+                done();
+            });
+    });
+
+
 });
