@@ -596,5 +596,25 @@ describe('High-level API tests', () => {
             });
     });
 
+    it('Should update energyIQ Tarif', (done) => {
+
+        nock('https://energy-insights.tado.com')
+            .put('/api/homes/1907/tariff')
+            .reply(200, (uri, req) => {
+                return req;
+            })
+
+        tado.updateEnergyIQtariff('1907', 'm3',303)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+                done();
+            })
+            .catch(err => {
+                console.log(err);
+                done();
+            });
+    });
+
+
 
 });
