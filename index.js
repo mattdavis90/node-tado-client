@@ -339,6 +339,13 @@ class Tado {
     async deleteEnergyIQMeterReading(home_id, reading_id){
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings/${reading_id}`, 'delete',{});
     }
+
+    // const home = await this.getHome(home_id);
+    //  const country = home.address.country;
+
+    async getEnergySavingsReport(home_id, year, month, countryCode ) {
+        return this.apiCall(`https://energy-bob.tado.com/${home_id}/${year}-${month}?country=${countryCode}`);
+    }
 }
 
 module.exports = Tado;
