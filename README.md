@@ -69,12 +69,13 @@ This call will return something similar to the following Javascript object.
 ```
 
 The following API calls are available
+
 ```javascript
 /*********************/
 /* Low-level methods */
 /*********************/
 tado.login(username, password);
-tado.apiCall(url, method='get', data={});
+tado.apiCall(url, method = 'get', data = {});
 
 /**********************/
 /* High-level methods */
@@ -112,12 +113,12 @@ tado.getAirComfort(home_id);
 /* EnergyIQ & Savings methods */
 /**********************/
 tado.getEnergyIQ(home_id);
-tado.getEnergyIQtariff(home_id)
-tado.updateEnergyIQtariff(home_id, unit, tariffInCents)
+tado.getEnergyIQTariff(home_id)
+tado.updateEnergyIQTariff(home_id, unit, tariffInCents)
 tado.getEnergyIQMeterReadings(home_id)
 tado.addEnergyIQMeterReading(home_id, date, reading);
 tado.deleteEnergyIQMeterReading(home_id, reading_id)
-tado.getEnergySavingsReport(home_id);
+tado.getEnergySavingsReport(home_id, year, month, countryCode); // countryCode should match home country, it can be retrieved from getHome(home_id).address.country
 ```
 
 The ```setZoneOverlay``` method call takes the following arguments

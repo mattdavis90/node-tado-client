@@ -587,7 +587,7 @@ describe('High-level API tests', () => {
             .reply(200, eneryIQ_tariff_response);
 
 
-        tado.getEnergyIQtariff('1907')
+        tado.getEnergyIQTariff('1907')
             .then(response => {
                 expect(typeof response).to.equal('object');
                 done();
@@ -606,7 +606,7 @@ describe('High-level API tests', () => {
                 return req;
             })
 
-        tado.updateEnergyIQtariff('1907', 'm3',303)
+        tado.updateEnergyIQTariff('1907', 'm3',303)
             .then(response => {
                 expect(typeof response).to.equal('object');
                 done();

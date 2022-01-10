@@ -317,11 +317,11 @@ class Tado {
     async getEnergyIQ(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/consumption`);
     }
-    async getEnergyIQtariff(home_id) {
+    async getEnergyIQTariff(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariff`);
     }
 
-    async updateEnergyIQtariff(home_id, unit, tariffInCents){
+    async updateEnergyIQTariff(home_id, unit, tariffInCents){
         if (!['m3', 'kWh'].includes(unit)) {
             throw new Error(`Invalid unit "${unit}" must be "m3", or "kWh"`);
         }
@@ -341,7 +341,7 @@ class Tado {
     }
 
     // const home = await this.getHome(home_id);
-    //  const country = home.address.country;
+    // const country = home.address.country;
 
     async getEnergySavingsReport(home_id, year, month, countryCode ) {
         return this.apiCall(`https://energy-bob.tado.com/${home_id}/${year}-${month}?country=${countryCode}`);
