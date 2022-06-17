@@ -69,14 +69,22 @@ class Tado {
     async apiCall(url, method = 'get', data = {}) {
         await this._refreshToken();
 
-        const response = await axios({
-            url: tado_url + url,
+        let callUrl = tado_url + url;
+        if(url.includes('https')){
+            callUrl = url;
+        }
+        let request = {
+            url: callUrl,
             method: method,
             data: data,
             headers: {
                 Authorization: 'Bearer ' + this._accessToken.token.access_token
             }
-        });
+        }
+        if(method === 'get'){
+            delete request.data;
+        }
+        const response = await axios(request);
 
         return response.data;
     }
@@ -304,6 +312,39 @@ class Tado {
         const login = `username=${this._username}&password=${this._password}`;
         const resp = await axios(`https://acme.tado.com/v1/homes/${home_id}/airComfort?${location}&${login}`);
         return resp.data;
+    }
+
+    async getEnergyIQ(home_id) {
+        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/consumption`);
+    }
+    async getEnergyIQTariff(home_id) {
+        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariff`);
+    }
+
+    async updateEnergyIQTariff(home_id, unit, tariffInCents){
+        if (!['m3', 'kWh'].includes(unit)) {
+            throw new Error(`Invalid unit "${unit}" must be "m3", or "kWh"`);
+        }
+        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariff`, 'put',{ unit: unit, tariffInCents: tariffInCents});
+    }
+
+    async getEnergyIQMeterReadings(home_id) {
+        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`);
+    }
+
+    async addEnergyIQMeterReading(home_id, date, reading){
+        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`, 'post',{ date: date, reading: reading});
+    }
+
+    async deleteEnergyIQMeterReading(home_id, reading_id){
+        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings/${reading_id}`, 'delete',{});
+    }
+
+    // const home = await this.getHome(home_id);
+    // const country = home.address.country;
+
+    async getEnergySavingsReport(home_id, year, month, countryCode ) {
+        return this.apiCall(`https://energy-bob.tado.com/${home_id}/${year}-${month}?country=${countryCode}`);
     }
 }
 

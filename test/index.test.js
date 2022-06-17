@@ -21,6 +21,10 @@ const timetables_response = require('./response.timetables');
 const away_configuration_response = require('./response.away');
 const timetable_response = require('./response.timetable');
 const zone_overlay_response = require('./response.zone.overlay');
+const eneryIQ_response = require('./response.eneryIQ');
+const eneryIQ_tariff_response = require('./response.eneryIQ.tariff');
+const eneryIQ_meter_readings_response = require('./response.eneryIQ.meterReadings');
+const eneryIQ_savings_response = require('./response.eneryIQ.savings');
 
 describe('OAuth2 tests', () => {
     it('Should login', (done) => {
@@ -559,4 +563,109 @@ describe('High-level API tests', () => {
             })
             .catch(err => {});
     });
+
+    it('Should get energyIQ', (done) => {
+        nock('https://energy-insights.tado.com')
+            .get('/api/homes/1907/consumption')
+            .reply(200, eneryIQ_response);
+
+
+        tado.getEnergyIQ('1907')
+            .then(response => {
+                expect(typeof response).to.equal('object');
+                done();
+            })
+            .catch(err => {
+                console.log(err);
+                done();
+            });
+    });
+
+    it('Should get energyIQ Tariff', (done) => {
+        nock('https://energy-insights.tado.com')
+            .get('/api/homes/1907/tariff')
+            .reply(200, eneryIQ_tariff_response);
+
+
+        tado.getEnergyIQTariff('1907')
+            .then(response => {
+                expect(typeof response).to.equal('object');
+                done();
+            })
+            .catch(err => {
+                console.log(err);
+                done();
+            });
+    });
+
+    it('Should update energyIQ Tariff', (done) => {
+
+        nock('https://energy-insights.tado.com')
+            .put('/api/homes/1907/tariff')
+            .reply(200, (uri, req) => {
+                return req;
+            })
+
+        tado.updateEnergyIQTariff('1907', 'm3',303)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+                done();
+            })
+            .catch(err => {
+                console.log(err);
+                done();
+            });
+    });
+
+    it('Should get energyIQ meter readings', (done) => {
+        nock('https://energy-insights.tado.com')
+            .get('/api/homes/1907/meterReadings')
+            .reply(200, eneryIQ_meter_readings_response);
+
+        tado.getEnergyIQMeterReadings('1907')
+            .then(response => {
+                expect(typeof response).to.equal('object');
+                done();
+            })
+            .catch(err => {
+                console.log(err);
+                done();
+            });
+    });
+
+    it('Should add energyIQ meter readings', (done) => {
+        nock('https://energy-insights.tado.com')
+            .post('/api/homes/1907/meterReadings')
+            .reply(200, (uri, req) => {
+                return req;
+            })
+
+        tado.addEnergyIQMeterReading('1907','2022-01-05',6813)
+            .then(response => {
+                expect(typeof response).to.equal('object');
+                done();
+            })
+            .catch(err => {
+                console.log(err);
+                done();
+            });
+    });
+
+    it('Should get energyIQ savings', (done) => {
+        nock('https://energy-bob.tado.com')
+            .get('/1907/2021-11?country=NLD')
+            .reply(200, eneryIQ_savings_response);
+
+        tado.getEnergySavingsReport('1907', 2021, 11, 'NLD')
+            .then(response => {
+                expect(typeof response).to.equal('object');
+                done();
+            })
+            .catch(err => {
+                console.log(err);
+                done();
+            });
+    });
+
+
 });
