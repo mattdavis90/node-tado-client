@@ -19,13 +19,14 @@ const { ResourceOwnerPassword } = require('simple-oauth2');
 const client = new ResourceOwnerPassword(tado_config);
 
 const axios = require('axios');
-
+const { Agent } = require('https');
 
 class Tado {
     constructor(username, password) {
         this._username = username;
         this._password = password;
         this._accessToken;
+        this._httpsAgent = new Agent({ keepAlive: true });
     }
 
     async _login() {
@@ -79,7 +80,8 @@ class Tado {
             data: data,
             headers: {
                 Authorization: 'Bearer ' + this._accessToken.token.access_token
-            }
+            },
+            httpsAgent: this._httpsAgent
         }
         if(method === 'get'){
             delete request.data;
