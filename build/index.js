@@ -392,7 +392,6 @@ class Tado {
     deleteEnergyIQMeterReading(home_id, reading_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings/${reading_id}`, 'delete', {});
     }
-    // TODO: type
     getEnergySavingsReport(home_id, year, month, countryCode) {
         return this.apiCall(`https://energy-bob.tado.com/${home_id}/${year}-${month}?country=${countryCode}`);
     }

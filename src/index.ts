@@ -662,7 +662,6 @@ export class Tado {
         )
     }
 
-    // TODO: type
     getEnergySavingsReport(
         home_id: number,
         year: string,
