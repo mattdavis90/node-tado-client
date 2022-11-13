@@ -27,6 +27,8 @@ import {
     TimeTables,
     AirComfort,
     EnergyIQ,
+    EnergyIQMeterReadings,
+    EnergySavingReport,
 } from './types'
 
 const EXPIRATION_WINDOW_IN_SECONDS = 300
@@ -633,15 +635,14 @@ export class Tado {
         )
     }
 
-    // TODO: type
-    getEnergyIQMeterReadings(home_id: number) {
+    getEnergyIQMeterReadings(home_id: number): Promise<EnergyIQMeterReadings> {
         return this.apiCall(
             `https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`
         )
     }
 
     /**
-     * @param date datetime format `YYYY-MM-DD`
+     * @param date format `YYYY-MM-DD`
      */
     // TODO: type
     addEnergyIQMeterReading(home_id: number, date: string, reading: number) {
@@ -667,7 +668,7 @@ export class Tado {
         year: string,
         month: string,
         countryCode: Country
-    ) {
+    ): Promise<EnergySavingReport> {
         return this.apiCall(
             `https://energy-bob.tado.com/${home_id}/${year}-${month}?country=${countryCode}`
         )

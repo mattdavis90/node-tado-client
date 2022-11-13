@@ -378,12 +378,11 @@ class Tado {
         }
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariff`, 'put', { unit: unit, tariffInCents: tariffInCents });
     }
-    // TODO: type
     getEnergyIQMeterReadings(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`);
     }
     /**
-     * @param date datetime format `YYYY-MM-DD`
+     * @param date format `YYYY-MM-DD`
      */
     // TODO: type
     addEnergyIQMeterReading(home_id, date, reading) {

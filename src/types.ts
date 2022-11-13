@@ -471,3 +471,59 @@ export type EnergyIQ = {
     unit: IQUnit
     details: EnergyIQDetail
 }
+
+export type EnergyIQMeterReading = {
+    id: string
+    homeId: number
+    reading: number
+    /** `YYYY-MM-DD` format date */
+    date: string
+}
+
+export type EnergyIQMeterReadings = {
+    readings: EnergyIQMeterReading[]
+}
+
+export type EnergySavingReportUnit = 'HOURS' | 'PERCENTAGE'
+
+export type EnergySavingDuration = {
+    value: number
+    unit: EnergySavingReportUnit
+}
+
+export type EnergySavingReport = {
+    coveredInterval: {
+        /** JSON formated date */
+        start: string
+        /** JSON formated date */
+        end: string
+    }
+    totalSavingsAvailable: boolean
+    withAutoAssist: {
+        detectedAwayDuration: EnergySavingDuration
+        openWindowDetectionTimes: number
+    }
+    totalSavingsInThermostaticMode: EnergySavingDuration
+    manualControlSaving: EnergySavingDuration
+    totalSavings: EnergySavingDuration
+    hideSunshineDuration: boolean
+    awayDuration: EnergySavingDuration
+    showSavingsInThermostaticMode: boolean
+    communityNews: {
+        type: 'TURN_ON_HEATING_DATE'
+        /** `YYYY-MM-DD` format date */
+        turnOnDateForMajorityOfTadoUsers: string
+        /** `YYYY-MM-DD` format date */
+        turnOnDateForMajorityOfUsersInLocalRegion: string
+    }
+    sunshineDuration: EnergySavingDuration
+    hasAutoAssist: boolean
+    openWindowDetectionTimes: number
+    setbackScheduleDurationPerDay: EnergySavingDuration
+    totalSavingsInThermostaticModeAvailable: boolean
+    /** `YYYY-MM` */
+    yearMonth: string
+    hideOpenWindowDetection: boolean
+    home: number
+    hideCommunityNews: boolean
+}
