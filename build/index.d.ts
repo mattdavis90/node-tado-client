@@ -1,5 +1,5 @@
 import { Method } from 'axios';
-import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power, Termination, StatePresence, IQUnit, ZoneOverlay, TimeTables } from './types';
+import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power, Termination, StatePresence, IQUnit, ZoneOverlay, TimeTables, AirComfort, EnergyIQ } from './types';
 export declare class Tado {
     private _httpsAgent;
     private _accessToken?;
@@ -68,9 +68,9 @@ export declare class Tado {
     setWindowDetection(home_id: number, zone_id: number, enabled: true, timeout: number): Promise<void>;
     setWindowDetection(home_id: number, zone_id: number, enabled: false): Promise<void>;
     setOpenWindowMode(home_id: number, zone_id: number, activate: boolean): Promise<void>;
-    getAirComfort(home_id: number): Promise<unknown>;
+    getAirComfort(home_id: number): Promise<AirComfort>;
     getAirComfortDetailed(home_id: number): Promise<any>;
-    getEnergyIQ(home_id: number): Promise<unknown>;
+    getEnergyIQ(home_id: number): Promise<EnergyIQ>;
     getEnergyIQTariff(home_id: number): Promise<unknown>;
     updateEnergyIQTariff(home_id: number, unit: IQUnit, tariffInCents: number): Promise<unknown>;
     getEnergyIQMeterReadings(home_id: number): Promise<unknown>;

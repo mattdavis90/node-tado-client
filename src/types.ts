@@ -19,6 +19,12 @@ export type TemperatureUnit = 'CELSIUS'
 /** Example: `'FRA'` */
 export type Country = string
 
+/** Example: `'EUR'` */
+export type Currency = string
+
+/** Example: `'€'` */
+export type CurrencySign = string
+
 export type Geolocation = { latitude: number; longitude: number }
 
 export type Feature =
@@ -406,3 +412,62 @@ export type TimeTables =
     | { id: 0; type: 'ONE_DAY' }
     | { id: 1; type: 'THREE_DAY' }
     | { id: 2; type: 'SEVEN_DAY' }
+
+export type AirComfortFreshnessValue = 'FAIR'
+
+export type AirComfortFreshness = {
+    value: AirComfortFreshnessValue
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    lastOpenWindow: string
+}
+
+export type TemperatureLevel = 'COLD'
+
+export type HumidityLevel = 'HUMID'
+
+export type AirComfortCoordinate = { radial: number; angular: number }
+
+export type AirComfortRoom = {
+    roomId: number
+    temperatureLevel: TemperatureLevel
+    humidityLevel: HumidityLevel
+    coordinate: AirComfortCoordinate
+}
+
+export type AirComfort = {
+    freshness: AirComfortFreshness
+    comfort: AirComfortRoom[]
+}
+
+export type EnergyIQTariffInfo = {
+    currencySign: CurrencySign
+    consumptionUnit: IQUnit
+    tariffInCents: number
+    customTariff: boolean
+}
+
+export type EnergyIQConsumptionInputState = 'partial'
+
+export type EnergyIQDetailPerDay = {
+    /** `YYYY-MM-DD` format date */
+    date: string
+    consumption: number
+    costInCents: number
+}
+
+export type EnergyIQDetail = {
+    totalConsumption: 24.57
+    totalCostInCents: 2685.45
+    perDay: EnergyIQDetailPerDay[]
+}
+
+export type EnergyIQ = {
+    currency: Currency
+    /** Example: `'0.104 €/kWh'` */
+    tariff: string
+    tariffInfo: EnergyIQTariffInfo
+    customTariff: boolean
+    consumptionInputState: EnergyIQConsumptionInputState
+    unit: IQUnit
+    details: EnergyIQDetail
+}

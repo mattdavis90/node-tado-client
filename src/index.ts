@@ -25,6 +25,8 @@ import {
     IQUnit,
     ZoneOverlay,
     TimeTables,
+    AirComfort,
+    EnergyIQ,
 } from './types'
 
 const EXPIRATION_WINDOW_IN_SECONDS = 300
@@ -590,8 +592,7 @@ export class Tado {
         )
     }
 
-    // TODO: type
-    getAirComfort(home_id: number) {
+    getAirComfort(home_id: number): Promise<AirComfort> {
         return this.apiCall(`/api/v2/homes/${home_id}/airComfort`)
     }
 
@@ -606,8 +607,7 @@ export class Tado {
         return resp.data
     }
 
-    // TODO: type
-    getEnergyIQ(home_id: number) {
+    getEnergyIQ(home_id: number): Promise<EnergyIQ> {
         return this.apiCall(
             `https://energy-insights.tado.com/api/homes/${home_id}/consumption`
         )

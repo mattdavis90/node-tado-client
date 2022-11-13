@@ -9,6 +9,10 @@ export declare type Platform = 'iOS' | 'Android';
 export declare type TemperatureUnit = 'CELSIUS';
 /** Example: `'FRA'` */
 export declare type Country = string;
+/** Example: `'EUR'` */
+export declare type Currency = string;
+/** Example: `'€'` */
+export declare type CurrencySign = string;
 export declare type Geolocation = {
     latitude: number;
     longitude: number;
@@ -325,4 +329,54 @@ export declare type TimeTables = {
 } | {
     id: 2;
     type: 'SEVEN_DAY';
+};
+export declare type AirComfortFreshnessValue = 'FAIR';
+export declare type AirComfortFreshness = {
+    value: AirComfortFreshnessValue;
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    lastOpenWindow: string;
+};
+export declare type TemperatureLevel = 'COLD';
+export declare type HumidityLevel = 'HUMID';
+export declare type AirComfortCoordinate = {
+    radial: number;
+    angular: number;
+};
+export declare type AirComfortRoom = {
+    roomId: number;
+    temperatureLevel: TemperatureLevel;
+    humidityLevel: HumidityLevel;
+    coordinate: AirComfortCoordinate;
+};
+export declare type AirComfort = {
+    freshness: AirComfortFreshness;
+    comfort: AirComfortRoom[];
+};
+export declare type EnergyIQTariffInfo = {
+    currencySign: CurrencySign;
+    consumptionUnit: IQUnit;
+    tariffInCents: number;
+    customTariff: boolean;
+};
+export declare type EnergyIQConsumptionInputState = 'partial';
+export declare type EnergyIQDetailPerDay = {
+    /** `YYYY-MM-DD` format date */
+    date: string;
+    consumption: number;
+    costInCents: number;
+};
+export declare type EnergyIQDetail = {
+    totalConsumption: 24.57;
+    totalCostInCents: 2685.45;
+    perDay: EnergyIQDetailPerDay[];
+};
+export declare type EnergyIQ = {
+    currency: Currency;
+    /** Example: `'0.104 €/kWh'` */
+    tariff: string;
+    tariffInfo: EnergyIQTariffInfo;
+    customTariff: boolean;
+    consumptionInputState: EnergyIQConsumptionInputState;
+    unit: IQUnit;
+    details: EnergyIQDetail;
 };
