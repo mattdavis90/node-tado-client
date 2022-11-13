@@ -237,6 +237,47 @@ export type ZoneDevice = Zone & {
     duties: ZoneDeviceDuty[]
 }
 
+export type ZoneOverlayTerminationType = 'MANUAL' | 'TIMER'
+export type ZoneOverlayTerminationTypeSkillBasedApp =
+    | 'MANUAL'
+    | 'NEXT_TIME_BLOCK'
+    | 'TIMER'
+
+export type ZoneOverlayTerminationNextTimeBlock = {
+    type: 'TIMER'
+    typeSkillBasedApp: 'NEXT_TIME_BLOCK'
+    durationInSeconds: number
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    expiry: string
+    remainingTimeInSeconds: number
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    projectedExpiry: string
+}
+
+export type ZoneOverlayTerminationTimer = Omit<
+    ZoneOverlayTerminationNextTimeBlock,
+    'type' | 'typeSkillBasedApp'
+> & {
+    type: 'TIMER'
+    typeSkillBasedApp: 'TIMER'
+}
+
+export type ZoneOverlayTerminationManual = {
+    type: 'MANUAL'
+    typeSkillBasedApp: 'MANUAL'
+}
+
+export type ZoneOverlayTermination =
+    | ZoneOverlayTerminationManual
+    | ZoneOverlayTerminationTimer
+    | ZoneOverlayTerminationNextTimeBlock
+
+export type ZoneOverlay = {
+    type: 'MANUAL'
+    setting: TimeTableSettings
+    termination: ZoneOverlayTermination
+}
+
 export type Zone = {
     id: number
     name: string
@@ -356,3 +397,10 @@ export type TimeTable = {
     geolocationOverride: boolean
     setting: TimeTableSettings
 }
+
+export type TimeTableType = 'ONE_DAY'
+
+export type TimeTables =
+    | { id: 0; type: 'ONE_DAY' }
+    | { id: 1; type: 'THREE_DAY' }
+    | { id: 2; type: 'SEVEN_DAY' }

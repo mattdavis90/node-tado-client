@@ -188,6 +188,32 @@ export declare type ZoneDeviceDuty = 'ZONE_UI' | 'ZONE_LEADER' | 'ZONE_DRIVER';
 export declare type ZoneDevice = Zone & {
     duties: ZoneDeviceDuty[];
 };
+export declare type ZoneOverlayTerminationType = 'MANUAL' | 'TIMER';
+export declare type ZoneOverlayTerminationTypeSkillBasedApp = 'MANUAL' | 'NEXT_TIME_BLOCK' | 'TIMER';
+export declare type ZoneOverlayTerminationNextTimeBlock = {
+    type: 'TIMER';
+    typeSkillBasedApp: 'NEXT_TIME_BLOCK';
+    durationInSeconds: number;
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    expiry: string;
+    remainingTimeInSeconds: number;
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    projectedExpiry: string;
+};
+export declare type ZoneOverlayTerminationTimer = Omit<ZoneOverlayTerminationNextTimeBlock, 'type' | 'typeSkillBasedApp'> & {
+    type: 'TIMER';
+    typeSkillBasedApp: 'TIMER';
+};
+export declare type ZoneOverlayTerminationManual = {
+    type: 'MANUAL';
+    typeSkillBasedApp: 'MANUAL';
+};
+export declare type ZoneOverlayTermination = ZoneOverlayTerminationManual | ZoneOverlayTerminationTimer | ZoneOverlayTerminationNextTimeBlock;
+export declare type ZoneOverlay = {
+    type: 'MANUAL';
+    setting: TimeTableSettings;
+    termination: ZoneOverlayTermination;
+};
 export declare type Zone = {
     id: number;
     name: string;
@@ -285,4 +311,15 @@ export declare type TimeTable = {
     end: string;
     geolocationOverride: boolean;
     setting: TimeTableSettings;
+};
+export declare type TimeTableType = 'ONE_DAY';
+export declare type TimeTables = {
+    id: 0;
+    type: 'ONE_DAY';
+} | {
+    id: 1;
+    type: 'THREE_DAY';
+} | {
+    id: 2;
+    type: 'SEVEN_DAY';
 };

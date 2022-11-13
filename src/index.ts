@@ -23,6 +23,8 @@ import {
     Termination,
     StatePresence,
     IQUnit,
+    ZoneOverlay,
+    TimeTables,
 } from './types'
 
 const EXPIRATION_WINDOW_IN_SECONDS = 300
@@ -216,9 +218,14 @@ export class Tado {
         )
     }
 
-    // TODO: type
-    getZoneOverlay(home_id: number, zone_id: number) {
-        return this.apiCall(
+    /**
+     * @returns an empty object if overlay does not exist
+     */
+    getZoneOverlay(
+        home_id: number,
+        zone_id: number
+    ): Promise<ZoneOverlay | {}> {
+        return this.apiCall<ZoneOverlay>(
             `/api/v2/homes/${home_id}/zones/${zone_id}/overlay`
         ).catch((error) => {
             if (error.response.status === 404) {
@@ -239,8 +246,7 @@ export class Tado {
         )
     }
 
-    // TODO: type
-    getTimeTables(home_id: number, zone_id: number) {
+    getTimeTables(home_id: number, zone_id: number): Promise<TimeTables> {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/schedule/activeTimetable`
         )
@@ -265,7 +271,7 @@ export class Tado {
         )
     }
 
-    async clearZoneOverlay(home_id: number, zone_id: number) {
+    clearZoneOverlay(home_id: number, zone_id: number): Promise<void> {
         console.warn(
             'This method of clearing zone overlays will soon be deprecated, please use clearZoneOverlays'
         )
@@ -284,10 +290,10 @@ export class Tado {
         zone_id: number,
         power: Power,
         temperature: number,
-        termination: Termination | undefined | number,
-        fan_speed: any, // FIXME: any here
-        ac_mode: any // FIXME: any here
-    ) {
+        termination?: Termination | undefined | number,
+        fan_speed?: any, // FIXME: any here
+        ac_mode?: any // FIXME: any here
+    ): Promise<ZoneOverlay> {
         console.warn(
             'This method of setting zone overlays will soon be deprecated, please use setZoneOverlays'
         )
@@ -364,7 +370,10 @@ export class Tado {
         )
     }
 
-    async clearZoneOverlays(home_id: number, zone_ids: number[]) {
+    async clearZoneOverlays(
+        home_id: number,
+        zone_ids: number[]
+    ): Promise<void> {
         const rooms = zone_ids.join(',')
         return this.apiCall(
             `/api/v2/homes/${home_id}/overlay?rooms=${rooms}`,
@@ -377,9 +386,18 @@ export class Tado {
      */
     async setZoneOverlays(
         home_id: number,
-        overlays: any, // FIXME: any here
+        overlays: {
+            zone_id: number
+            power?: Power
+            mode?: any
+            temperature?: Temperature
+            fanLevel?: any
+            verticalSwing?: any
+            horizontalSwing?: any
+            light?: any
+        }[],
         termination: Termination | undefined | number
-    ) {
+    ): Promise<void> {
         let termination_config: {
             typeSkillBasedApp?: any
             durationInSeconds?: number
@@ -430,13 +448,16 @@ export class Tado {
             ].forEach((prop) => {
                 if (overlay.hasOwnProperty(prop)) {
                     if (
-                        typeof overlay[prop] === 'string' ||
-                        overlay[prop] instanceof String
+                        typeof (overlay as any)[prop] === 'string' ||
+                        (overlay as any)[prop] instanceof String
                     ) {
-                        overlay_config.overlay.setting[prop] =
-                            overlay[prop].toUpperCase()
+                        overlay_config.overlay.setting[prop] = (overlay as any)[
+                            prop
+                        ].toUpperCase()
                     } else {
-                        overlay_config.overlay.setting[prop] = overlay[prop]
+                        overlay_config.overlay.setting[prop] = (overlay as any)[
+                            prop
+                        ]
                     }
                 }
             })
@@ -462,11 +483,11 @@ export class Tado {
         )
     }
 
-    async identifyDevice(device_id: number) {
-        return this.apiCall(`/api/v2/devices/${device_id}/identify`, 'post')
+    async identifyDevice(serial_no: string): Promise<void> {
+        return this.apiCall(`/api/v2/devices/${serial_no}/identify`, 'post')
     }
 
-    async setPresence(home_id: number, presence: StatePresence) {
+    async setPresence(home_id: number, presence: StatePresence): Promise<void> {
         const upperCasePresence = presence.toUpperCase()
 
         if (!['HOME', 'AWAY', 'AUTO'].includes(upperCasePresence)) {
@@ -503,9 +524,13 @@ export class Tado {
         return false
     }
 
-    async updatePresence(home_id: number) {
-        const isAnyoneAtHome = await this.isAnyoneAtHome(home_id)
-        const presenceState = await this.getState(home_id)
+    async updatePresence(
+        home_id: number
+    ): Promise<void | 'already up to date'> {
+        const [isAnyoneAtHome, presenceState] = await Promise.all([
+            this.isAnyoneAtHome(home_id),
+            this.getState(home_id),
+        ])
         const isPresenceAtHome = presenceState.presence === 'HOME'
 
         // FIXME: type change on return
@@ -516,12 +541,23 @@ export class Tado {
         }
     }
 
-    async setWindowDetection(
+    setWindowDetection(
+        home_id: number,
+        zone_id: number,
+        enabled: true,
+        timeout: number
+    ): Promise<void>
+    setWindowDetection(
+        home_id: number,
+        zone_id: number,
+        enabled: false
+    ): Promise<void>
+    setWindowDetection(
         home_id: number,
         zone_id: number,
         enabled: boolean,
-        timeout: number
-    ) {
+        timeout?: number
+    ): Promise<void> {
         const config = {
             enabled: enabled,
             timeoutInSeconds: timeout,
@@ -533,7 +569,11 @@ export class Tado {
         )
     }
 
-    setOpenWindowMode(home_id: number, zone_id: number, activate: boolean) {
+    setOpenWindowMode(
+        home_id: number,
+        zone_id: number,
+        activate: boolean
+    ): Promise<void> {
         if (activate) {
             return this.apiCall(
                 `/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow/activate`,

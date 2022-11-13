@@ -133,7 +133,9 @@ class Tado {
     getZoneCapabilities(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/capabilities`);
     }
-    // TODO: type
+    /**
+     * @returns an empty object if overlay does not exist
+     */
     getZoneOverlay(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`).catch((error) => {
             if (error.response.status === 404) {
@@ -149,7 +151,6 @@ class Tado {
     getZoneDayReport(home_id, zone_id, reportDate) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/dayReport?date=${reportDate}`);
     }
-    // TODO: type
     getTimeTables(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/schedule/activeTimetable`);
     }
@@ -159,7 +160,7 @@ class Tado {
     getTimeTable(home_id, zone_id, timetable_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/schedule/timetables/${timetable_id}/blocks`);
     }
-    async clearZoneOverlay(home_id, zone_id) {
+    clearZoneOverlay(home_id, zone_id) {
         console.warn('This method of clearing zone overlays will soon be deprecated, please use clearZoneOverlays');
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'delete');
     }
@@ -232,8 +233,7 @@ class Tado {
     /**
      * @param termination if number then duration in seconds
      */
-    async setZoneOverlays(home_id, overlays, // FIXME: any here
-    termination) {
+    async setZoneOverlays(home_id, overlays, termination) {
         let termination_config = {};
         if (typeof termination === 'number') {
             termination_config.typeSkillBasedApp = 'TIMER';
@@ -280,8 +280,7 @@ class Tado {
                 if (overlay.hasOwnProperty(prop)) {
                     if (typeof overlay[prop] === 'string' ||
                         overlay[prop] instanceof String) {
-                        overlay_config.overlay.setting[prop] =
-                            overlay[prop].toUpperCase();
+                        overlay_config.overlay.setting[prop] = overlay[prop].toUpperCase();
                     }
                     else {
                         overlay_config.overlay.setting[prop] = overlay[prop];
@@ -298,8 +297,8 @@ class Tado {
         };
         return this.apiCall(`/api/v2/devices/${device_id}/temperatureOffset`, 'put', config);
     }
-    async identifyDevice(device_id) {
-        return this.apiCall(`/api/v2/devices/${device_id}/identify`, 'post');
+    async identifyDevice(serial_no) {
+        return this.apiCall(`/api/v2/devices/${serial_no}/identify`, 'post');
     }
     async setPresence(home_id, presence) {
         const upperCasePresence = presence.toUpperCase();
@@ -324,8 +323,10 @@ class Tado {
         return false;
     }
     async updatePresence(home_id) {
-        const isAnyoneAtHome = await this.isAnyoneAtHome(home_id);
-        const presenceState = await this.getState(home_id);
+        const [isAnyoneAtHome, presenceState] = await Promise.all([
+            this.isAnyoneAtHome(home_id),
+            this.getState(home_id),
+        ]);
         const isPresenceAtHome = presenceState.presence === 'HOME';
         // FIXME: type change on return
         if (isAnyoneAtHome !== isPresenceAtHome) {
@@ -335,7 +336,7 @@ class Tado {
             return 'already up to date';
         }
     }
-    async setWindowDetection(home_id, zone_id, enabled, timeout) {
+    setWindowDetection(home_id, zone_id, enabled, timeout) {
         const config = {
             enabled: enabled,
             timeoutInSeconds: timeout,

@@ -1,5 +1,5 @@
 import { Method } from 'axios';
-import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power, Termination, StatePresence, IQUnit } from './types';
+import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power, Termination, StatePresence, IQUnit, ZoneOverlay, TimeTables } from './types';
 export declare class Tado {
     private _httpsAgent;
     private _accessToken?;
@@ -25,34 +25,46 @@ export declare class Tado {
     getZones(home_id: number): Promise<Zone>;
     getZoneState(home_id: number, zone_id: number): Promise<ZoneState>;
     getZoneCapabilities(home_id: number, zone_id: number): Promise<ZoneCapabilities>;
-    getZoneOverlay(home_id: number, zone_id: number): Promise<unknown>;
+    /**
+     * @returns an empty object if overlay does not exist
+     */
+    getZoneOverlay(home_id: number, zone_id: number): Promise<ZoneOverlay | {}>;
     /**
      * @param reportDate date with YYYY-MM-DD format (ex: `2022-11-12`)
      */
     getZoneDayReport(home_id: number, zone_id: number, reportDate: string): Promise<unknown>;
-    getTimeTables(home_id: number, zone_id: number): Promise<unknown>;
+    getTimeTables(home_id: number, zone_id: number): Promise<TimeTables>;
     getAwayConfiguration(home_id: number, zone_id: number): Promise<AwayConfiguration>;
     getTimeTable(home_id: number, zone_id: number, timetable_id: string): Promise<TimeTable>;
-    clearZoneOverlay(home_id: number, zone_id: number): Promise<unknown>;
+    clearZoneOverlay(home_id: number, zone_id: number): Promise<void>;
     /**
      * @param temperature in celcius (FIXME: should accept Temperature type to let people use F)
      * @param termination if number then duration in seconds
      */
-    setZoneOverlay(home_id: number, zone_id: number, power: Power, temperature: number, termination: Termination | undefined | number, fan_speed: any, // FIXME: any here
-    ac_mode: any): Promise<unknown>;
-    clearZoneOverlays(home_id: number, zone_ids: number[]): Promise<unknown>;
+    setZoneOverlay(home_id: number, zone_id: number, power: Power, temperature: number, termination?: Termination | undefined | number, fan_speed?: any, // FIXME: any here
+    ac_mode?: any): Promise<ZoneOverlay>;
+    clearZoneOverlays(home_id: number, zone_ids: number[]): Promise<void>;
     /**
      * @param termination if number then duration in seconds
      */
-    setZoneOverlays(home_id: number, overlays: any, // FIXME: any here
-    termination: Termination | undefined | number): Promise<unknown>;
+    setZoneOverlays(home_id: number, overlays: {
+        zone_id: number;
+        power?: Power;
+        mode?: any;
+        temperature?: Temperature;
+        fanLevel?: any;
+        verticalSwing?: any;
+        horizontalSwing?: any;
+        light?: any;
+    }[], termination: Termination | undefined | number): Promise<void>;
     setDeviceTemperatureOffset(device_id: number, temperatureOffset: number): Promise<unknown>;
-    identifyDevice(device_id: number): Promise<unknown>;
-    setPresence(home_id: number, presence: StatePresence): Promise<unknown>;
+    identifyDevice(serial_no: string): Promise<void>;
+    setPresence(home_id: number, presence: StatePresence): Promise<void>;
     isAnyoneAtHome(home_id: number): Promise<boolean>;
-    updatePresence(home_id: number): Promise<unknown>;
-    setWindowDetection(home_id: number, zone_id: number, enabled: boolean, timeout: number): Promise<unknown>;
-    setOpenWindowMode(home_id: number, zone_id: number, activate: boolean): Promise<unknown>;
+    updatePresence(home_id: number): Promise<void | 'already up to date'>;
+    setWindowDetection(home_id: number, zone_id: number, enabled: true, timeout: number): Promise<void>;
+    setWindowDetection(home_id: number, zone_id: number, enabled: false): Promise<void>;
+    setOpenWindowMode(home_id: number, zone_id: number, activate: boolean): Promise<void>;
     getAirComfort(home_id: number): Promise<unknown>;
     getAirComfortDetailed(home_id: number): Promise<any>;
     getEnergyIQ(home_id: number): Promise<unknown>;
