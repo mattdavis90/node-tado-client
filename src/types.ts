@@ -209,7 +209,7 @@ export type StatePresence = 'HOME' | string
 
 export type State = { presence: StatePresence; presenceLocked: boolean }
 
-export type ZoneType = 'HEATING' | string
+export type ZoneType = 'HEATING' | 'AC'
 
 export type ZoneDazzleMode = { supported: boolean; enabled: boolean }
 
@@ -242,17 +242,17 @@ export type Zone = {
 
 export type TadoMode = 'HOME'
 
-export type ZoneStateSettingsPower = 'ON'
+export type Power = 'ON' | 'OFF'
 
-export type ZoneStateSettings = {
+export type TimeTableSettings = {
     type: ZoneType
-    power: ZoneStateSettingsPower
-    temperature: Temperature
+    power: Power
+    temperature: Temperature | null
 }
 
 export type ZoneStateNextScheduleChange = {
     start: string
-    setting: ZoneStateSettings
+    setting: TimeTableSettings
 }
 
 export type ZoneNextTimeBlock = { start: string }
@@ -294,7 +294,7 @@ export type ZoneState = {
     geolocationOverride: boolean | null
     geolocationOverrideDisableTime: boolean | null
     preparation: any // TODO:
-    setting: ZoneStateSettings
+    setting: TimeTableSettings
     overlayType: any // TODO:
     overlay: any // TODO:
     openWindow: any // TODO:
@@ -304,8 +304,6 @@ export type ZoneState = {
     activityDataPoints: ZoneActivityDataPoints
     sensorDataPoints: ZoneStateSensorDataPoints
 }
-
-export type ZoneCapabilitiesType = 'HEATING'
 
 export type StepTemperature = {
     min: number
@@ -319,6 +317,30 @@ export type ZoneCapabilitiesTemperatures = {
 }
 
 export type ZoneCapabilities = {
-    type: ZoneCapabilitiesType
+    type: ZoneType
     temperatures: ZoneCapabilitiesTemperatures
+}
+
+export type AwayConfigurationPreheatingLevel = 'MEDIUM'
+
+export type AwayConfiguration = {
+    type: ZoneType
+    preheatingLevel: AwayConfigurationPreheatingLevel
+    minimumAwayTemperature: Temperature
+}
+
+export type TimeTableDayType =
+    | 'MONDAY_TO_SUNDAY'
+    | 'SATURDAY'
+    | 'SUNDAY'
+    | 'MONDAY_TO_FRIDAY'
+
+export type TimeTable = {
+    dayType: TimeTableDayType
+    /** HH:mm */
+    start: string
+    /** HH:mm */
+    end: string
+    geolocationOverride: boolean
+    setting: TimeTableSettings
 }

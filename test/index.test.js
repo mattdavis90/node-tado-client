@@ -1,7 +1,7 @@
 const expect = require('chai').expect
 const nock = require('nock')
 
-const { Tado } = require('../index')
+const { Tado } = require('../')
 const auth_response = require('./response.auth')
 const me_response = require('./response.me')
 const home_response = require('./response.home')

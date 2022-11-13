@@ -169,7 +169,7 @@ export declare type State = {
     presence: StatePresence;
     presenceLocked: boolean;
 };
-export declare type ZoneType = 'HEATING' | string;
+export declare type ZoneType = 'HEATING' | 'AC';
 export declare type ZoneDazzleMode = {
     supported: boolean;
     enabled: boolean;
@@ -198,15 +198,15 @@ export declare type Zone = {
     openWindowDetection: ZoneOpenWindowDetection;
 };
 export declare type TadoMode = 'HOME';
-export declare type ZoneStateSettingsPower = 'ON';
-export declare type ZoneStateSettings = {
+export declare type Power = 'ON' | 'OFF';
+export declare type TimeTableSettings = {
     type: ZoneType;
-    power: ZoneStateSettingsPower;
-    temperature: Temperature;
+    power: Power;
+    temperature: Temperature | null;
 };
 export declare type ZoneStateNextScheduleChange = {
     start: string;
-    setting: ZoneStateSettings;
+    setting: TimeTableSettings;
 };
 export declare type ZoneNextTimeBlock = {
     start: string;
@@ -242,7 +242,7 @@ export declare type ZoneState = {
     geolocationOverride: boolean | null;
     geolocationOverrideDisableTime: boolean | null;
     preparation: any;
-    setting: ZoneStateSettings;
+    setting: TimeTableSettings;
     overlayType: any;
     overlay: any;
     openWindow: any;
@@ -252,7 +252,6 @@ export declare type ZoneState = {
     activityDataPoints: ZoneActivityDataPoints;
     sensorDataPoints: ZoneStateSensorDataPoints;
 };
-export declare type ZoneCapabilitiesType = 'HEATING';
 export declare type StepTemperature = {
     min: number;
     max: number;
@@ -263,6 +262,22 @@ export declare type ZoneCapabilitiesTemperatures = {
     fahrenheit: StepTemperature;
 };
 export declare type ZoneCapabilities = {
-    type: ZoneCapabilitiesType;
+    type: ZoneType;
     temperatures: ZoneCapabilitiesTemperatures;
+};
+export declare type AwayConfigurationPreheatingLevel = 'MEDIUM';
+export declare type AwayConfiguration = {
+    type: ZoneType;
+    preheatingLevel: AwayConfigurationPreheatingLevel;
+    minimumAwayTemperature: Temperature;
+};
+export declare type TimeTableDayType = 'MONDAY_TO_SUNDAY' | 'SATURDAY' | 'SUNDAY' | 'MONDAY_TO_FRIDAY';
+export declare type TimeTable = {
+    dayType: TimeTableDayType;
+    /** HH:mm */
+    start: string;
+    /** HH:mm */
+    end: string;
+    geolocationOverride: boolean;
+    setting: TimeTableSettings;
 };

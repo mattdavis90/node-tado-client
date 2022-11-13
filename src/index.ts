@@ -14,6 +14,10 @@ import {
     Zone,
     ZoneState,
     ZoneCapabilities,
+    AwayConfiguration,
+    TimeTable,
+    Country,
+    Power,
 } from './types'
 
 const EXPIRATION_WINDOW_IN_SECONDS = 300
@@ -208,8 +212,8 @@ export class Tado {
         )
     }
 
-    // FIXME: type form here
-    async getZoneOverlay(home_id: number, zone_id: number) {
+    // TODO: type
+    getZoneOverlay(home_id: number, zone_id: number) {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/overlay`
         ).catch((error) => {
@@ -221,32 +225,37 @@ export class Tado {
         })
     }
 
+    // TODO: type
     /**
-     * @param reportDate date with json format (ex: `new Date().toJSON()`)
+     * @param reportDate date with YYYY-MM-DD format (ex: `2022-11-12`)
      */
-    async getZoneDayReport(
-        home_id: number,
-        zone_id: number,
-        reportDate: string
-    ) {
+    getZoneDayReport(home_id: number, zone_id: number, reportDate: string) {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/dayReport?date=${reportDate}`
         )
     }
 
-    async getTimeTables(home_id: number, zone_id: number) {
+    // TODO: type
+    getTimeTables(home_id: number, zone_id: number) {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/schedule/activeTimetable`
         )
     }
 
-    async getAwayConfiguration(home_id: number, zone_id: number) {
+    getAwayConfiguration(
+        home_id: number,
+        zone_id: number
+    ): Promise<AwayConfiguration> {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/awayConfiguration`
         )
     }
 
-    async getTimeTable(home_id: number, zone_id: number, timetable_id: string) {
+    getTimeTable(
+        home_id: number,
+        zone_id: number,
+        timetable_id: string
+    ): Promise<TimeTable> {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/schedule/timetables/${timetable_id}/blocks`
         )
@@ -262,11 +271,14 @@ export class Tado {
         )
     }
 
+    /**
+     * @param temperature in celcius (FIXME: should accept Temperature type to let people use F)
+     */
     async setZoneOverlay(
         home_id: number,
         zone_id: number,
-        power,
-        temperature,
+        power: Power,
+        temperature: number,
         termination,
         fan_speed,
         ac_mode
@@ -281,7 +293,7 @@ export class Tado {
             termination: {},
         }
 
-        if (power.toLowerCase() == 'on') {
+        if (power.toUpperCase() == 'ON') {
             config.setting.power = 'ON'
 
             if (config.setting.type == 'HEATING' && temperature) {
@@ -336,7 +348,7 @@ export class Tado {
         )
     }
 
-    async clearZoneOverlays(home_id: number, zone_ids) {
+    async clearZoneOverlays(home_id: number, zone_ids: number[]) {
         const rooms = zone_ids.join(',')
         return this.apiCall(
             `/api/v2/homes/${home_id}/overlay?rooms=${rooms}`,
@@ -404,7 +416,10 @@ export class Tado {
         return this.apiCall(`/api/v2/homes/${home_id}/overlay`, 'post', config)
     }
 
-    async setDeviceTemperatureOffset(device_id: number, temperatureOffset) {
+    async setDeviceTemperatureOffset(
+        device_id: number,
+        temperatureOffset: number
+    ) {
         const config = {
             celsius: temperatureOffset,
         }
@@ -441,7 +456,7 @@ export class Tado {
         )
     }
 
-    async isAnyoneAtHome(home_id: number) {
+    async isAnyoneAtHome(home_id: number): Promise<boolean> {
         const devices = await this.getMobileDevices(home_id)
 
         for (const device of devices) {
@@ -459,9 +474,10 @@ export class Tado {
 
     async updatePresence(home_id: number) {
         const isAnyoneAtHome = await this.isAnyoneAtHome(home_id)
-        let isPresenceAtHome = await this.getState(home_id)
-        isPresenceAtHome = isPresenceAtHome.presence === 'HOME'
+        const presenceState = await this.getState(home_id)
+        const isPresenceAtHome = presenceState.presence === 'HOME'
 
+        // FIXME: type change on return
         if (isAnyoneAtHome !== isPresenceAtHome) {
             return this.setPresence(home_id, isAnyoneAtHome ? 'HOME' : 'AWAY')
         } else {
@@ -469,7 +485,12 @@ export class Tado {
         }
     }
 
-    async setWindowDetection(home_id: number, zone_id, enabled, timeout) {
+    async setWindowDetection(
+        home_id: number,
+        zone_id: number,
+        enabled: boolean,
+        timeout: number
+    ) {
         const config = {
             enabled: enabled,
             timeoutInSeconds: timeout,
@@ -481,21 +502,21 @@ export class Tado {
         )
     }
 
-    async setOpenWindowMode(home_id: number, zone_id, activate) {
+    setOpenWindowMode(home_id: number, zone_id: number, activate: boolean) {
         if (activate) {
             return this.apiCall(
                 `/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow/activate`,
                 'POST'
             )
-        } else {
-            return this.apiCall(
-                `/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow`,
-                'DELETE'
-            )
         }
+
+        return this.apiCall(
+            `/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow`,
+            'DELETE'
+        )
     }
 
-    async getAirComfort(home_id: number) {
+    getAirComfort(home_id: number) {
         return this.apiCall(`/api/v2/homes/${home_id}/airComfort`)
     }
 
@@ -553,10 +574,12 @@ export class Tado {
         )
     }
 
-    // const home = await this.getHome(home_id);
-    // const country = home.address.country;
-
-    async getEnergySavingsReport(home_id: number, year, month, countryCode) {
+    getEnergySavingsReport(
+        home_id: number,
+        year: string,
+        month: string,
+        countryCode: Country
+    ) {
         return this.apiCall(
             `https://energy-bob.tado.com/${home_id}/${year}-${month}?country=${countryCode}`
         )

@@ -134,8 +134,8 @@ class Tado {
     getZoneCapabilities(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/capabilities`);
     }
-    // FIXME: type form here
-    async getZoneOverlay(home_id, zone_id) {
+    // TODO: type
+    getZoneOverlay(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`).catch((error) => {
             if (error.response.status === 404) {
                 return {};
@@ -143,25 +143,30 @@ class Tado {
             throw error;
         });
     }
+    // TODO: type
     /**
-     * @param reportDate date with json format (ex: `new Date().toJSON()`)
+     * @param reportDate date with YYYY-MM-DD format (ex: `2022-11-12`)
      */
-    async getZoneDayReport(home_id, zone_id, reportDate) {
+    getZoneDayReport(home_id, zone_id, reportDate) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/dayReport?date=${reportDate}`);
     }
-    async getTimeTables(home_id, zone_id) {
+    // TODO: type
+    getTimeTables(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/schedule/activeTimetable`);
     }
-    async getAwayConfiguration(home_id, zone_id) {
+    getAwayConfiguration(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/awayConfiguration`);
     }
-    async getTimeTable(home_id, zone_id, timetable_id) {
+    getTimeTable(home_id, zone_id, timetable_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/schedule/timetables/${timetable_id}/blocks`);
     }
     async clearZoneOverlay(home_id, zone_id) {
         console.warn('This method of clearing zone overlays will soon be deprecated, please use clearZoneOverlays');
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'delete');
     }
+    /**
+     * @param temperature in celcius (FIXME: should accept Temperature type to let people use F)
+     */
     async setZoneOverlay(home_id, zone_id, power, temperature, termination, fan_speed, ac_mode) {
         console.warn('This method of setting zone overlays will soon be deprecated, please use setZoneOverlays');
         const zone_state = await this.getZoneState(home_id, zone_id);
@@ -169,7 +174,7 @@ class Tado {
             setting: zone_state.setting,
             termination: {},
         };
-        if (power.toLowerCase() == 'on') {
+        if (power.toUpperCase() == 'ON') {
             config.setting.power = 'ON';
             if (config.setting.type == 'HEATING' && temperature) {
                 config.setting.temperature = { celsius: temperature };
@@ -302,8 +307,9 @@ class Tado {
     }
     async updatePresence(home_id) {
         const isAnyoneAtHome = await this.isAnyoneAtHome(home_id);
-        let isPresenceAtHome = await this.getState(home_id);
-        isPresenceAtHome = isPresenceAtHome.presence === 'HOME';
+        const presenceState = await this.getState(home_id);
+        const isPresenceAtHome = presenceState.presence === 'HOME';
+        // FIXME: type change on return
         if (isAnyoneAtHome !== isPresenceAtHome) {
             return this.setPresence(home_id, isAnyoneAtHome ? 'HOME' : 'AWAY');
         }
@@ -318,15 +324,13 @@ class Tado {
         };
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/openWindowDetection`, 'PUT', config);
     }
-    async setOpenWindowMode(home_id, zone_id, activate) {
+    setOpenWindowMode(home_id, zone_id, activate) {
         if (activate) {
             return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow/activate`, 'POST');
         }
-        else {
-            return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow`, 'DELETE');
-        }
+        return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow`, 'DELETE');
     }
-    async getAirComfort(home_id) {
+    getAirComfort(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/airComfort`);
     }
     async getAirComfortDetailed(home_id) {
@@ -357,9 +361,7 @@ class Tado {
     async deleteEnergyIQMeterReading(home_id, reading_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings/${reading_id}`, 'delete', {});
     }
-    // const home = await this.getHome(home_id);
-    // const country = home.address.country;
-    async getEnergySavingsReport(home_id, year, month, countryCode) {
+    getEnergySavingsReport(home_id, year, month, countryCode) {
         return this.apiCall(`https://energy-bob.tado.com/${home_id}/${year}-${month}?country=${countryCode}`);
     }
 }
