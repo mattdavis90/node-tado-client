@@ -6,15 +6,18 @@ export type DeepPartial<T> = T extends object
     : T
 
 // tado
-export type Locale = 'en' | string
+/** Example: `'en'`  */
+export type Locale = string
 
-export type TimeZone = 'Europe/Paris' | string
+/** Example: `'Europe/Paris'` */
+export type TimeZone = string
 
-export type Platform = 'iOS' | 'Android' | string
+export type Platform = 'iOS' | 'Android'
 
-export type TemperatureUnit = 'CELSIUS' | string
+export type TemperatureUnit = 'CELSIUS'
 
-export type Country = 'FRA' | string
+/** Example: `'FRA'` */
+export type Country = string
 
 export type Geolocation = { latitude: number; longitude: number }
 
@@ -31,7 +34,7 @@ export type HomePartner = any
 
 export type HomeIncidentDetection = { supported: boolean; enabled: boolean }
 
-export type HomeSkill = 'AUTO_ASSIST' | string
+export type HomeSkill = 'AUTO_ASSIST'
 
 export type HomeContactDetail = {
     name: string
@@ -125,7 +128,7 @@ export type Me = {
     mobileDevices: MobileDevice[]
 }
 
-export type WeatherSolarIntensityType = 'PERCENTAGE' | string
+export type WeatherSolarIntensityType = 'PERCENTAGE'
 
 export type WeatherSolarIntensity = {
     type: WeatherSolarIntensityType
@@ -133,7 +136,7 @@ export type WeatherSolarIntensity = {
     timestamp: string
 }
 
-export type WeatherOutsideTemperatureType = 'TEMPERATURE' | string
+export type WeatherOutsideTemperatureType = 'TEMPERATURE'
 
 export type Temperature = {
     celsius: number
@@ -148,9 +151,9 @@ export type WeatherOutsideTemperature = {
     precision: Temperature
 }
 
-export type WeatherStateType = 'WEATHER_STATE' | string
+export type WeatherStateType = 'WEATHER_STATE'
 
-export type WeatherStateValue = 'CLOUDY' | string
+export type WeatherStateValue = 'CLOUDY' | 'NIGHT_CLOUDY'
 
 export type WeatherState = {
     type: WeatherStateType
@@ -164,7 +167,7 @@ export type Weather = {
     weatherState: WeatherState
 }
 
-export type DeviceType = 'VA02' | 'SU02' | string
+export type DeviceType = 'VA02' | 'SU02'
 
 export type DeviceConnectionState = { value: boolean; timestamp: string }
 
@@ -172,20 +175,19 @@ export type DeviceCharacteristicsCapabilities =
     | 'RADIO_ENCRYPTION_KEY_ACCESS'
     | 'INSIDE_TEMPERATURE_MEASUREMENT'
     | 'IDENTIFY'
-    | string
 
 export type DeviceCharacteristics = {
     capabilities: DeviceCharacteristicsCapabilities[]
 }
 
-export type DeviceMountingStateValue = 'CALIBRATED' | string
+export type DeviceMountingStateValue = 'CALIBRATED'
 
 export type DeviceMountingState = {
     value: DeviceMountingStateValue
     timestamp: string
 }
 
-export type DeviceBatteryState = 'NORMAL' | string
+export type DeviceBatteryState = 'NORMAL' | 'LOW'
 
 export type DeviceOrientation = 'HORIZONTAL' | 'VERTICAL'
 

@@ -1,11 +1,14 @@
 export declare type DeepPartial<T> = T extends object ? {
     [P in keyof T]?: DeepPartial<T[P]>;
 } : T;
-export declare type Locale = 'en' | string;
-export declare type TimeZone = 'Europe/Paris' | string;
-export declare type Platform = 'iOS' | 'Android' | string;
-export declare type TemperatureUnit = 'CELSIUS' | string;
-export declare type Country = 'FRA' | string;
+/** Example: `'en'`  */
+export declare type Locale = string;
+/** Example: `'Europe/Paris'` */
+export declare type TimeZone = string;
+export declare type Platform = 'iOS' | 'Android';
+export declare type TemperatureUnit = 'CELSIUS';
+/** Example: `'FRA'` */
+export declare type Country = string;
 export declare type Geolocation = {
     latitude: number;
     longitude: number;
@@ -17,7 +20,7 @@ export declare type HomeIncidentDetection = {
     supported: boolean;
     enabled: boolean;
 };
-export declare type HomeSkill = 'AUTO_ASSIST' | string;
+export declare type HomeSkill = 'AUTO_ASSIST';
 export declare type HomeContactDetail = {
     name: string;
     email: string;
@@ -99,13 +102,13 @@ export declare type Me = {
     locale: Locale;
     mobileDevices: MobileDevice[];
 };
-export declare type WeatherSolarIntensityType = 'PERCENTAGE' | string;
+export declare type WeatherSolarIntensityType = 'PERCENTAGE';
 export declare type WeatherSolarIntensity = {
     type: WeatherSolarIntensityType;
     percentage: number;
     timestamp: string;
 };
-export declare type WeatherOutsideTemperatureType = 'TEMPERATURE' | string;
+export declare type WeatherOutsideTemperatureType = 'TEMPERATURE';
 export declare type Temperature = {
     celsius: number;
     fahrenheit: number;
@@ -117,8 +120,8 @@ export declare type WeatherOutsideTemperature = {
     type: WeatherOutsideTemperatureType;
     precision: Temperature;
 };
-export declare type WeatherStateType = 'WEATHER_STATE' | string;
-export declare type WeatherStateValue = 'CLOUDY' | string;
+export declare type WeatherStateType = 'WEATHER_STATE';
+export declare type WeatherStateValue = 'CLOUDY' | 'NIGHT_CLOUDY';
 export declare type WeatherState = {
     type: WeatherStateType;
     value: WeatherStateValue;
@@ -129,21 +132,21 @@ export declare type Weather = {
     outsideTemperature: WeatherOutsideTemperature;
     weatherState: WeatherState;
 };
-export declare type DeviceType = 'VA02' | 'SU02' | string;
+export declare type DeviceType = 'VA02' | 'SU02';
 export declare type DeviceConnectionState = {
     value: boolean;
     timestamp: string;
 };
-export declare type DeviceCharacteristicsCapabilities = 'RADIO_ENCRYPTION_KEY_ACCESS' | 'INSIDE_TEMPERATURE_MEASUREMENT' | 'IDENTIFY' | string;
+export declare type DeviceCharacteristicsCapabilities = 'RADIO_ENCRYPTION_KEY_ACCESS' | 'INSIDE_TEMPERATURE_MEASUREMENT' | 'IDENTIFY';
 export declare type DeviceCharacteristics = {
     capabilities: DeviceCharacteristicsCapabilities[];
 };
-export declare type DeviceMountingStateValue = 'CALIBRATED' | string;
+export declare type DeviceMountingStateValue = 'CALIBRATED';
 export declare type DeviceMountingState = {
     value: DeviceMountingStateValue;
     timestamp: string;
 };
-export declare type DeviceBatteryState = 'NORMAL' | string;
+export declare type DeviceBatteryState = 'NORMAL' | 'LOW';
 export declare type DeviceOrientation = 'HORIZONTAL' | 'VERTICAL';
 export declare type Device = {
     deviceType: DeviceType;
