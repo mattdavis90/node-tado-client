@@ -336,8 +336,8 @@ export declare type AirComfortFreshness = {
     /** `YYYY-MM-DDTHH:mm:ss` format datetime */
     lastOpenWindow: string;
 };
-export declare type TemperatureLevel = 'COLD';
-export declare type HumidityLevel = 'HUMID';
+export declare type TemperatureLevel = 'COLD' | 'COMFY' | 'HOT';
+export declare type HumidityLevel = 'HUMID' | 'COMFY' | 'DRY';
 export declare type AirComfortCoordinate = {
     radial: number;
     angular: number;

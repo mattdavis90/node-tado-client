@@ -421,9 +421,9 @@ export type AirComfortFreshness = {
     lastOpenWindow: string
 }
 
-export type TemperatureLevel = 'COLD'
+export type TemperatureLevel = 'COLD' | 'COMFY' | 'HOT'
 
-export type HumidityLevel = 'HUMID'
+export type HumidityLevel = 'HUMID' | 'COMFY' | 'DRY'
 
 export type AirComfortCoordinate = { radial: number; angular: number }
 
