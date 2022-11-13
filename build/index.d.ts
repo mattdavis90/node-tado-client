@@ -57,7 +57,10 @@ export declare class Tado {
         horizontalSwing?: any;
         light?: any;
     }[], termination: Termination | undefined | number): Promise<void>;
-    setDeviceTemperatureOffset(device_id: number, temperatureOffset: number): Promise<unknown>;
+    /**
+     * @param temperatureOffset in celcius
+     */
+    setDeviceTemperatureOffset(serial_no: number, temperatureOffset: number): Promise<Temperature>;
     identifyDevice(serial_no: string): Promise<void>;
     setPresence(home_id: number, presence: StatePresence): Promise<void>;
     isAnyoneAtHome(home_id: number): Promise<boolean>;

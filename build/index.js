@@ -291,16 +291,20 @@ class Tado {
         }
         return this.apiCall(`/api/v2/homes/${home_id}/overlay`, 'post', config);
     }
-    async setDeviceTemperatureOffset(device_id, temperatureOffset) {
+    /**
+     * @param temperatureOffset in celcius
+     */
+    setDeviceTemperatureOffset(serial_no, temperatureOffset // TODO: should accept F with Temperature type
+    ) {
         const config = {
             celsius: temperatureOffset,
         };
-        return this.apiCall(`/api/v2/devices/${device_id}/temperatureOffset`, 'put', config);
+        return this.apiCall(`/api/v2/devices/${serial_no}/temperatureOffset`, 'put', config);
     }
-    async identifyDevice(serial_no) {
+    identifyDevice(serial_no) {
         return this.apiCall(`/api/v2/devices/${serial_no}/identify`, 'post');
     }
-    async setPresence(home_id, presence) {
+    setPresence(home_id, presence) {
         const upperCasePresence = presence.toUpperCase();
         if (!['HOME', 'AWAY', 'AUTO'].includes(upperCasePresence)) {
             throw new Error(`Invalid presence "${upperCasePresence}" must be "HOME", "AWAY", or "AUTO"`);
@@ -349,9 +353,11 @@ class Tado {
         }
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow`, 'DELETE');
     }
+    // TODO: type
     getAirComfort(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/airComfort`);
     }
+    // TODO: type
     async getAirComfortDetailed(home_id) {
         const home = await this.getHome(home_id);
         const location = `latitude=${home.geolocation.latitude}&longitude=${home.geolocation.longitude}`;
@@ -359,30 +365,37 @@ class Tado {
         const resp = await (0, axios_1.default)(`https://acme.tado.com/v1/homes/${home_id}/airComfort?${location}&${login}`);
         return resp.data;
     }
+    // TODO: type
     getEnergyIQ(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/consumption`);
     }
+    // TODO: type
     getEnergyIQTariff(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariff`);
     }
+    // TODO: type
     updateEnergyIQTariff(home_id, unit, tariffInCents) {
         if (!['m3', 'kWh'].includes(unit)) {
             throw new Error(`Invalid unit "${unit}" must be "m3", or "kWh"`);
         }
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariff`, 'put', { unit: unit, tariffInCents: tariffInCents });
     }
+    // TODO: type
     getEnergyIQMeterReadings(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`);
     }
     /**
      * @param date datetime format `YYYY-MM-DD`
      */
+    // TODO: type
     addEnergyIQMeterReading(home_id, date, reading) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`, 'post', { date: date, reading: reading });
     }
+    // TODO: type
     deleteEnergyIQMeterReading(home_id, reading_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings/${reading_id}`, 'delete', {});
     }
+    // TODO: type
     getEnergySavingsReport(home_id, year, month, countryCode) {
         return this.apiCall(`https://energy-bob.tado.com/${home_id}/${year}-${month}?country=${countryCode}`);
     }
