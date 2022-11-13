@@ -1,5 +1,5 @@
 import { Method } from 'axios';
-import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power, Termination, StatePresence, IQUnit, ZoneOverlay, TimeTables, AirComfort, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport } from './types';
+import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power, Termination, StatePresence, IQUnit, ZoneOverlay, TimeTables, AirComfort, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, AirComfortDetailed } from './types';
 export declare class Tado {
     private _httpsAgent;
     private _accessToken?;
@@ -38,10 +38,10 @@ export declare class Tado {
     getTimeTable(home_id: number, zone_id: number, timetable_id: string): Promise<TimeTable>;
     clearZoneOverlay(home_id: number, zone_id: number): Promise<void>;
     /**
-     * @param temperature in celcius (FIXME: should accept Temperature type to let people use F)
+     * @param temperature in celcius
      * @param termination if number then duration in seconds
      */
-    setZoneOverlay(home_id: number, zone_id: number, power: Power, temperature: number, termination?: Termination | undefined | number, fan_speed?: any, // FIXME: any here
+    setZoneOverlay(home_id: number, zone_id: number, power: Power, temperature: number, termination?: Termination | undefined | number, fan_speed?: any, // TODO: any here
     ac_mode?: any): Promise<ZoneOverlay>;
     clearZoneOverlays(home_id: number, zone_ids: number[]): Promise<void>;
     /**
@@ -69,7 +69,7 @@ export declare class Tado {
     setWindowDetection(home_id: number, zone_id: number, enabled: false): Promise<void>;
     setOpenWindowMode(home_id: number, zone_id: number, activate: boolean): Promise<void>;
     getAirComfort(home_id: number): Promise<AirComfort>;
-    getAirComfortDetailed(home_id: number): Promise<any>;
+    getAirComfortDetailed(home_id: number): Promise<AirComfortDetailed>;
     getEnergyIQ(home_id: number): Promise<EnergyIQ>;
     getEnergyIQTariff(home_id: number): Promise<unknown>;
     updateEnergyIQTariff(home_id: number, unit: IQUnit, tariffInCents: number): Promise<unknown>;

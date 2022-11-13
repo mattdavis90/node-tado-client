@@ -431,3 +431,48 @@ export declare type EnergySavingReport = {
     home: number;
     hideCommunityNews: boolean;
 };
+export declare type AirComfortDetailedRoomMessage = {
+    roomId: number;
+    message: string;
+    visual: null;
+    link: {
+        text: string;
+        type: 'internal';
+        url: string;
+    };
+};
+export declare type OutdoorQualityLevel = 'EXCELLENT' | 'NONE';
+export declare type OutdoorQualityPollutant = {
+    localizedName: string;
+    scientificName: string;
+    level: OutdoorQualityLevel;
+    concentration: [Object];
+};
+export declare type OutdoorPollensTypeForcast = {
+    localizedDay: string;
+    /** `YYYY-MM-DD` format date */
+    date: string;
+    level: OutdoorQualityLevel;
+};
+export declare type OutdoorPollensType = {
+    localizedName: string;
+    type: 'GRASS' | 'WEED' | 'TREE';
+    localizedDescription: string;
+    forecast: OutdoorPollensTypeForcast[];
+};
+export declare type AirComfortDetailed = {
+    roomMessages: AirComfortDetailedRoomMessage[];
+    outdoorQuality: {
+        aqi: {
+            value: number;
+            level: OutdoorQualityLevel;
+        };
+        pollens: {
+            dominant: {
+                level: string;
+            };
+            types: OutdoorPollensType[];
+        };
+        pollutants: OutdoorQualityPollutant[];
+    };
+};

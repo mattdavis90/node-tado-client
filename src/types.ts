@@ -527,3 +527,45 @@ export type EnergySavingReport = {
     home: number
     hideCommunityNews: boolean
 }
+
+export type AirComfortDetailedRoomMessage = {
+    roomId: number
+    message: string
+    visual: null
+    link: { text: string; type: 'internal'; url: string }
+}
+
+export type OutdoorQualityLevel = 'EXCELLENT' | 'NONE'
+
+export type OutdoorQualityPollutant = {
+    localizedName: string
+    scientificName: string
+    level: OutdoorQualityLevel
+    concentration: [Object]
+}
+
+export type OutdoorPollensTypeForcast = {
+    localizedDay: string
+    /** `YYYY-MM-DD` format date */
+    date: string
+    level: OutdoorQualityLevel
+}
+
+export type OutdoorPollensType = {
+    localizedName: string
+    type: 'GRASS' | 'WEED' | 'TREE'
+    localizedDescription: string
+    forecast: OutdoorPollensTypeForcast[]
+}
+
+export type AirComfortDetailed = {
+    roomMessages: AirComfortDetailedRoomMessage[]
+    outdoorQuality: {
+        aqi: { value: number; level: OutdoorQualityLevel }
+        pollens: {
+            dominant: { level: string }
+            types: OutdoorPollensType[]
+        }
+        pollutants: OutdoorQualityPollutant[]
+    }
+}

@@ -165,11 +165,11 @@ class Tado {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'delete');
     }
     /**
-     * @param temperature in celcius (FIXME: should accept Temperature type to let people use F)
+     * @param temperature in celcius
      * @param termination if number then duration in seconds
      */
-    async setZoneOverlay(home_id, zone_id, power, temperature, termination, fan_speed, // FIXME: any here
-    ac_mode // FIXME: any here
+    async setZoneOverlay(home_id, zone_id, power, temperature, termination, fan_speed, // TODO: any here
+    ac_mode // TODO: any here
     ) {
         console.warn('This method of setting zone overlays will soon be deprecated, please use setZoneOverlays');
         const zone_state = await this.getZoneState(home_id, zone_id);
@@ -294,8 +294,7 @@ class Tado {
     /**
      * @param temperatureOffset in celcius
      */
-    setDeviceTemperatureOffset(serial_no, temperatureOffset // TODO: should accept F with Temperature type
-    ) {
+    setDeviceTemperatureOffset(serial_no, temperatureOffset) {
         const config = {
             celsius: temperatureOffset,
         };
@@ -332,7 +331,6 @@ class Tado {
             this.getState(home_id),
         ]);
         const isPresenceAtHome = presenceState.presence === 'HOME';
-        // FIXME: type change on return
         if (isAnyoneAtHome !== isPresenceAtHome) {
             return this.setPresence(home_id, isAnyoneAtHome ? 'HOME' : 'AWAY');
         }
@@ -356,7 +354,6 @@ class Tado {
     getAirComfort(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/airComfort`);
     }
-    // TODO: type
     async getAirComfortDetailed(home_id) {
         const home = await this.getHome(home_id);
         const location = `latitude=${home.geolocation.latitude}&longitude=${home.geolocation.longitude}`;

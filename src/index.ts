@@ -29,6 +29,7 @@ import {
     EnergyIQ,
     EnergyIQMeterReadings,
     EnergySavingReport,
+    AirComfortDetailed,
 } from './types'
 
 const EXPIRATION_WINDOW_IN_SECONDS = 300
@@ -286,7 +287,7 @@ export class Tado {
     }
 
     /**
-     * @param temperature in celcius (FIXME: should accept Temperature type to let people use F)
+     * @param temperature in celcius
      * @param termination if number then duration in seconds
      */
     async setZoneOverlay(
@@ -295,8 +296,8 @@ export class Tado {
         power: Power,
         temperature: number,
         termination?: Termination | undefined | number,
-        fan_speed?: any, // FIXME: any here
-        ac_mode?: any // FIXME: any here
+        fan_speed?: any, // TODO: any here
+        ac_mode?: any // TODO: any here
     ): Promise<ZoneOverlay> {
         console.warn(
             'This method of setting zone overlays will soon be deprecated, please use setZoneOverlays'
@@ -477,7 +478,7 @@ export class Tado {
      */
     setDeviceTemperatureOffset(
         serial_no: number,
-        temperatureOffset: number // TODO: should accept F with Temperature type
+        temperatureOffset: number
     ): Promise<Temperature> {
         const config = {
             celsius: temperatureOffset,
@@ -540,7 +541,6 @@ export class Tado {
         ])
         const isPresenceAtHome = presenceState.presence === 'HOME'
 
-        // FIXME: type change on return
         if (isAnyoneAtHome !== isPresenceAtHome) {
             return this.setPresence(home_id, isAnyoneAtHome ? 'HOME' : 'AWAY')
         } else {
@@ -598,8 +598,7 @@ export class Tado {
         return this.apiCall(`/api/v2/homes/${home_id}/airComfort`)
     }
 
-    // TODO: type
-    async getAirComfortDetailed(home_id: number) {
+    async getAirComfortDetailed(home_id: number): Promise<AirComfortDetailed> {
         const home = await this.getHome(home_id)
         const location = `latitude=${home.geolocation.latitude}&longitude=${home.geolocation.longitude}`
         const login = `username=${this._username}&password=${this._password}`
