@@ -18,13 +18,17 @@ import {
     TimeTable,
     Country,
     Power,
+    TimeTableSettings,
+    DeepPartial,
+    Termination,
+    StatePresence,
+    IQUnit,
 } from './types'
 
 const EXPIRATION_WINDOW_IN_SECONDS = 300
 
 const tado_auth_url = 'https://auth.tado.com'
 const tado_url = 'https://my.tado.com'
-const oauth_path = '/oauth/token'
 const tado_config = {
     client: {
         id: 'tado-web-app',
@@ -39,7 +43,7 @@ const client = new ResourceOwnerPassword(tado_config)
 
 export class Tado {
     private _httpsAgent: Agent
-    private _accessToken: AccessToken | null
+    private _accessToken?: AccessToken | null
     private _username: string
     private _password: string
 
@@ -273,22 +277,30 @@ export class Tado {
 
     /**
      * @param temperature in celcius (FIXME: should accept Temperature type to let people use F)
+     * @param termination if number then duration in seconds
      */
     async setZoneOverlay(
         home_id: number,
         zone_id: number,
         power: Power,
         temperature: number,
-        termination,
-        fan_speed,
-        ac_mode
+        termination: Termination | undefined | number,
+        fan_speed: any, // FIXME: any here
+        ac_mode: any // FIXME: any here
     ) {
         console.warn(
             'This method of setting zone overlays will soon be deprecated, please use setZoneOverlays'
         )
         const zone_state = await this.getZoneState(home_id, zone_id)
 
-        const config = {
+        const config: {
+            setting: DeepPartial<TimeTableSettings> & {
+                mode?: any
+                fanLevel?: any
+            }
+            termination: any
+            type?: any
+        } = {
             setting: zone_state.setting,
             termination: {},
         }
@@ -322,10 +334,17 @@ export class Tado {
             config.setting.power = 'OFF'
         }
 
-        if (!isNaN(parseInt(termination))) {
+        if (typeof termination === 'number') {
             config.type = 'MANUAL'
             config.termination.typeSkillBasedApp = 'TIMER'
             config.termination.durationInSeconds = termination
+        } else if (termination === undefined) {
+            config.type = 'MANUAL'
+            config.termination.typeSkillBasedApp = 'MANUAL'
+        } else if (!isNaN(parseInt(termination))) {
+            config.type = 'MANUAL'
+            config.termination.typeSkillBasedApp = 'TIMER'
+            config.termination.durationInSeconds = parseInt(termination)
         } else if (termination && termination.toLowerCase() == 'auto') {
             // Not sure how to test this is the web app
             // But seems to by a combo of 'next_time_block' and geo
@@ -336,9 +355,6 @@ export class Tado {
         ) {
             config.type = 'MANUAL'
             config.termination.typeSkillBasedApp = 'NEXT_TIME_BLOCK'
-        } else {
-            config.type = 'MANUAL'
-            config.termination.typeSkillBasedApp = 'MANUAL'
         }
 
         return this.apiCall(
@@ -356,12 +372,27 @@ export class Tado {
         )
     }
 
-    async setZoneOverlays(home_id: number, overlays, termination) {
-        let termination_config = {}
+    /**
+     * @param termination if number then duration in seconds
+     */
+    async setZoneOverlays(
+        home_id: number,
+        overlays: any, // FIXME: any here
+        termination: Termination | undefined | number
+    ) {
+        let termination_config: {
+            typeSkillBasedApp?: any
+            durationInSeconds?: number
+        } = {}
 
-        if (!isNaN(parseInt(termination))) {
+        if (typeof termination === 'number') {
             termination_config.typeSkillBasedApp = 'TIMER'
             termination_config.durationInSeconds = termination
+        } else if (termination === undefined) {
+            termination_config.typeSkillBasedApp = 'MANUAL'
+        } else if (!isNaN(parseInt(termination))) {
+            termination_config.typeSkillBasedApp = 'TIMER'
+            termination_config.durationInSeconds = parseInt(termination)
         } else if (termination && termination.toLowerCase() == 'auto') {
             termination_config.typeSkillBasedApp = 'TADO_MODE'
         } else if (
@@ -373,14 +404,14 @@ export class Tado {
             termination_config.typeSkillBasedApp = 'MANUAL'
         }
 
-        let config = {
+        let config: any = {
             overlays: [],
         }
 
         for (let overlay of overlays) {
             const zone_state = await this.getZoneState(home_id, overlay.zone_id)
 
-            const overlay_config = {
+            const overlay_config: any = {
                 overlay: {
                     setting: zone_state.setting,
                     termination: termination_config,
@@ -435,18 +466,18 @@ export class Tado {
         return this.apiCall(`/api/v2/devices/${device_id}/identify`, 'post')
     }
 
-    async setPresence(home_id: number, presence) {
-        presence = presence.toUpperCase()
+    async setPresence(home_id: number, presence: StatePresence) {
+        const upperCasePresence = presence.toUpperCase()
 
-        if (!['HOME', 'AWAY', 'AUTO'].includes(presence)) {
+        if (!['HOME', 'AWAY', 'AUTO'].includes(upperCasePresence)) {
             throw new Error(
-                `Invalid presence "${presence}" must be "HOME", "AWAY", or "AUTO"`
+                `Invalid presence "${upperCasePresence}" must be "HOME", "AWAY", or "AUTO"`
             )
         }
 
-        const method = presence == 'AUTO' ? 'delete' : 'put'
+        const method = upperCasePresence == 'AUTO' ? 'delete' : 'put'
         const config = {
-            homePresence: presence,
+            homePresence: upperCasePresence,
         }
 
         return this.apiCall(
@@ -530,21 +561,23 @@ export class Tado {
         return resp.data
     }
 
-    async getEnergyIQ(home_id: number) {
+    getEnergyIQ(home_id: number) {
         return this.apiCall(
             `https://energy-insights.tado.com/api/homes/${home_id}/consumption`
         )
     }
-    async getEnergyIQTariff(home_id: number) {
+
+    getEnergyIQTariff(home_id: number) {
         return this.apiCall(
             `https://energy-insights.tado.com/api/homes/${home_id}/tariff`
         )
     }
 
-    async updateEnergyIQTariff(home_id: number, unit, tariffInCents) {
+    updateEnergyIQTariff(home_id: number, unit: IQUnit, tariffInCents: number) {
         if (!['m3', 'kWh'].includes(unit)) {
             throw new Error(`Invalid unit "${unit}" must be "m3", or "kWh"`)
         }
+
         return this.apiCall(
             `https://energy-insights.tado.com/api/homes/${home_id}/tariff`,
             'put',
@@ -552,13 +585,16 @@ export class Tado {
         )
     }
 
-    async getEnergyIQMeterReadings(home_id: number) {
+    getEnergyIQMeterReadings(home_id: number) {
         return this.apiCall(
             `https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`
         )
     }
 
-    async addEnergyIQMeterReading(home_id: number, date, reading) {
+    /**
+     * @param date datetime format `YYYY-MM-DD`
+     */
+    addEnergyIQMeterReading(home_id: number, date: string, reading: number) {
         return this.apiCall(
             `https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`,
             'post',
@@ -566,7 +602,7 @@ export class Tado {
         )
     }
 
-    async deleteEnergyIQMeterReading(home_id: number, reading_id) {
+    deleteEnergyIQMeterReading(home_id: number, reading_id: number) {
         return this.apiCall(
             `https://energy-insights.tado.com/api/homes/${home_id}/meterReadings/${reading_id}`,
             'delete',

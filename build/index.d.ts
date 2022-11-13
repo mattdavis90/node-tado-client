@@ -1,8 +1,8 @@
 import { Method } from 'axios';
-import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power } from './types';
+import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power, Termination, StatePresence, IQUnit } from './types';
 export declare class Tado {
     private _httpsAgent;
-    private _accessToken;
+    private _accessToken?;
     private _username;
     private _password;
     constructor(username: string, password: string);
@@ -36,13 +36,19 @@ export declare class Tado {
     clearZoneOverlay(home_id: number, zone_id: number): Promise<unknown>;
     /**
      * @param temperature in celcius (FIXME: should accept Temperature type to let people use F)
+     * @param termination if number then duration in seconds
      */
-    setZoneOverlay(home_id: number, zone_id: number, power: Power, temperature: number, termination: any, fan_speed: any, ac_mode: any): Promise<unknown>;
+    setZoneOverlay(home_id: number, zone_id: number, power: Power, temperature: number, termination: Termination | undefined | number, fan_speed: any, // FIXME: any here
+    ac_mode: any): Promise<unknown>;
     clearZoneOverlays(home_id: number, zone_ids: number[]): Promise<unknown>;
-    setZoneOverlays(home_id: number, overlays: any, termination: any): Promise<unknown>;
+    /**
+     * @param termination if number then duration in seconds
+     */
+    setZoneOverlays(home_id: number, overlays: any, // FIXME: any here
+    termination: Termination | undefined | number): Promise<unknown>;
     setDeviceTemperatureOffset(device_id: number, temperatureOffset: number): Promise<unknown>;
     identifyDevice(device_id: number): Promise<unknown>;
-    setPresence(home_id: number, presence: any): Promise<unknown>;
+    setPresence(home_id: number, presence: StatePresence): Promise<unknown>;
     isAnyoneAtHome(home_id: number): Promise<boolean>;
     updatePresence(home_id: number): Promise<unknown>;
     setWindowDetection(home_id: number, zone_id: number, enabled: boolean, timeout: number): Promise<unknown>;
@@ -51,9 +57,12 @@ export declare class Tado {
     getAirComfortDetailed(home_id: number): Promise<any>;
     getEnergyIQ(home_id: number): Promise<unknown>;
     getEnergyIQTariff(home_id: number): Promise<unknown>;
-    updateEnergyIQTariff(home_id: number, unit: any, tariffInCents: any): Promise<unknown>;
+    updateEnergyIQTariff(home_id: number, unit: IQUnit, tariffInCents: number): Promise<unknown>;
     getEnergyIQMeterReadings(home_id: number): Promise<unknown>;
-    addEnergyIQMeterReading(home_id: number, date: any, reading: any): Promise<unknown>;
-    deleteEnergyIQMeterReading(home_id: number, reading_id: any): Promise<unknown>;
+    /**
+     * @param date datetime format `YYYY-MM-DD`
+     */
+    addEnergyIQMeterReading(home_id: number, date: string, reading: number): Promise<unknown>;
+    deleteEnergyIQMeterReading(home_id: number, reading_id: number): Promise<unknown>;
     getEnergySavingsReport(home_id: number, year: string, month: string, countryCode: Country): Promise<unknown>;
 }

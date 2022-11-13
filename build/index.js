@@ -10,7 +10,6 @@ const https_1 = require("https");
 const EXPIRATION_WINDOW_IN_SECONDS = 300;
 const tado_auth_url = 'https://auth.tado.com';
 const tado_url = 'https://my.tado.com';
-const oauth_path = '/oauth/token';
 const tado_config = {
     client: {
         id: 'tado-web-app',
@@ -166,8 +165,11 @@ class Tado {
     }
     /**
      * @param temperature in celcius (FIXME: should accept Temperature type to let people use F)
+     * @param termination if number then duration in seconds
      */
-    async setZoneOverlay(home_id, zone_id, power, temperature, termination, fan_speed, ac_mode) {
+    async setZoneOverlay(home_id, zone_id, power, temperature, termination, fan_speed, // FIXME: any here
+    ac_mode // FIXME: any here
+    ) {
         console.warn('This method of setting zone overlays will soon be deprecated, please use setZoneOverlays');
         const zone_state = await this.getZoneState(home_id, zone_id);
         const config = {
@@ -197,10 +199,19 @@ class Tado {
         else {
             config.setting.power = 'OFF';
         }
-        if (!isNaN(parseInt(termination))) {
+        if (typeof termination === 'number') {
             config.type = 'MANUAL';
             config.termination.typeSkillBasedApp = 'TIMER';
             config.termination.durationInSeconds = termination;
+        }
+        else if (termination === undefined) {
+            config.type = 'MANUAL';
+            config.termination.typeSkillBasedApp = 'MANUAL';
+        }
+        else if (!isNaN(parseInt(termination))) {
+            config.type = 'MANUAL';
+            config.termination.typeSkillBasedApp = 'TIMER';
+            config.termination.durationInSeconds = parseInt(termination);
         }
         else if (termination && termination.toLowerCase() == 'auto') {
             // Not sure how to test this is the web app
@@ -212,21 +223,28 @@ class Tado {
             config.type = 'MANUAL';
             config.termination.typeSkillBasedApp = 'NEXT_TIME_BLOCK';
         }
-        else {
-            config.type = 'MANUAL';
-            config.termination.typeSkillBasedApp = 'MANUAL';
-        }
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, 'put', config);
     }
     async clearZoneOverlays(home_id, zone_ids) {
         const rooms = zone_ids.join(',');
         return this.apiCall(`/api/v2/homes/${home_id}/overlay?rooms=${rooms}`, 'delete');
     }
-    async setZoneOverlays(home_id, overlays, termination) {
+    /**
+     * @param termination if number then duration in seconds
+     */
+    async setZoneOverlays(home_id, overlays, // FIXME: any here
+    termination) {
         let termination_config = {};
-        if (!isNaN(parseInt(termination))) {
+        if (typeof termination === 'number') {
             termination_config.typeSkillBasedApp = 'TIMER';
             termination_config.durationInSeconds = termination;
+        }
+        else if (termination === undefined) {
+            termination_config.typeSkillBasedApp = 'MANUAL';
+        }
+        else if (!isNaN(parseInt(termination))) {
+            termination_config.typeSkillBasedApp = 'TIMER';
+            termination_config.durationInSeconds = parseInt(termination);
         }
         else if (termination && termination.toLowerCase() == 'auto') {
             termination_config.typeSkillBasedApp = 'TADO_MODE';
@@ -284,13 +302,13 @@ class Tado {
         return this.apiCall(`/api/v2/devices/${device_id}/identify`, 'post');
     }
     async setPresence(home_id, presence) {
-        presence = presence.toUpperCase();
-        if (!['HOME', 'AWAY', 'AUTO'].includes(presence)) {
-            throw new Error(`Invalid presence "${presence}" must be "HOME", "AWAY", or "AUTO"`);
+        const upperCasePresence = presence.toUpperCase();
+        if (!['HOME', 'AWAY', 'AUTO'].includes(upperCasePresence)) {
+            throw new Error(`Invalid presence "${upperCasePresence}" must be "HOME", "AWAY", or "AUTO"`);
         }
-        const method = presence == 'AUTO' ? 'delete' : 'put';
+        const method = upperCasePresence == 'AUTO' ? 'delete' : 'put';
         const config = {
-            homePresence: presence,
+            homePresence: upperCasePresence,
         };
         return this.apiCall(`/api/v2/homes/${home_id}/presenceLock`, method, config);
     }
@@ -340,25 +358,28 @@ class Tado {
         const resp = await (0, axios_1.default)(`https://acme.tado.com/v1/homes/${home_id}/airComfort?${location}&${login}`);
         return resp.data;
     }
-    async getEnergyIQ(home_id) {
+    getEnergyIQ(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/consumption`);
     }
-    async getEnergyIQTariff(home_id) {
+    getEnergyIQTariff(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariff`);
     }
-    async updateEnergyIQTariff(home_id, unit, tariffInCents) {
+    updateEnergyIQTariff(home_id, unit, tariffInCents) {
         if (!['m3', 'kWh'].includes(unit)) {
             throw new Error(`Invalid unit "${unit}" must be "m3", or "kWh"`);
         }
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariff`, 'put', { unit: unit, tariffInCents: tariffInCents });
     }
-    async getEnergyIQMeterReadings(home_id) {
+    getEnergyIQMeterReadings(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`);
     }
-    async addEnergyIQMeterReading(home_id, date, reading) {
+    /**
+     * @param date datetime format `YYYY-MM-DD`
+     */
+    addEnergyIQMeterReading(home_id, date, reading) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`, 'post', { date: date, reading: reading });
     }
-    async deleteEnergyIQMeterReading(home_id, reading_id) {
+    deleteEnergyIQMeterReading(home_id, reading_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings/${reading_id}`, 'delete', {});
     }
     getEnergySavingsReport(home_id, year, month, countryCode) {

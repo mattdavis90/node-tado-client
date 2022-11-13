@@ -1,3 +1,11 @@
+// utils
+export type DeepPartial<T> = T extends object
+    ? {
+          [P in keyof T]?: DeepPartial<T[P]>
+      }
+    : T
+
+// tado
 export type Locale = 'en' | string
 
 export type TimeZone = 'Europe/Paris' | string
@@ -15,6 +23,8 @@ export type Feature =
     | 'ENERGY_CONSUMPTION'
     | 'HEATING_ROOM_DETAILS_AS_WEBVIEW'
     | 'HOME_SCREEN_AS_WEBVIEW_PROD_ANDROID'
+
+export type Termination = 'AUTO' | 'NEXT_TIME_BLOCK' | 'MANUAL'
 
 // TODO:
 export type HomePartner = any
@@ -205,11 +215,13 @@ export type User = {
     mobileDevices: MobileDevice[]
 }
 
-export type StatePresence = 'HOME' | string
+export type IQUnit = 'm3' | 'kWh'
+
+export type StatePresence = 'HOME' | 'AWAY' | 'AUTO'
 
 export type State = { presence: StatePresence; presenceLocked: boolean }
 
-export type ZoneType = 'HEATING' | 'AC'
+export type ZoneType = 'HEATING' | 'AIR_CONDITIONING'
 
 export type ZoneDazzleMode = { supported: boolean; enabled: boolean }
 

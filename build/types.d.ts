@@ -1,3 +1,6 @@
+export declare type DeepPartial<T> = T extends object ? {
+    [P in keyof T]?: DeepPartial<T[P]>;
+} : T;
 export declare type Locale = 'en' | string;
 export declare type TimeZone = 'Europe/Paris' | string;
 export declare type Platform = 'iOS' | 'Android' | string;
@@ -8,6 +11,7 @@ export declare type Geolocation = {
     longitude: number;
 };
 export declare type Feature = 'ELIGIBLE_FOR_ENERGY_CONSUMPTION' | 'ENERGY_CONSUMPTION' | 'HEATING_ROOM_DETAILS_AS_WEBVIEW' | 'HOME_SCREEN_AS_WEBVIEW_PROD_ANDROID';
+export declare type Termination = 'AUTO' | 'NEXT_TIME_BLOCK' | 'MANUAL';
 export declare type HomePartner = any;
 export declare type HomeIncidentDetection = {
     supported: boolean;
@@ -164,12 +168,13 @@ export declare type User = {
     locale: Locale;
     mobileDevices: MobileDevice[];
 };
-export declare type StatePresence = 'HOME' | string;
+export declare type IQUnit = 'm3' | 'kWh';
+export declare type StatePresence = 'HOME' | 'AWAY' | 'AUTO';
 export declare type State = {
     presence: StatePresence;
     presenceLocked: boolean;
 };
-export declare type ZoneType = 'HEATING' | 'AC';
+export declare type ZoneType = 'HEATING' | 'AIR_CONDITIONING';
 export declare type ZoneDazzleMode = {
     supported: boolean;
     enabled: boolean;
