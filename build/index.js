@@ -100,39 +100,41 @@ class Tado {
     getDeviceTemperatureOffset(serial_no) {
         return this.apiCall(`/api/v2/devices/${serial_no}/temperatureOffset`);
     }
-    // FIXME: type form here
-    async getInstallations(home_id) {
+    // TODO: type
+    getInstallations(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/installations`);
     }
-    async getUsers(home_id) {
+    getUsers(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/users`);
     }
-    async getState(home_id) {
+    getState(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/state`);
     }
-    async getMobileDevices(home_id) {
+    getMobileDevices(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices`);
     }
-    async getMobileDevice(home_id, device_id) {
-        return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices/${device_id}`);
+    getMobileDevice(home_id, mobile_device_id) {
+        return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices/${mobile_device_id}`);
     }
-    getMobileDeviceSettings(home_id, device_id) {
-        return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices/${device_id}/settings`);
+    getMobileDeviceSettings(home_id, mobile_device_id) {
+        return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices/${mobile_device_id}/settings`);
     }
-    async setGeoTracking(home_id, device_id, geoTrackingEnabled) {
-        const settings = await this.getMobileDeviceSettings(home_id, device_id);
-        settings['geoTrackingEnabled'] = geoTrackingEnabled;
-        return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices/${device_id}/settings`, 'put', settings);
+    setGeoTracking(home_id, mobile_device_id, geoTrackingEnabled) {
+        return this.getMobileDeviceSettings(home_id, mobile_device_id).then((settings) => this.apiCall(`/api/v2/homes/${home_id}/mobileDevices/${mobile_device_id}/settings`, 'put', {
+            ...settings,
+            geoTrackingEnabled: geoTrackingEnabled,
+        }));
     }
-    async getZones(home_id) {
+    getZones(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones`);
     }
-    async getZoneState(home_id, zone_id) {
+    getZoneState(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state`);
     }
-    async getZoneCapabilities(home_id, zone_id) {
+    getZoneCapabilities(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/capabilities`);
     }
+    // FIXME: type form here
     async getZoneOverlay(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`).catch((error) => {
             if (error.response.status === 404) {
@@ -141,6 +143,9 @@ class Tado {
             throw error;
         });
     }
+    /**
+     * @param reportDate date with json format (ex: `new Date().toJSON()`)
+     */
     async getZoneDayReport(home_id, zone_id, reportDate) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/dayReport?date=${reportDate}`);
     }

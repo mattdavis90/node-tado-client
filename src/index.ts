@@ -3,11 +3,17 @@ import axios, { Method } from 'axios'
 import { Agent } from 'https'
 import {
     Device,
-    DeviceTemperatureOffset,
+    Temperature,
     Home,
     Me,
+    MobileDevice,
     MobileDeviceSettings,
+    State,
+    User,
     Weather,
+    Zone,
+    ZoneState,
+    ZoneCapabilities,
 } from './types'
 
 const EXPIRATION_WINDOW_IN_SECONDS = 300
@@ -128,73 +134,82 @@ export class Tado {
         return this.apiCall(`/api/v2/homes/${home_id}/devices`)
     }
 
-    getDeviceTemperatureOffset(
-        serial_no: string
-    ): Promise<DeviceTemperatureOffset> {
+    getDeviceTemperatureOffset(serial_no: string): Promise<Temperature> {
         return this.apiCall(`/api/v2/devices/${serial_no}/temperatureOffset`)
     }
 
-    // FIXME: type form here
-    async getInstallations(home_id: number) {
+    // TODO: type
+    getInstallations(home_id: number) {
         return this.apiCall(`/api/v2/homes/${home_id}/installations`)
     }
 
-    async getUsers(home_id: number) {
+    getUsers(home_id: number): Promise<User> {
         return this.apiCall(`/api/v2/homes/${home_id}/users`)
     }
 
-    async getState(home_id: number) {
+    getState(home_id: number): Promise<State> {
         return this.apiCall(`/api/v2/homes/${home_id}/state`)
     }
 
-    async getMobileDevices(home_id: number) {
+    getMobileDevices(home_id: number): Promise<MobileDevice[]> {
         return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices`)
     }
 
-    async getMobileDevice(home_id: number, device_id: number) {
+    getMobileDevice(
+        home_id: number,
+        mobile_device_id: number
+    ): Promise<MobileDevice> {
         return this.apiCall(
-            `/api/v2/homes/${home_id}/mobileDevices/${device_id}`
+            `/api/v2/homes/${home_id}/mobileDevices/${mobile_device_id}`
         )
     }
 
     getMobileDeviceSettings(
         home_id: number,
-        device_id: number
+        mobile_device_id: number
     ): Promise<MobileDeviceSettings> {
         return this.apiCall(
-            `/api/v2/homes/${home_id}/mobileDevices/${device_id}/settings`
+            `/api/v2/homes/${home_id}/mobileDevices/${mobile_device_id}/settings`
         )
     }
 
-    async setGeoTracking(
+    setGeoTracking(
         home_id: number,
-        device_id: number,
+        mobile_device_id: number,
         geoTrackingEnabled: boolean
-    ) {
-        const settings = await this.getMobileDeviceSettings(home_id, device_id)
-        settings['geoTrackingEnabled'] = geoTrackingEnabled
-        return this.apiCall(
-            `/api/v2/homes/${home_id}/mobileDevices/${device_id}/settings`,
-            'put',
-            settings
+    ): Promise<MobileDeviceSettings> {
+        return this.getMobileDeviceSettings(home_id, mobile_device_id).then(
+            (settings) =>
+                this.apiCall(
+                    `/api/v2/homes/${home_id}/mobileDevices/${mobile_device_id}/settings`,
+                    'put',
+                    {
+                        ...settings,
+                        geoTrackingEnabled: geoTrackingEnabled,
+                    }
+                )
         )
     }
 
-    async getZones(home_id: number) {
+    getZones(home_id: number): Promise<Zone> {
         return this.apiCall(`/api/v2/homes/${home_id}/zones`)
     }
 
-    async getZoneState(home_id: number, zone_id: string) {
+    getZoneState(home_id: number, zone_id: number): Promise<ZoneState> {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state`)
     }
 
-    async getZoneCapabilities(home_id: number, zone_id: string) {
+    getZoneCapabilities(
+        home_id: number,
+        zone_id: number
+    ): Promise<ZoneCapabilities> {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/capabilities`
         )
     }
 
-    async getZoneOverlay(home_id: number, zone_id: string) {
+    // FIXME: type form here
+    async getZoneOverlay(home_id: number, zone_id: number) {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/overlay`
         ).catch((error) => {
@@ -206,31 +221,38 @@ export class Tado {
         })
     }
 
-    async getZoneDayReport(home_id: number, zone_id: string, reportDate) {
+    /**
+     * @param reportDate date with json format (ex: `new Date().toJSON()`)
+     */
+    async getZoneDayReport(
+        home_id: number,
+        zone_id: number,
+        reportDate: string
+    ) {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/dayReport?date=${reportDate}`
         )
     }
 
-    async getTimeTables(home_id: number, zone_id: string) {
+    async getTimeTables(home_id: number, zone_id: number) {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/schedule/activeTimetable`
         )
     }
 
-    async getAwayConfiguration(home_id: number, zone_id: string) {
+    async getAwayConfiguration(home_id: number, zone_id: number) {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/awayConfiguration`
         )
     }
 
-    async getTimeTable(home_id: number, zone_id: string, timetable_id: string) {
+    async getTimeTable(home_id: number, zone_id: number, timetable_id: string) {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/schedule/timetables/${timetable_id}/blocks`
         )
     }
 
-    async clearZoneOverlay(home_id: number, zone_id: string) {
+    async clearZoneOverlay(home_id: number, zone_id: number) {
         console.warn(
             'This method of clearing zone overlays will soon be deprecated, please use clearZoneOverlays'
         )
@@ -242,7 +264,7 @@ export class Tado {
 
     async setZoneOverlay(
         home_id: number,
-        zone_id: string,
+        zone_id: number,
         power,
         temperature,
         termination,

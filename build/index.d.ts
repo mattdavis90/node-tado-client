@@ -1,5 +1,5 @@
 import { Method } from 'axios';
-import { Device, DeviceTemperatureOffset, Home, Me, MobileDeviceSettings, Weather } from './types';
+import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities } from './types';
 export declare class Tado {
     private _httpsAgent;
     private _accessToken;
@@ -14,24 +14,27 @@ export declare class Tado {
     getHome(home_id: number): Promise<Home>;
     getWeather(home_id: number): Promise<Weather>;
     getDevices(home_id: number): Promise<Device[]>;
-    getDeviceTemperatureOffset(serial_no: string): Promise<DeviceTemperatureOffset>;
+    getDeviceTemperatureOffset(serial_no: string): Promise<Temperature>;
     getInstallations(home_id: number): Promise<unknown>;
-    getUsers(home_id: number): Promise<unknown>;
-    getState(home_id: number): Promise<unknown>;
-    getMobileDevices(home_id: number): Promise<unknown>;
-    getMobileDevice(home_id: number, device_id: number): Promise<unknown>;
-    getMobileDeviceSettings(home_id: number, device_id: number): Promise<MobileDeviceSettings>;
-    setGeoTracking(home_id: number, device_id: number, geoTrackingEnabled: boolean): Promise<unknown>;
-    getZones(home_id: number): Promise<unknown>;
-    getZoneState(home_id: number, zone_id: string): Promise<unknown>;
-    getZoneCapabilities(home_id: number, zone_id: string): Promise<unknown>;
-    getZoneOverlay(home_id: number, zone_id: string): Promise<unknown>;
-    getZoneDayReport(home_id: number, zone_id: string, reportDate: any): Promise<unknown>;
-    getTimeTables(home_id: number, zone_id: string): Promise<unknown>;
-    getAwayConfiguration(home_id: number, zone_id: string): Promise<unknown>;
-    getTimeTable(home_id: number, zone_id: string, timetable_id: string): Promise<unknown>;
-    clearZoneOverlay(home_id: number, zone_id: string): Promise<unknown>;
-    setZoneOverlay(home_id: number, zone_id: string, power: any, temperature: any, termination: any, fan_speed: any, ac_mode: any): Promise<unknown>;
+    getUsers(home_id: number): Promise<User>;
+    getState(home_id: number): Promise<State>;
+    getMobileDevices(home_id: number): Promise<MobileDevice[]>;
+    getMobileDevice(home_id: number, mobile_device_id: number): Promise<MobileDevice>;
+    getMobileDeviceSettings(home_id: number, mobile_device_id: number): Promise<MobileDeviceSettings>;
+    setGeoTracking(home_id: number, mobile_device_id: number, geoTrackingEnabled: boolean): Promise<MobileDeviceSettings>;
+    getZones(home_id: number): Promise<Zone>;
+    getZoneState(home_id: number, zone_id: number): Promise<ZoneState>;
+    getZoneCapabilities(home_id: number, zone_id: number): Promise<ZoneCapabilities>;
+    getZoneOverlay(home_id: number, zone_id: number): Promise<unknown>;
+    /**
+     * @param reportDate date with json format (ex: `new Date().toJSON()`)
+     */
+    getZoneDayReport(home_id: number, zone_id: number, reportDate: string): Promise<unknown>;
+    getTimeTables(home_id: number, zone_id: number): Promise<unknown>;
+    getAwayConfiguration(home_id: number, zone_id: number): Promise<unknown>;
+    getTimeTable(home_id: number, zone_id: number, timetable_id: string): Promise<unknown>;
+    clearZoneOverlay(home_id: number, zone_id: number): Promise<unknown>;
+    setZoneOverlay(home_id: number, zone_id: number, power: any, temperature: any, termination: any, fan_speed: any, ac_mode: any): Promise<unknown>;
     clearZoneOverlays(home_id: number, zone_ids: any): Promise<unknown>;
     setZoneOverlays(home_id: number, overlays: any, termination: any): Promise<unknown>;
     setDeviceTemperatureOffset(device_id: number, temperatureOffset: any): Promise<unknown>;

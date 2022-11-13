@@ -102,7 +102,7 @@ export declare type WeatherSolarIntensity = {
     timestamp: string;
 };
 export declare type WeatherOutsideTemperatureType = 'TEMPERATURE' | string;
-export declare type WeatherOutsideTemperaturePrecision = {
+export declare type Temperature = {
     celsius: number;
     fahrenheit: number;
 };
@@ -111,7 +111,7 @@ export declare type WeatherOutsideTemperature = {
     fahrenheit: number;
     timestamp: string;
     type: WeatherOutsideTemperatureType;
-    precision: WeatherOutsideTemperaturePrecision;
+    precision: Temperature;
 };
 export declare type WeatherStateType = 'WEATHER_STATE' | string;
 export declare type WeatherStateValue = 'CLOUDY' | string;
@@ -125,7 +125,7 @@ export declare type Weather = {
     outsideTemperature: WeatherOutsideTemperature;
     weatherState: WeatherState;
 };
-export declare type DeviceType = 'VA02' | string;
+export declare type DeviceType = 'VA02' | 'SU02' | string;
 export declare type DeviceConnectionState = {
     value: boolean;
     timestamp: string;
@@ -154,7 +154,115 @@ export declare type Device = {
     orientation: DeviceOrientation;
     childLockEnabled: boolean;
 };
-export declare type DeviceTemperatureOffset = {
-    celsius: number;
-    fahrenheit: number;
+export declare type UserHome = Pick<Home, 'id' | 'name'>;
+export declare type User = {
+    name: string;
+    email: string;
+    username: string;
+    id: string;
+    homes: UserHome[];
+    locale: Locale;
+    mobileDevices: MobileDevice[];
+};
+export declare type StatePresence = 'HOME' | string;
+export declare type State = {
+    presence: StatePresence;
+    presenceLocked: boolean;
+};
+export declare type ZoneType = 'HEATING' | string;
+export declare type ZoneDazzleMode = {
+    supported: boolean;
+    enabled: boolean;
+};
+export declare type ZoneOpenWindowDetection = {
+    supported: boolean;
+    enabled: boolean;
+    timeoutInSeconds: number;
+};
+export declare type ZoneDeviceDuty = 'ZONE_UI' | 'ZONE_LEADER' | 'ZONE_DRIVER';
+export declare type ZoneDevice = Zone & {
+    duties: ZoneDeviceDuty[];
+};
+export declare type Zone = {
+    id: number;
+    name: string;
+    type: ZoneType;
+    dateCreated: string;
+    deviceTypes: DeviceType[];
+    devices: ZoneDevice[];
+    reportAvailable: boolean;
+    showScheduleSetup: boolean;
+    supportsDazzle: boolean;
+    dazzleEnabled: boolean;
+    dazzleMode: ZoneDazzleMode;
+    openWindowDetection: ZoneOpenWindowDetection;
+};
+export declare type TadoMode = 'HOME';
+export declare type ZoneStateSettingsPower = 'ON';
+export declare type ZoneStateSettings = {
+    type: ZoneType;
+    power: ZoneStateSettingsPower;
+    temperature: Temperature;
+};
+export declare type ZoneStateNextScheduleChange = {
+    start: string;
+    setting: ZoneStateSettings;
+};
+export declare type ZoneNextTimeBlock = {
+    start: string;
+};
+export declare type ZoneLinkState = 'ONLINE';
+export declare type ZoneLink = {
+    state: ZoneLinkState;
+};
+export declare enum DataPointType {
+    PERCENTAGE = "PERCENTAGE",
+    TEMPERATURE = "TEMPERATURE"
+}
+export declare type DataPointPercentage = {
+    type: DataPointType.PERCENTAGE;
+    timestamp: string;
+    percentage: number;
+};
+export declare type DataPointTemperature = Temperature & {
+    type: DataPointType.TEMPERATURE;
+    timestamp: string;
+    precision: Temperature;
+};
+export declare type DataPoint = DataPointPercentage | DataPointTemperature;
+export declare type ZoneActivityDataPoints = {
+    heatingPower: DataPoint;
+};
+export declare type ZoneStateSensorDataPoints = {
+    insideTemperature: DataPointTemperature;
+    humidity: DataPointPercentage;
+};
+export declare type ZoneState = {
+    tadoMode: TadoMode;
+    geolocationOverride: boolean | null;
+    geolocationOverrideDisableTime: boolean | null;
+    preparation: any;
+    setting: ZoneStateSettings;
+    overlayType: any;
+    overlay: any;
+    openWindow: any;
+    nextScheduleChange: ZoneStateNextScheduleChange;
+    nextTimeBlock: ZoneNextTimeBlock;
+    link: ZoneLink;
+    activityDataPoints: ZoneActivityDataPoints;
+    sensorDataPoints: ZoneStateSensorDataPoints;
+};
+export declare type ZoneCapabilitiesType = 'HEATING';
+export declare type StepTemperature = {
+    min: number;
+    max: number;
+    step: number;
+};
+export declare type ZoneCapabilitiesTemperatures = {
+    celsius: StepTemperature;
+    fahrenheit: StepTemperature;
+};
+export declare type ZoneCapabilities = {
+    type: ZoneCapabilitiesType;
+    temperatures: ZoneCapabilitiesTemperatures;
 };

@@ -125,7 +125,7 @@ export type WeatherSolarIntensity = {
 
 export type WeatherOutsideTemperatureType = 'TEMPERATURE' | string
 
-export type WeatherOutsideTemperaturePrecision = {
+export type Temperature = {
     celsius: number
     fahrenheit: number
 }
@@ -135,7 +135,7 @@ export type WeatherOutsideTemperature = {
     fahrenheit: number
     timestamp: string
     type: WeatherOutsideTemperatureType
-    precision: WeatherOutsideTemperaturePrecision
+    precision: Temperature
 }
 
 export type WeatherStateType = 'WEATHER_STATE' | string
@@ -154,7 +154,7 @@ export type Weather = {
     weatherState: WeatherState
 }
 
-export type DeviceType = 'VA02' | string
+export type DeviceType = 'VA02' | 'SU02' | string
 
 export type DeviceConnectionState = { value: boolean; timestamp: string }
 
@@ -193,4 +193,132 @@ export type Device = {
     childLockEnabled: boolean
 }
 
-export type DeviceTemperatureOffset = { celsius: number; fahrenheit: number }
+export type UserHome = Pick<Home, 'id' | 'name'>
+
+export type User = {
+    name: string
+    email: string
+    username: string
+    id: string
+    homes: UserHome[]
+    locale: Locale
+    mobileDevices: MobileDevice[]
+}
+
+export type StatePresence = 'HOME' | string
+
+export type State = { presence: StatePresence; presenceLocked: boolean }
+
+export type ZoneType = 'HEATING' | string
+
+export type ZoneDazzleMode = { supported: boolean; enabled: boolean }
+
+export type ZoneOpenWindowDetection = {
+    supported: boolean
+    enabled: boolean
+    timeoutInSeconds: number
+}
+
+export type ZoneDeviceDuty = 'ZONE_UI' | 'ZONE_LEADER' | 'ZONE_DRIVER'
+
+export type ZoneDevice = Zone & {
+    duties: ZoneDeviceDuty[]
+}
+
+export type Zone = {
+    id: number
+    name: string
+    type: ZoneType
+    dateCreated: string
+    deviceTypes: DeviceType[]
+    devices: ZoneDevice[]
+    reportAvailable: boolean
+    showScheduleSetup: boolean
+    supportsDazzle: boolean
+    dazzleEnabled: boolean
+    dazzleMode: ZoneDazzleMode
+    openWindowDetection: ZoneOpenWindowDetection
+}
+
+export type TadoMode = 'HOME'
+
+export type ZoneStateSettingsPower = 'ON'
+
+export type ZoneStateSettings = {
+    type: ZoneType
+    power: ZoneStateSettingsPower
+    temperature: Temperature
+}
+
+export type ZoneStateNextScheduleChange = {
+    start: string
+    setting: ZoneStateSettings
+}
+
+export type ZoneNextTimeBlock = { start: string }
+
+export type ZoneLinkState = 'ONLINE'
+
+export type ZoneLink = { state: ZoneLinkState }
+
+export enum DataPointType {
+    PERCENTAGE = 'PERCENTAGE',
+    TEMPERATURE = 'TEMPERATURE',
+}
+
+export type DataPointPercentage = {
+    type: DataPointType.PERCENTAGE
+    timestamp: string
+    percentage: number
+}
+
+export type DataPointTemperature = Temperature & {
+    type: DataPointType.TEMPERATURE
+    timestamp: string
+    precision: Temperature
+}
+
+export type DataPoint = DataPointPercentage | DataPointTemperature
+
+export type ZoneActivityDataPoints = {
+    heatingPower: DataPoint
+}
+
+export type ZoneStateSensorDataPoints = {
+    insideTemperature: DataPointTemperature
+    humidity: DataPointPercentage
+}
+
+export type ZoneState = {
+    tadoMode: TadoMode
+    geolocationOverride: boolean | null
+    geolocationOverrideDisableTime: boolean | null
+    preparation: any // TODO:
+    setting: ZoneStateSettings
+    overlayType: any // TODO:
+    overlay: any // TODO:
+    openWindow: any // TODO:
+    nextScheduleChange: ZoneStateNextScheduleChange
+    nextTimeBlock: ZoneNextTimeBlock
+    link: ZoneLink
+    activityDataPoints: ZoneActivityDataPoints
+    sensorDataPoints: ZoneStateSensorDataPoints
+}
+
+export type ZoneCapabilitiesType = 'HEATING'
+
+export type StepTemperature = {
+    min: number
+    max: number
+    step: number
+}
+
+export type ZoneCapabilitiesTemperatures = {
+    celsius: StepTemperature
+    fahrenheit: StepTemperature
+}
+
+export type ZoneCapabilities = {
+    type: ZoneCapabilitiesType
+    temperatures: ZoneCapabilitiesTemperatures
+}
