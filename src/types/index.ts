@@ -1,3 +1,30 @@
+export * from './enums'
+import {
+    Feature,
+    AirComfortFreshnessValue,
+    AwayConfigurationPreheatingLevel,
+    DataPointType,
+    DeviceBatteryState,
+    DeviceCharacteristicsCapabilities,
+    DeviceOrientation,
+    DeviceType,
+    EnergyIQConsumptionInputState,
+    EnergySavingReportUnit,
+    HumidityLevel,
+    IQUnit,
+    OutdoorPollensTypeValue,
+    OutdoorQualityLevel,
+    StatePresence,
+    StripeTypeValue,
+    TemperatureLevel,
+    TimeTableDayType,
+    WeatherStateValue,
+    ZoneDeviceDuty,
+    ZoneType,
+    Platform,
+    TemperatureUnit,
+} from './enums'
+
 // utils
 export type DeepPartial<T> = T extends object
     ? {
@@ -12,10 +39,6 @@ export type Locale = string
 /** Example: `'Europe/Paris'` */
 export type TimeZone = string
 
-export type Platform = 'iOS' | 'Android'
-
-export type TemperatureUnit = 'CELSIUS'
-
 /** Example: `'FRA'` */
 export type Country = string
 
@@ -25,15 +48,17 @@ export type Currency = string
 /** Example: `'€'` */
 export type CurrencySign = string
 
-export type Geolocation = { latitude: number; longitude: number }
+export type Geolocation = {
+    latitude: number
+    longitude: number
+}
 
-export type Feature =
-    | 'ELIGIBLE_FOR_ENERGY_CONSUMPTION'
-    | 'ENERGY_CONSUMPTION'
-    | 'HEATING_ROOM_DETAILS_AS_WEBVIEW'
-    | 'HOME_SCREEN_AS_WEBVIEW_PROD_ANDROID'
-
-export type Termination = 'AUTO' | 'NEXT_TIME_BLOCK' | 'MANUAL'
+export type Interval = {
+    /** JSON formated date */
+    start: string
+    /** JSON formated date */
+    end: string
+}
 
 // TODO:
 export type HomePartner = any
@@ -134,15 +159,11 @@ export type Me = {
     mobileDevices: MobileDevice[]
 }
 
-export type WeatherSolarIntensityType = 'PERCENTAGE'
-
 export type WeatherSolarIntensity = {
-    type: WeatherSolarIntensityType
+    type: 'PERCENTAGE'
     percentage: number
     timestamp: string
 }
-
-export type WeatherOutsideTemperatureType = 'TEMPERATURE'
 
 export type Temperature = {
     celsius: number
@@ -150,19 +171,15 @@ export type Temperature = {
 }
 
 export type WeatherOutsideTemperature = {
+    type: 'TEMPERATURE'
     celsius: number
     fahrenheit: number
     timestamp: string
-    type: WeatherOutsideTemperatureType
     precision: Temperature
 }
 
-export type WeatherStateType = 'WEATHER_STATE'
-
-export type WeatherStateValue = 'CLOUDY' | 'NIGHT_CLOUDY'
-
 export type WeatherState = {
-    type: WeatherStateType
+    type: 'WEATHER_STATE'
     value: WeatherStateValue
     timestamp: string
 }
@@ -173,14 +190,7 @@ export type Weather = {
     weatherState: WeatherState
 }
 
-export type DeviceType = 'VA02' | 'SU02'
-
 export type DeviceConnectionState = { value: boolean; timestamp: string }
-
-export type DeviceCharacteristicsCapabilities =
-    | 'RADIO_ENCRYPTION_KEY_ACCESS'
-    | 'INSIDE_TEMPERATURE_MEASUREMENT'
-    | 'IDENTIFY'
 
 export type DeviceCharacteristics = {
     capabilities: DeviceCharacteristicsCapabilities[]
@@ -192,10 +202,6 @@ export type DeviceMountingState = {
     value: DeviceMountingStateValue
     timestamp: string
 }
-
-export type DeviceBatteryState = 'NORMAL' | 'LOW'
-
-export type DeviceOrientation = 'HORIZONTAL' | 'VERTICAL'
 
 export type Device = {
     deviceType: DeviceType
@@ -223,13 +229,7 @@ export type User = {
     mobileDevices: MobileDevice[]
 }
 
-export type IQUnit = 'm3' | 'kWh'
-
-export type StatePresence = 'HOME' | 'AWAY' | 'AUTO'
-
 export type State = { presence: StatePresence; presenceLocked: boolean }
-
-export type ZoneType = 'HEATING' | 'AIR_CONDITIONING'
 
 export type ZoneDazzleMode = { supported: boolean; enabled: boolean }
 
@@ -239,17 +239,9 @@ export type ZoneOpenWindowDetection = {
     timeoutInSeconds: number
 }
 
-export type ZoneDeviceDuty = 'ZONE_UI' | 'ZONE_LEADER' | 'ZONE_DRIVER'
-
 export type ZoneDevice = Zone & {
     duties: ZoneDeviceDuty[]
 }
-
-export type ZoneOverlayTerminationType = 'MANUAL' | 'TIMER'
-export type ZoneOverlayTerminationTypeSkillBasedApp =
-    | 'MANUAL'
-    | 'NEXT_TIME_BLOCK'
-    | 'TIMER'
 
 export type ZoneOverlayTerminationNextTimeBlock = {
     type: 'TIMER'
@@ -322,11 +314,6 @@ export type ZoneLinkState = 'ONLINE'
 
 export type ZoneLink = { state: ZoneLinkState }
 
-export enum DataPointType {
-    PERCENTAGE = 'PERCENTAGE',
-    TEMPERATURE = 'TEMPERATURE',
-}
-
 export type DataPointPercentage = {
     type: DataPointType.PERCENTAGE
     timestamp: string
@@ -382,19 +369,11 @@ export type ZoneCapabilities = {
     temperatures: ZoneCapabilitiesTemperatures
 }
 
-export type AwayConfigurationPreheatingLevel = 'MEDIUM'
-
 export type AwayConfiguration = {
     type: ZoneType
     preheatingLevel: AwayConfigurationPreheatingLevel
     minimumAwayTemperature: Temperature
 }
-
-export type TimeTableDayType =
-    | 'MONDAY_TO_SUNDAY'
-    | 'SATURDAY'
-    | 'SUNDAY'
-    | 'MONDAY_TO_FRIDAY'
 
 export type TimeTable = {
     dayType: TimeTableDayType
@@ -406,24 +385,16 @@ export type TimeTable = {
     setting: TimeTableSettings
 }
 
-export type TimeTableType = 'ONE_DAY'
-
 export type TimeTables =
     | { id: 0; type: 'ONE_DAY' }
     | { id: 1; type: 'THREE_DAY' }
     | { id: 2; type: 'SEVEN_DAY' }
-
-export type AirComfortFreshnessValue = 'FAIR'
 
 export type AirComfortFreshness = {
     value: AirComfortFreshnessValue
     /** `YYYY-MM-DDTHH:mm:ss` format datetime */
     lastOpenWindow: string
 }
-
-export type TemperatureLevel = 'COLD' | 'COMFY' | 'HOT'
-
-export type HumidityLevel = 'HUMID' | 'COMFY' | 'DRY'
 
 export type AirComfortCoordinate = { radial: number; angular: number }
 
@@ -445,8 +416,6 @@ export type EnergyIQTariffInfo = {
     tariffInCents: number
     customTariff: boolean
 }
-
-export type EnergyIQConsumptionInputState = 'partial'
 
 export type EnergyIQDetailPerDay = {
     /** `YYYY-MM-DD` format date */
@@ -484,20 +453,13 @@ export type EnergyIQMeterReadings = {
     readings: EnergyIQMeterReading[]
 }
 
-export type EnergySavingReportUnit = 'HOURS' | 'PERCENTAGE'
-
 export type EnergySavingDuration = {
     value: number
     unit: EnergySavingReportUnit
 }
 
 export type EnergySavingReport = {
-    coveredInterval: {
-        /** JSON formated date */
-        start: string
-        /** JSON formated date */
-        end: string
-    }
+    coveredInterval: Interval
     totalSavingsAvailable: boolean
     withAutoAssist: {
         detectedAwayDuration: EnergySavingDuration
@@ -535,8 +497,6 @@ export type AirComfortDetailedRoomMessage = {
     link: { text: string; type: 'internal'; url: string }
 }
 
-export type OutdoorQualityLevel = 'EXCELLENT' | 'NONE'
-
 export type OutdoorQualityPollutant = {
     localizedName: string
     scientificName: string
@@ -553,7 +513,7 @@ export type OutdoorPollensTypeForcast = {
 
 export type OutdoorPollensType = {
     localizedName: string
-    type: 'GRASS' | 'WEED' | 'TREE'
+    type: OutdoorPollensTypeValue
     localizedDescription: string
     forecast: OutdoorPollensTypeForcast[]
 }
@@ -576,4 +536,125 @@ export type AddEnergiIQMeterReadingResponse = {
     /** `YYYY-MM-DD` format date */
     date: string
     reading: number
+}
+
+export type MeasureDataInterval<T> = {
+    /** JSON formated date */
+    from: string
+    /** JSON formated date */
+    to: string
+    value: T
+}
+
+export type MeasureDataPoint<T> = {
+    /** JSON formated date */
+    timestamp: string
+    value: T
+}
+
+export type MeasureBoolean = {
+    timeSeriesType: 'dataIntervals'
+    valueType: 'boolean'
+    dataIntervals: MeasureDataInterval<boolean>[]
+}
+
+export type MeasureTemperature = {
+    timeSeriesType: 'dataPoints'
+    valueType: 'temperature'
+    min: Temperature
+    max: Temperature
+    dataPoints: MeasureDataPoint<Temperature>
+}
+
+export type MeasurePercentage = {
+    timeSeriesType: 'dataPoints'
+    valueType: 'percentage'
+    percentageUnit: 'UNIT_INTERVAL'
+    min: number
+    max: number
+    dataPoints: MeasureDataPoint<number>
+}
+
+export type MeasureStripeData =
+    | {
+          stripeType: StripeTypeValue
+          setting: {
+              type: 'HEATING'
+              power: Power
+              temperature: Temperature | null
+          }
+      }
+    | {
+          stripeType: 'AWAY'
+      }
+
+export type MeasureStripe = {
+    timeSeriesType: 'dataIntervals'
+    valueType: 'stripes'
+    dataIntervals: MeasureDataInterval<MeasureStripeData>
+}
+
+export type MeasureSettings = {
+    timeSeriesType: 'dataIntervals'
+    valueType: 'heatingSetting'
+    dataIntervals: MeasureDataInterval<MeasureStripeData>
+}
+
+export type MeasureCallForHeat = {
+    timeSeriesType: 'dataIntervals'
+    valueType: 'callForHeat'
+    dataIntervals: MeasureDataInterval<'NONE' | 'LOW' | 'MEDIUM' | 'HIGH'>
+}
+
+export type MeasureWeatherConditionData = {
+    state: WeatherStateValue
+    temperature: Temperature
+}
+
+export type MeasureWeatherCondition = {
+    timeSeriesType: 'dataIntervals'
+    valueType: 'weatherCondition'
+    dataIntervals: MeasureDataInterval<MeasureWeatherConditionData>
+}
+
+export type MeasureWeatherSunny = {
+    timeSeriesType: 'dataIntervals'
+    valueType: 'boolean'
+    dataIntervals: MeasureDataInterval<boolean>
+}
+
+export type MeasureWeatherSlotData = {
+    state: WeatherStateValue
+    temperature: Temperature
+}
+
+export type MeasureWeatherSlot = {
+    timeSeriesType: 'slots'
+    valueType: 'weatherCondition'
+    slots: {
+        '04:00': MeasureWeatherSlotData | null
+        '08:00': MeasureWeatherSlotData | null
+        '12:00': MeasureWeatherSlotData | null
+        '16:00': MeasureWeatherSlotData | null
+        '20:00': MeasureWeatherSlotData | null
+    }
+}
+
+export type ZoneDayReport = {
+    zoneType: ZoneType
+    interval: Interval
+    hoursInDay: number
+    measuredData: {
+        measuringDeviceConnected: MeasureBoolean
+        insideTemperature: MeasureTemperature
+        humidity: MeasurePercentage
+    }
+    stripes: MeasureStripe
+    settings: MeasureSettings
+    callForHeat: MeasureCallForHeat
+    weather: {
+        condition: MeasureWeatherCondition
+        sunny: MeasureWeatherSunny
+        slots: MeasureWeatherSlot
+    }
 }

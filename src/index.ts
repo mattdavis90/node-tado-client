@@ -31,7 +31,10 @@ import {
     EnergySavingReport,
     AirComfortDetailed,
     AddEnergiIQMeterReadingResponse,
+    ZoneDayReport,
 } from './types'
+
+export * from './types'
 
 const EXPIRATION_WINDOW_IN_SECONDS = 300
 
@@ -155,7 +158,7 @@ export class Tado {
     }
 
     // TODO: type
-    getInstallations(home_id: number) {
+    getInstallations(home_id: number): Promise<any[]> {
         return this.apiCall(`/api/v2/homes/${home_id}/installations`)
     }
 
@@ -242,11 +245,14 @@ export class Tado {
         })
     }
 
-    // TODO: type
     /**
      * @param reportDate date with YYYY-MM-DD format (ex: `2022-11-12`)
      */
-    getZoneDayReport(home_id: number, zone_id: number, reportDate: string) {
+    getZoneDayReport(
+        home_id: number,
+        zone_id: number,
+        reportDate: string
+    ): Promise<ZoneDayReport> {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/dayReport?date=${reportDate}`
         )

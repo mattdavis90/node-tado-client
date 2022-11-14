@@ -1,5 +1,6 @@
 import { Method } from 'axios';
 import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power, Termination, StatePresence, IQUnit, ZoneOverlay, TimeTables, AirComfort, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, AirComfortDetailed, AddEnergiIQMeterReadingResponse } from './types';
+export * from './types';
 export declare class Tado {
     private _httpsAgent;
     private _accessToken?;
@@ -15,7 +16,7 @@ export declare class Tado {
     getWeather(home_id: number): Promise<Weather>;
     getDevices(home_id: number): Promise<Device[]>;
     getDeviceTemperatureOffset(serial_no: string): Promise<Temperature>;
-    getInstallations(home_id: number): Promise<unknown>;
+    getInstallations(home_id: number): Promise<any[]>;
     getUsers(home_id: number): Promise<User>;
     getState(home_id: number): Promise<State>;
     getMobileDevices(home_id: number): Promise<MobileDevice[]>;
