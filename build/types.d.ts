@@ -476,3 +476,10 @@ export declare type AirComfortDetailed = {
         pollutants: OutdoorQualityPollutant[];
     };
 };
+export declare type AddEnergiIQMeterReadingResponse = {
+    id: string;
+    homeId: number;
+    /** `YYYY-MM-DD` format date */
+    date: string;
+    reading: number;
+};

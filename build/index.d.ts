@@ -1,5 +1,5 @@
 import { Method } from 'axios';
-import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power, Termination, StatePresence, IQUnit, ZoneOverlay, TimeTables, AirComfort, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, AirComfortDetailed } from './types';
+import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power, Termination, StatePresence, IQUnit, ZoneOverlay, TimeTables, AirComfort, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, AirComfortDetailed, AddEnergiIQMeterReadingResponse } from './types';
 export declare class Tado {
     private _httpsAgent;
     private _accessToken?;
@@ -22,7 +22,7 @@ export declare class Tado {
     getMobileDevice(home_id: number, mobile_device_id: number): Promise<MobileDevice>;
     getMobileDeviceSettings(home_id: number, mobile_device_id: number): Promise<MobileDeviceSettings>;
     setGeoTracking(home_id: number, mobile_device_id: number, geoTrackingEnabled: boolean): Promise<MobileDeviceSettings>;
-    getZones(home_id: number): Promise<Zone>;
+    getZones(home_id: number): Promise<Zone[]>;
     getZoneState(home_id: number, zone_id: number): Promise<ZoneState>;
     getZoneCapabilities(home_id: number, zone_id: number): Promise<ZoneCapabilities>;
     /**
@@ -77,7 +77,7 @@ export declare class Tado {
     /**
      * @param date format `YYYY-MM-DD`
      */
-    addEnergyIQMeterReading(home_id: number, date: string, reading: number): Promise<unknown>;
-    deleteEnergyIQMeterReading(home_id: number, reading_id: number): Promise<unknown>;
+    addEnergyIQMeterReading(home_id: number, date: string, reading: number): Promise<AddEnergiIQMeterReadingResponse>;
+    deleteEnergyIQMeterReading(home_id: number, reading_id: number): Promise<void>;
     getEnergySavingsReport(home_id: number, year: string, month: string, countryCode: Country): Promise<EnergySavingReport>;
 }

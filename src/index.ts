@@ -30,6 +30,7 @@ import {
     EnergyIQMeterReadings,
     EnergySavingReport,
     AirComfortDetailed,
+    AddEnergiIQMeterReadingResponse,
 } from './types'
 
 const EXPIRATION_WINDOW_IN_SECONDS = 300
@@ -206,7 +207,7 @@ export class Tado {
         )
     }
 
-    getZones(home_id: number): Promise<Zone> {
+    getZones(home_id: number): Promise<Zone[]> {
         return this.apiCall(`/api/v2/homes/${home_id}/zones`)
     }
 
@@ -614,14 +615,14 @@ export class Tado {
         )
     }
 
-    // TODO: type
+    // FIXME: not working?
     getEnergyIQTariff(home_id: number) {
         return this.apiCall(
             `https://energy-insights.tado.com/api/homes/${home_id}/tariff`
         )
     }
 
-    // TODO: type
+    // FIXME: not working?
     updateEnergyIQTariff(home_id: number, unit: IQUnit, tariffInCents: number) {
         if (!['m3', 'kWh'].includes(unit)) {
             throw new Error(`Invalid unit "${unit}" must be "m3", or "kWh"`)
@@ -643,8 +644,11 @@ export class Tado {
     /**
      * @param date format `YYYY-MM-DD`
      */
-    // TODO: type
-    addEnergyIQMeterReading(home_id: number, date: string, reading: number) {
+    addEnergyIQMeterReading(
+        home_id: number,
+        date: string,
+        reading: number
+    ): Promise<AddEnergiIQMeterReadingResponse> {
         return this.apiCall(
             `https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`,
             'post',
@@ -652,8 +656,10 @@ export class Tado {
         )
     }
 
-    // TODO: type
-    deleteEnergyIQMeterReading(home_id: number, reading_id: number) {
+    deleteEnergyIQMeterReading(
+        home_id: number,
+        reading_id: number
+    ): Promise<void> {
         return this.apiCall(
             `https://energy-insights.tado.com/api/homes/${home_id}/meterReadings/${reading_id}`,
             'delete',

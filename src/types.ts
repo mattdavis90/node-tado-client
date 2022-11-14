@@ -569,3 +569,11 @@ export type AirComfortDetailed = {
         pollutants: OutdoorQualityPollutant[]
     }
 }
+
+export type AddEnergiIQMeterReadingResponse = {
+    id: string
+    homeId: number
+    /** `YYYY-MM-DD` format date */
+    date: string
+    reading: number
+}

@@ -364,11 +364,11 @@ class Tado {
     getEnergyIQ(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/consumption`);
     }
-    // TODO: type
+    // FIXME: not working?
     getEnergyIQTariff(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariff`);
     }
-    // TODO: type
+    // FIXME: not working?
     updateEnergyIQTariff(home_id, unit, tariffInCents) {
         if (!['m3', 'kWh'].includes(unit)) {
             throw new Error(`Invalid unit "${unit}" must be "m3", or "kWh"`);
@@ -381,11 +381,9 @@ class Tado {
     /**
      * @param date format `YYYY-MM-DD`
      */
-    // TODO: type
     addEnergyIQMeterReading(home_id, date, reading) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`, 'post', { date: date, reading: reading });
     }
-    // TODO: type
     deleteEnergyIQMeterReading(home_id, reading_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings/${reading_id}`, 'delete', {});
     }
