@@ -66,7 +66,7 @@ export class Tado {
         this._httpsAgent = new Agent({ keepAlive: true })
     }
 
-    async _login() {
+    private async _login() {
         if (!this._username || !this._password) {
             throw new Error('Please login before using Tado!')
         }
@@ -84,7 +84,7 @@ export class Tado {
         }
     }
 
-    async _refreshToken() {
+    private async _refreshToken() {
         if (!this._accessToken) {
             await this._login()
         }

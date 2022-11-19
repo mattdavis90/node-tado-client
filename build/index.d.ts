@@ -7,8 +7,8 @@ export declare class Tado {
     private _username?;
     private _password?;
     constructor(username?: string, password?: string);
-    _login(): Promise<void>;
-    _refreshToken(): Promise<void>;
+    private _login;
+    private _refreshToken;
     login(username: string, password: string): Promise<void>;
     apiCall<R, T = any>(url: string, method?: Method, data?: T): Promise<R>;
     getMe(): Promise<Me>;
