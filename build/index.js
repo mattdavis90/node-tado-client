@@ -42,6 +42,9 @@ class Tado {
         this._httpsAgent = new https_1.Agent({ keepAlive: true });
     }
     async _login() {
+        if (!this._username || !this._password) {
+            throw new Error('Please login before using Tado!');
+        }
         const tokenParams = {
             username: this._username,
             password: this._password,
@@ -159,7 +162,6 @@ class Tado {
             throw error;
         });
     }
-    // TODO: type
     /**
      * @param reportDate date with YYYY-MM-DD format (ex: `2022-11-12`)
      */

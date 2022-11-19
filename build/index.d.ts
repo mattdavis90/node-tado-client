@@ -1,12 +1,12 @@
 import { Method } from 'axios';
-import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power, Termination, StatePresence, IQUnit, ZoneOverlay, TimeTables, AirComfort, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, AirComfortDetailed, AddEnergiIQMeterReadingResponse } from './types';
+import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power, Termination, StatePresence, IQUnit, ZoneOverlay, TimeTables, AirComfort, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, AirComfortDetailed, AddEnergiIQMeterReadingResponse, ZoneDayReport } from './types';
 export * from './types';
 export declare class Tado {
     private _httpsAgent;
     private _accessToken?;
-    private _username;
-    private _password;
-    constructor(username: string, password: string);
+    private _username?;
+    private _password?;
+    constructor(username?: string, password?: string);
     _login(): Promise<void>;
     _refreshToken(): Promise<void>;
     login(username: string, password: string): Promise<void>;
@@ -33,7 +33,7 @@ export declare class Tado {
     /**
      * @param reportDate date with YYYY-MM-DD format (ex: `2022-11-12`)
      */
-    getZoneDayReport(home_id: number, zone_id: number, reportDate: string): Promise<unknown>;
+    getZoneDayReport(home_id: number, zone_id: number, reportDate: string): Promise<ZoneDayReport>;
     getTimeTables(home_id: number, zone_id: number): Promise<TimeTables>;
     getAwayConfiguration(home_id: number, zone_id: number): Promise<AwayConfiguration>;
     getTimeTable(home_id: number, zone_id: number, timetable_id: string): Promise<TimeTable>;

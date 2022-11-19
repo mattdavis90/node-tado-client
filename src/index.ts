@@ -55,16 +55,20 @@ const client = new ResourceOwnerPassword(tado_config)
 export class Tado {
     private _httpsAgent: Agent
     private _accessToken?: AccessToken | null
-    private _username: string
-    private _password: string
+    private _username?: string
+    private _password?: string
 
-    constructor(username: string, password: string) {
+    constructor(username?: string, password?: string) {
         this._username = username
         this._password = password
         this._httpsAgent = new Agent({ keepAlive: true })
     }
 
     async _login() {
+        if (!this._username || !this._password) {
+            throw new Error('Please login before using Tado!')
+        }
+
         const tokenParams = {
             username: this._username,
             password: this._password,
