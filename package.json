@@ -1,36 +1,46 @@
 {
-  "name": "node-tado-client",
-  "version": "0.10.0",
-  "description": "A Tado client for nodejs",
-  "main": "index.js",
-  "dependencies": {
-    "axios": "^0.27.0",
-    "simple-oauth2": "^4.3.0"
-  },
-  "devDependencies": {
-    "chai": "^4.3.0",
-    "coveralls": "^3.1.0",
-    "mocha": "^10.0.0",
-    "nock": "^13.2.0",
-    "nyc": "^15.1.0"
-  },
-  "scripts": {
-    "test": "nyc mocha",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "test-html": "nyc --reporter=html mocha"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mattdavis90/node-tado-client.git"
-  },
-  "keywords": [
-    "tado",
-    "tado-api"
-  ],
-  "author": "Matt Davis <mattdavis90@googlemail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/mattdavis90/node-tado-client/issues"
-  },
-  "homepage": "https://github.com/mattdavis90/node-tado-client#readme"
+    "name": "node-tado-client",
+    "version": "0.10.0",
+    "description": "A Tado client for nodejs",
+    "main": "build/index.js",
+    "types": "build/index.d.ts",
+    "dependencies": {
+        "axios": "^0.27.0",
+        "simple-oauth2": "^4.3.0"
+    },
+    "devDependencies": {
+        "@types/node": "^18.11.9",
+        "@types/simple-oauth2": "^4.1.1",
+        "chai": "^4.3.0",
+        "coveralls": "^3.1.0",
+        "mocha": "^10.0.0",
+        "nock": "^13.2.0",
+        "nyc": "^15.1.0",
+        "prettier": "^2.7.1",
+        "typescript": "^4.8.4"
+    },
+    "scripts": {
+        "build": "tsc",
+        "test": "nyc mocha",
+        "coveralls": "nyc report --reporter=text-lcov | coveralls",
+        "test-html": "nyc --reporter=html mocha",
+        "format": "prettier --write src test"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mattdavis90/node-tado-client.git"
+    },
+    "keywords": [
+        "tado",
+        "tado-api"
+    ],
+    "author": "Matt Davis <mattdavis90@googlemail.com>",
+    "contributors": [
+        "Fabien JUIF <fabien.juif@gmail.com>"
+    ],
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/mattdavis90/node-tado-client/issues"
+    },
+    "homepage": "https://github.com/mattdavis90/node-tado-client#readme"
 }

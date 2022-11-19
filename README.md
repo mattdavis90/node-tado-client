@@ -1,4 +1,5 @@
 # node-tado-client
+
 [![Node.js Package](https://github.com/mattdavis90/node-tado-client/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/mattdavis90/node-tado-client/actions/workflows/npm-publish.yml)
 [![CodeQL](https://github.com/mattdavis90/node-tado-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/mattdavis90/node-tado-client/actions/workflows/codeql-analysis.yml)
 
@@ -6,23 +7,24 @@ A Tado API client for Node
 
 Based on the work of SCPhillips on his [blog](http://blog.scphillips.com/posts/2017/01/the-tado-api-v2/)
 
-*Please note: This is based on reverse engineering the Tado Web App's API and hence may be unstable*
+_Please note: This is based on reverse engineering the Tado Web App's API and hence may be unstable_
 
-*DEPRECATION notice: The Zone Overlay API calls are being deprecated, see below for further information*
+_DEPRECATION notice: The Zone Overlay API calls are being deprecated, see below for further information_
 
 ## Usage
+
 ```javascript
 // Import the Tado client
-const Tado = require('node-tado-client');
+const { Tado } = require("node-tado-client");
 
 // Create a new Tado instance
 var tado = new Tado();
 
 // Login to the Tado Web API
-tado.login('username', 'password').then(() => {
-    tado.getMe().then(resp => {
-        console.log(resp);
-    });
+tado.login("username", "password").then(() => {
+  tado.getMe().then((resp) => {
+    console.log(resp);
+  });
 });
 
 // Get the User's information
@@ -127,6 +129,7 @@ tado.addEnergyIQMeterReading(home_id, date, reading);
 tado.deleteEnergyIQMeterReading(home_id, reading_id)
 tado.getEnergySavingsReport(home_id, year, month, countryCode); // countryCode should match home country, it can be retrieved from getHome(home_id).address.country
 ```
+
 ### Setting Zone Overlays
 
 The `setZoneOverlay` and `clearZoneOverlay` methods have been deprecated in favour of `setZoneOverlays` and `clearZoneOverlays` respectively.
@@ -153,26 +156,23 @@ It is not required to use upper case in the values, the library will convert the
 
 The `termination` argument should be one of the following:
 
-* A positive integer - this will be interpreted as the number of seconds to set the overlay for
-* "auto" - this will put the overlay into "TADO_MODE" *Note: I haven't been able to replicate this mode in the Tado App so not sure what it does*
-* ""next_time_block" - overlay until the next scheduled event
-* Anything else - the overlay will exist indefinitely and will need manually clearing
+- A positive integer - this will be interpreted as the number of seconds to set the overlay for
+- "auto" - this will put the overlay into "TADO_MODE" _Note: I haven't been able to replicate this mode in the Tado App so not sure what it does_
+- ""next_time_block" - overlay until the next scheduled event
+- Anything else - the overlay will exist indefinitely and will need manually clearing
 
 ### Setting Geo Presence
 
+The `setPresence` method call takes the following arguments
 
-The ```setPresence``` method call takes the following arguments
-
-* *presence* - **home**, **away** or **auto**
-
-
+- _presence_ - **home**, **away** or **auto**
 
 **Documentation of deprecated methods**
 
-The ```setZoneOverlay``` method call takes the following arguments
+The `setZoneOverlay` method call takes the following arguments
 
 **Note:** It will automatically determine the type of system that it is affecting
 
-* *power* - **on** or **off** (case insensitive) [**default:** off]
-* *temperature* - *Integer* temperature in Celsius, if affecting a HEATING system
-* *termination* - *Integer* , **auto**, **next_time_block**, or **manual** (case insensitive, integer denotes a timer in seconds) [**default:** manual]
+- _power_ - **on** or **off** (case insensitive) [**default:** off]
+- _temperature_ - _Integer_ temperature in Celsius, if affecting a HEATING system
+- _termination_ - _Integer_ , **auto**, **next_time_block**, or **manual** (case insensitive, integer denotes a timer in seconds) [**default:** manual]

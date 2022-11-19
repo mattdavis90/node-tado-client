@@ -1,5 +1,5 @@
 module.exports = [
     {
-        "presence": "HOME"
-    }
+        presence: 'HOME',
+    },
 ]

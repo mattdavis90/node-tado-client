@@ -1,6 +1,6 @@
 module.exports = [
     {
-        "id": 0,
-        "type": "ONE_DAY"
-    }
+        id: 0,
+        type: 'ONE_DAY',
+    },
 ]

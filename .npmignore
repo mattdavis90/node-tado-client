@@ -1,0 +1,6 @@
+**
+!build/*
+!build/types/*
+!package.json
+!README.md
+!LICENSE
