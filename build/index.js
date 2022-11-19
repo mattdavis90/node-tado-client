@@ -82,6 +82,7 @@ class Tado {
         await this._login();
     }
     async apiCall(url, method = 'get', data) {
+        var _a;
         await this._refreshToken();
         let callUrl = tado_url + url;
         if (url.includes('https')) {
@@ -92,7 +93,7 @@ class Tado {
             method: method,
             data: data,
             headers: {
-                Authorization: 'Bearer ' + this._accessToken?.token.access_token,
+                Authorization: 'Bearer ' + ((_a = this._accessToken) === null || _a === void 0 ? void 0 : _a.token.access_token),
             },
             httpsAgent: this._httpsAgent,
         };
