@@ -185,9 +185,7 @@ class Tado {
      * @param temperature in celcius
      * @param termination if number then duration in seconds
      */
-    async setZoneOverlay(home_id, zone_id, power, temperature, termination, fan_speed, // TODO: any here
-    ac_mode // TODO: any here
-    ) {
+    async setZoneOverlay(home_id, zone_id, power, temperature, termination, fan_speed, ac_mode) {
         console.warn('This method of setting zone overlays will soon be deprecated, please use setZoneOverlays');
         const zone_state = await this.getZoneState(home_id, zone_id);
         const config = {

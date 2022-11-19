@@ -8,6 +8,10 @@ export type Feature =
     | 'HEATING_ROOM_DETAILS_AS_WEBVIEW'
     | 'HOME_SCREEN_AS_WEBVIEW_PROD_ANDROID'
 
+export type FanSpeed = 'LEVEL1' | 'LEVEL2' | 'LEVEL3' | 'AUTO'
+
+export type ACMode = 'COOL' | 'HEAT' | 'DRY' | 'FAN' | 'AUTO'
+
 export type Termination = 'AUTO' | 'NEXT_TIME_BLOCK' | 'MANUAL'
 
 export type OutdoorQualityLevel = 'EXCELLENT' | 'NONE'

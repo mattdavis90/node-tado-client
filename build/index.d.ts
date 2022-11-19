@@ -1,5 +1,5 @@
 import { Method } from 'axios';
-import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power, Termination, StatePresence, IQUnit, ZoneOverlay, TimeTables, AirComfort, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, AirComfortDetailed, AddEnergiIQMeterReadingResponse, ZoneDayReport } from './types';
+import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power, Termination, StatePresence, IQUnit, ZoneOverlay, TimeTables, AirComfort, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, AirComfortDetailed, AddEnergiIQMeterReadingResponse, ZoneDayReport, FanSpeed, ACMode } from './types';
 export * from './types';
 export declare class Tado {
     private _httpsAgent;
@@ -42,8 +42,7 @@ export declare class Tado {
      * @param temperature in celcius
      * @param termination if number then duration in seconds
      */
-    setZoneOverlay(home_id: number, zone_id: number, power: Power, temperature: number, termination?: Termination | undefined | number, fan_speed?: any, // TODO: any here
-    ac_mode?: any): Promise<ZoneOverlay>;
+    setZoneOverlay(home_id: number, zone_id: number, power: Power, temperature: number, termination?: Termination | undefined | number, fan_speed?: FanSpeed, ac_mode?: ACMode): Promise<ZoneOverlay>;
     clearZoneOverlays(home_id: number, zone_ids: number[]): Promise<void>;
     /**
      * @param termination if number then duration in seconds

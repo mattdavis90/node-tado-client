@@ -32,6 +32,8 @@ import {
     AirComfortDetailed,
     AddEnergiIQMeterReadingResponse,
     ZoneDayReport,
+    FanSpeed,
+    ACMode,
 } from './types'
 
 export * from './types'
@@ -307,8 +309,8 @@ export class Tado {
         power: Power,
         temperature: number,
         termination?: Termination | undefined | number,
-        fan_speed?: any, // TODO: any here
-        ac_mode?: any // TODO: any here
+        fan_speed?: FanSpeed,
+        ac_mode?: ACMode
     ): Promise<ZoneOverlay> {
         console.warn(
             'This method of setting zone overlays will soon be deprecated, please use setZoneOverlays'
