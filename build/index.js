@@ -367,6 +367,9 @@ class Tado {
         }
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow`, 'DELETE');
     }
+    setChildlock(serial_no, child_lock) {
+        return this.apiCall(`/api/v2/devices/${serial_no}/childLock`, 'PUT', { childLockEnabled: child_lock });
+    }
     getAirComfort(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/airComfort`);
     }

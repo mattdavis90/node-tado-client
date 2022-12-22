@@ -68,6 +68,7 @@ export declare class Tado {
     setWindowDetection(home_id: number, zone_id: number, enabled: true, timeout: number): Promise<void>;
     setWindowDetection(home_id: number, zone_id: number, enabled: false): Promise<void>;
     setOpenWindowMode(home_id: number, zone_id: number, activate: boolean): Promise<void>;
+    setChildlock(serial_no: string, child_lock: boolean): Promise<void>;
     getAirComfort(home_id: number): Promise<AirComfort>;
     getAirComfortDetailed(home_id: number): Promise<AirComfortDetailed>;
     getEnergyIQ(home_id: number): Promise<EnergyIQ>;
