@@ -358,25 +358,26 @@ export class Tado {
             config.setting.power = 'OFF'
         }
 
+        if (!termination) {
+            termination = "MANUAL"
+        }
+
+        if (typeof termination === 'string' && !isNaN(parseInt(termination))) {
+            termination = parseInt(termination)
+        }
+
         if (typeof termination === 'number') {
             config.type = 'MANUAL'
             config.termination.typeSkillBasedApp = 'TIMER'
             config.termination.durationInSeconds = termination
-        } else if (termination === undefined) {
+        } else if (termination.toLowerCase() == 'manual') {
             config.type = 'MANUAL'
             config.termination.typeSkillBasedApp = 'MANUAL'
-        } else if (!isNaN(parseInt(termination))) {
-            config.type = 'MANUAL'
-            config.termination.typeSkillBasedApp = 'TIMER'
-            config.termination.durationInSeconds = parseInt(termination)
-        } else if (termination && termination.toLowerCase() == 'auto') {
+        } else if (termination.toLowerCase() == 'auto') {
             // Not sure how to test this is the web app
             // But seems to by a combo of 'next_time_block' and geo
             config.termination.type = 'TADO_MODE'
-        } else if (
-            termination &&
-            termination.toLowerCase() == 'next_time_block'
-        ) {
+        } else if (termination.toLowerCase() == 'next_time_block') {
             config.type = 'MANUAL'
             config.termination.typeSkillBasedApp = 'NEXT_TIME_BLOCK'
         }
@@ -421,23 +422,23 @@ export class Tado {
             durationInSeconds?: number
         } = {}
 
+        if (!termination) {
+            termination = "MANUAL"
+        }
+
+        if (typeof termination === 'string' && !isNaN(parseInt(termination))) {
+            termination = parseInt(termination)
+        }
+
         if (typeof termination === 'number') {
             termination_config.typeSkillBasedApp = 'TIMER'
             termination_config.durationInSeconds = termination
-        } else if (termination === undefined) {
+        } else if (termination.toLowerCase() == 'manual') {
             termination_config.typeSkillBasedApp = 'MANUAL'
-        } else if (!isNaN(parseInt(termination))) {
-            termination_config.typeSkillBasedApp = 'TIMER'
-            termination_config.durationInSeconds = parseInt(termination)
-        } else if (termination && termination.toLowerCase() == 'auto') {
+        } else if (termination.toLowerCase() == 'auto') {
             termination_config.typeSkillBasedApp = 'TADO_MODE'
-        } else if (
-            termination &&
-            termination.toLowerCase() == 'next_time_block'
-        ) {
+        } else if (termination.toLowerCase() == 'next_time_block') {
             termination_config.typeSkillBasedApp = 'NEXT_TIME_BLOCK'
-        } else {
-            termination_config.typeSkillBasedApp = 'MANUAL'
         }
 
         let config: any = {
