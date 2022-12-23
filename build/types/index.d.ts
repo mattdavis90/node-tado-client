@@ -276,6 +276,9 @@ export declare type ZoneState = {
     activityDataPoints: ZoneActivityDataPoints;
     sensorDataPoints: ZoneStateSensorDataPoints;
 };
+export declare type ZoneStates = {
+    zoneStates: ZoneState[];
+};
 export declare type StepTemperature = {
     min: number;
     max: number;

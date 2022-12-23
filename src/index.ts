@@ -2,38 +2,39 @@ import { AccessToken, ResourceOwnerPassword } from 'simple-oauth2'
 import axios, { Method } from 'axios'
 import { Agent } from 'https'
 import {
-    Device,
-    Temperature,
-    Home,
-    Me,
-    MobileDevice,
-    MobileDeviceSettings,
-    State,
-    User,
-    Weather,
-    Zone,
-    ZoneState,
-    ZoneCapabilities,
-    AwayConfiguration,
-    TimeTable,
-    Country,
-    Power,
-    TimeTableSettings,
-    DeepPartial,
-    Termination,
-    StatePresence,
-    IQUnit,
-    ZoneOverlay,
-    TimeTables,
+    ACMode,
+    AddEnergiIQMeterReadingResponse,
     AirComfort,
+    AirComfortDetailed,
+    AwayConfiguration,
+    Country,
+    DeepPartial,
+    Device,
     EnergyIQ,
     EnergyIQMeterReadings,
     EnergySavingReport,
-    AirComfortDetailed,
-    AddEnergiIQMeterReadingResponse,
-    ZoneDayReport,
     FanSpeed,
-    ACMode,
+    Home,
+    IQUnit,
+    Me,
+    MobileDevice,
+    MobileDeviceSettings,
+    Power,
+    State,
+    StatePresence,
+    Temperature,
+    Termination,
+    TimeTable,
+    TimeTableSettings,
+    TimeTables,
+    User,
+    Weather,
+    Zone,
+    ZoneCapabilities,
+    ZoneDayReport,
+    ZoneOverlay,
+    ZoneState,
+    ZoneStates,
 } from './types'
 
 export * from './types'
@@ -174,6 +175,10 @@ export class Tado {
 
     getState(home_id: number): Promise<State> {
         return this.apiCall(`/api/v2/homes/${home_id}/state`)
+    }
+
+    getZoneStates(home_id: number): Promise<ZoneStates> {
+        return this.apiCall(`/api/v2/homes/${home_id}/zoneStates`)
     }
 
     getMobileDevices(home_id: number): Promise<MobileDevice[]> {

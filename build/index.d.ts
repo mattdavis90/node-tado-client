@@ -1,5 +1,5 @@
 import { Method } from 'axios';
-import { Device, Temperature, Home, Me, MobileDevice, MobileDeviceSettings, State, User, Weather, Zone, ZoneState, ZoneCapabilities, AwayConfiguration, TimeTable, Country, Power, Termination, StatePresence, IQUnit, ZoneOverlay, TimeTables, AirComfort, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, AirComfortDetailed, AddEnergiIQMeterReadingResponse, ZoneDayReport, FanSpeed, ACMode } from './types';
+import { ACMode, AddEnergiIQMeterReadingResponse, AirComfort, AirComfortDetailed, AwayConfiguration, Country, Device, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, FanSpeed, Home, IQUnit, Me, MobileDevice, MobileDeviceSettings, Power, State, StatePresence, Temperature, Termination, TimeTable, TimeTables, User, Weather, Zone, ZoneCapabilities, ZoneDayReport, ZoneOverlay, ZoneState, ZoneStates } from './types';
 export * from './types';
 export declare class Tado {
     private _httpsAgent;
@@ -19,6 +19,7 @@ export declare class Tado {
     getInstallations(home_id: number): Promise<any[]>;
     getUsers(home_id: number): Promise<User>;
     getState(home_id: number): Promise<State>;
+    getZoneStates(home_id: number): Promise<ZoneStates>;
     getMobileDevices(home_id: number): Promise<MobileDevice[]>;
     getMobileDevice(home_id: number, mobile_device_id: number): Promise<MobileDevice>;
     getMobileDeviceSettings(home_id: number, mobile_device_id: number): Promise<MobileDeviceSettings>;

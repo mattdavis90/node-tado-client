@@ -353,6 +353,10 @@ export type ZoneState = {
     sensorDataPoints: ZoneStateSensorDataPoints
 }
 
+export type ZoneStates = {
+    zoneStates: ZoneState[]
+}
+
 export type StepTemperature = {
     min: number
     max: number

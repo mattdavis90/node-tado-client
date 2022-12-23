@@ -128,6 +128,9 @@ class Tado {
     getState(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/state`);
     }
+    getZoneStates(home_id) {
+        return this.apiCall(`/api/v2/homes/${home_id}/zoneStates`);
+    }
     getMobileDevices(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices`);
     }
