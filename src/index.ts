@@ -332,7 +332,7 @@ export class Tado {
         if (power.toUpperCase() == 'ON') {
             config.setting.power = 'ON'
 
-            if (config.setting.type == 'HEATING' && temperature) {
+            if ((config.setting.type == 'HEATING' || config.setting.type == 'HOT_WATER') && temperature) {
                 config.setting.temperature = { celsius: temperature }
             }
 

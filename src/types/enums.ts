@@ -40,7 +40,7 @@ export type IQUnit = 'm3' | 'kWh'
 
 export type StatePresence = 'HOME' | 'AWAY' | 'AUTO'
 
-export type ZoneType = 'HEATING' | 'AIR_CONDITIONING'
+export type ZoneType = 'HEATING' | 'HOT_WATER' | 'AIR_CONDITIONING'
 
 export type ZoneDeviceDuty = 'ZONE_UI' | 'ZONE_LEADER' | 'ZONE_DRIVER'
 
