@@ -131,6 +131,9 @@ class Tado {
     getZoneStates(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zoneStates`);
     }
+    getHeatingCircuits(home_id) {
+        return this.apiCall(`/api/v2/homes/${home_id}/heatingCircuits`);
+    }
     getMobileDevices(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices`);
     }
@@ -151,6 +154,9 @@ class Tado {
     }
     getZoneState(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state`);
+    }
+    getZoneControl(home_id, zone_id) {
+        return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/control`);
     }
     getZoneCapabilities(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/capabilities`);

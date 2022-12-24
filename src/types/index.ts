@@ -60,9 +60,6 @@ export type Interval = {
     end: string
 }
 
-// TODO:
-export type HomePartner = any
-
 export type HomeIncidentDetection = { supported: boolean; enabled: boolean }
 
 export type HomeSkill = 'AUTO_ASSIST'
@@ -88,7 +85,8 @@ export type Home = {
     dateTimeZone: TimeZone
     dateCreated: string
     temperatureUnit: TemperatureUnit
-    partner: HomePartner
+    /** Partner organisation where Tado was purchased */
+    partner: string
     simpleSmartScheduleEnabled: boolean
     awayRadiusInMeters: number
     installationCompleted: boolean
@@ -343,8 +341,8 @@ export type ZoneState = {
     geolocationOverrideDisableTime: boolean | null
     preparation: any // TODO:
     setting: TimeTableSettings
-    overlayType: any // TODO:
-    overlay: any // TODO:
+    overlayType: 'MANUAL'
+    overlay: ZoneOverlay
     openWindow: any // TODO:
     nextScheduleChange: ZoneStateNextScheduleChange
     nextTimeBlock: ZoneNextTimeBlock
@@ -353,8 +351,27 @@ export type ZoneState = {
     sensorDataPoints: ZoneStateSensorDataPoints
 }
 
+export type ZoneControl = {
+    type: ZoneType
+    heatingCircuit?: number
+    earlyStartEnabled: boolean
+    duties: {
+        type: ZoneType
+        leader: Device
+        drivers: Device[]
+        uis: Device[]
+    }
+    
+}
+
 export type ZoneStates = {
     zoneStates: ZoneState[]
+}
+
+export type HeatingCircuit = {
+    number: number
+    driverSerialNo: string
+    driverShortSerialNo: string
 }
 
 export type StepTemperature = {

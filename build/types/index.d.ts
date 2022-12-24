@@ -23,7 +23,6 @@ export declare type Interval = {
     /** JSON formated date */
     end: string;
 };
-export declare type HomePartner = any;
 export declare type HomeIncidentDetection = {
     supported: boolean;
     enabled: boolean;
@@ -48,7 +47,8 @@ export declare type Home = {
     dateTimeZone: TimeZone;
     dateCreated: string;
     temperatureUnit: TemperatureUnit;
-    partner: HomePartner;
+    /** Partner organisation where Tado was purchased */
+    partner: string;
     simpleSmartScheduleEnabled: boolean;
     awayRadiusInMeters: number;
     installationCompleted: boolean;
@@ -267,8 +267,8 @@ export declare type ZoneState = {
     geolocationOverrideDisableTime: boolean | null;
     preparation: any;
     setting: TimeTableSettings;
-    overlayType: any;
-    overlay: any;
+    overlayType: 'MANUAL';
+    overlay: ZoneOverlay;
     openWindow: any;
     nextScheduleChange: ZoneStateNextScheduleChange;
     nextTimeBlock: ZoneNextTimeBlock;
@@ -276,8 +276,24 @@ export declare type ZoneState = {
     activityDataPoints: ZoneActivityDataPoints;
     sensorDataPoints: ZoneStateSensorDataPoints;
 };
+export declare type ZoneControl = {
+    type: ZoneType;
+    heatingCircuit?: number;
+    earlyStartEnabled: boolean;
+    duties: {
+        type: ZoneType;
+        leader: Device;
+        drivers: Device[];
+        uis: Device[];
+    };
+};
 export declare type ZoneStates = {
     zoneStates: ZoneState[];
+};
+export declare type HeatingCircuit = {
+    number: number;
+    driverSerialNo: string;
+    driverShortSerialNo: string;
 };
 export declare type StepTemperature = {
     min: number;

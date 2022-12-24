@@ -1,5 +1,5 @@
 import { Method } from 'axios';
-import { ACMode, AddEnergiIQMeterReadingResponse, AirComfort, AirComfortDetailed, AwayConfiguration, Country, Device, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, FanSpeed, Home, IQUnit, Me, MobileDevice, MobileDeviceSettings, Power, State, StatePresence, Temperature, Termination, TimeTable, TimeTables, User, Weather, Zone, ZoneCapabilities, ZoneDayReport, ZoneOverlay, ZoneState, ZoneStates } from './types';
+import { ACMode, AddEnergiIQMeterReadingResponse, AirComfort, AirComfortDetailed, AwayConfiguration, Country, Device, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, FanSpeed, HeatingCircuit, Home, IQUnit, Me, MobileDevice, MobileDeviceSettings, Power, State, StatePresence, Temperature, Termination, TimeTable, TimeTables, User, Weather, Zone, ZoneCapabilities, ZoneDayReport, ZoneOverlay, ZoneState, ZoneStates, ZoneControl } from './types';
 export * from './types';
 export declare class Tado {
     private _httpsAgent;
@@ -20,12 +20,14 @@ export declare class Tado {
     getUsers(home_id: number): Promise<User>;
     getState(home_id: number): Promise<State>;
     getZoneStates(home_id: number): Promise<ZoneStates>;
+    getHeatingCircuits(home_id: number): Promise<HeatingCircuit>;
     getMobileDevices(home_id: number): Promise<MobileDevice[]>;
     getMobileDevice(home_id: number, mobile_device_id: number): Promise<MobileDevice>;
     getMobileDeviceSettings(home_id: number, mobile_device_id: number): Promise<MobileDeviceSettings>;
     setGeoTracking(home_id: number, mobile_device_id: number, geoTrackingEnabled: boolean): Promise<MobileDeviceSettings>;
     getZones(home_id: number): Promise<Zone[]>;
     getZoneState(home_id: number, zone_id: number): Promise<ZoneState>;
+    getZoneControl(home_id: number, zone_id: number): Promise<ZoneControl>;
     getZoneCapabilities(home_id: number, zone_id: number): Promise<ZoneCapabilities>;
     /**
      * @returns an empty object if overlay does not exist

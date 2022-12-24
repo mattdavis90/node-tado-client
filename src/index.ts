@@ -14,6 +14,7 @@ import {
     EnergyIQMeterReadings,
     EnergySavingReport,
     FanSpeed,
+    HeatingCircuit,
     Home,
     IQUnit,
     Me,
@@ -35,6 +36,7 @@ import {
     ZoneOverlay,
     ZoneState,
     ZoneStates,
+    ZoneControl,
 } from './types'
 
 export * from './types'
@@ -181,6 +183,10 @@ export class Tado {
         return this.apiCall(`/api/v2/homes/${home_id}/zoneStates`)
     }
 
+    getHeatingCircuits(home_id: number): Promise<HeatingCircuit> {
+        return this.apiCall(`/api/v2/homes/${home_id}/heatingCircuits`)
+    }
+
     getMobileDevices(home_id: number): Promise<MobileDevice[]> {
         return this.apiCall(`/api/v2/homes/${home_id}/mobileDevices`)
     }
@@ -227,6 +233,10 @@ export class Tado {
 
     getZoneState(home_id: number, zone_id: number): Promise<ZoneState> {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state`)
+    }
+
+    getZoneControl(home_id: number, zone_id: number): Promise<ZoneControl> {
+        return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/control`)
     }
 
     getZoneCapabilities(
