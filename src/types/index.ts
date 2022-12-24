@@ -28,8 +28,8 @@ import {
 // utils
 export type DeepPartial<T> = T extends object
     ? {
-          [P in keyof T]?: DeepPartial<T[P]>
-      }
+        [P in keyof T]?: DeepPartial<T[P]>
+    }
     : T
 
 // tado
@@ -361,7 +361,6 @@ export type ZoneControl = {
         drivers: Device[]
         uis: Device[]
     }
-    
 }
 
 export type ZoneStates = {
@@ -372,6 +371,40 @@ export type HeatingCircuit = {
     number: number
     driverSerialNo: string
     driverShortSerialNo: string
+}
+
+export type RunningTimeZone = {
+    id: number
+    runningTimeInSeconds: number
+}
+
+export type RunningTime = {
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    startTime: string
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    endTime: string
+    runningTimeInSeconds: number
+    zones: RunningTimeZone[]
+}
+
+export type RunningTimeSummary = {
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    start: string
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    end: string
+    meanInSecondsPerDay: number
+    totalRunningTimeInSeconds: number
+}
+
+export type RunningTimes = {
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    lastUpdated: string
+    runningTimes: RunningTime[]
+    summary: RunningTimeSummary
+}
+
+export type RunningTimesSummaryOnly = {
+    summary: RunningTimeSummary
 }
 
 export type StepTemperature = {
@@ -598,16 +631,16 @@ export type MeasurePercentage = {
 
 export type MeasureStripeData =
     | {
-          stripeType: StripeTypeValue
-          setting: {
-              type: 'HEATING'
-              power: Power
-              temperature: Temperature | null
-          }
-      }
+        stripeType: StripeTypeValue
+        setting: {
+            type: 'HEATING'
+            power: Power
+            temperature: Temperature | null
+        }
+    }
     | {
-          stripeType: 'AWAY'
-      }
+        stripeType: 'AWAY'
+    }
 
 export type MeasureStripe = {
     timeSeriesType: 'dataIntervals'

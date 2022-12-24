@@ -38,6 +38,8 @@ export type DeviceOrientation = 'HORIZONTAL' | 'VERTICAL'
 
 export type IQUnit = 'm3' | 'kWh'
 
+export type RunningTimeAggregation = 'day' | 'month'
+
 export type StatePresence = 'HOME' | 'AWAY' | 'AUTO'
 
 export type ZoneType = 'HEATING' | 'HOT_WATER' | 'AIR_CONDITIONING'

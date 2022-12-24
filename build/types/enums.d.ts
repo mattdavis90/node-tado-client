@@ -11,6 +11,7 @@ export declare type DeviceCharacteristicsCapabilities = 'RADIO_ENCRYPTION_KEY_AC
 export declare type DeviceBatteryState = 'NORMAL' | 'LOW';
 export declare type DeviceOrientation = 'HORIZONTAL' | 'VERTICAL';
 export declare type IQUnit = 'm3' | 'kWh';
+export declare type RunningTimeAggregation = 'day' | 'month';
 export declare type StatePresence = 'HOME' | 'AWAY' | 'AUTO';
 export declare type ZoneType = 'HEATING' | 'HOT_WATER' | 'AIR_CONDITIONING';
 export declare type ZoneDeviceDuty = 'ZONE_UI' | 'ZONE_LEADER' | 'ZONE_DRIVER';

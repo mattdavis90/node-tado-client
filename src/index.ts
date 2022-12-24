@@ -37,6 +37,9 @@ import {
     ZoneState,
     ZoneStates,
     ZoneControl,
+    RunningTimes,
+    RunningTimeAggregation,
+    RunningTimesSummaryOnly,
 } from './types'
 
 export * from './types'
@@ -302,6 +305,37 @@ export class Tado {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/schedule/timetables/${timetable_id}/blocks`
         )
+    }
+
+    /**
+     * @param from Start date in foramt YYYY-MM-DD
+     * @param end Start date in foramt YYYY-MM-DD
+     * @param aggregate Period to aggregate metrics by
+     * @param summary_only Only report back a summary
+     */
+    getRunningTimes(
+        home_id: number,
+        from: string,
+        to: string,
+        aggregate: RunningTimeAggregation,
+        summary_only: true,
+    ): Promise<RunningTimesSummaryOnly>
+    getRunningTimes(
+        home_id: number,
+        from: string,
+        to: string,
+        aggregate: RunningTimeAggregation,
+        summary_only: false,
+    ): Promise<RunningTimes>
+    getRunningTimes(
+        home_id: number,
+        from: string,
+        to: string,
+        aggregate: RunningTimeAggregation,
+        summary_only: boolean,
+    ): Promise<RunningTimes | RunningTimesSummaryOnly>
+    {
+        return this.apiCall(`https://minder.tado.com/v1/homes/${home_id}/runningTimes?from=${from}&to=${to}&aggregate=${aggregate}&summary_only=${summary_only}`)
     }
 
     clearZoneOverlay(home_id: number, zone_id: number): Promise<void> {

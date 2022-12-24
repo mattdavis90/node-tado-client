@@ -295,6 +295,35 @@ export declare type HeatingCircuit = {
     driverSerialNo: string;
     driverShortSerialNo: string;
 };
+export declare type RunningTimeZone = {
+    id: number;
+    runningTimeInSeconds: number;
+};
+export declare type RunningTime = {
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    startTime: string;
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    endTime: string;
+    runningTimeInSeconds: number;
+    zones: RunningTimeZone[];
+};
+export declare type RunningTimeSummary = {
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    start: string;
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    end: string;
+    meanInSecondsPerDay: number;
+    totalRunningTimeInSeconds: number;
+};
+export declare type RunningTimes = {
+    /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+    lastUpdated: string;
+    runningTimes: RunningTime[];
+    summary: RunningTimeSummary;
+};
+export declare type RunningTimesSummaryOnly = {
+    summary: RunningTimeSummary;
+};
 export declare type StepTemperature = {
     min: number;
     max: number;
