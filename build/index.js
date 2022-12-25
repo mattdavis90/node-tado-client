@@ -390,8 +390,10 @@ class Tado {
         const resp = await (0, axios_1.default)(`https://acme.tado.com/v1/homes/${home_id}/airComfort?${location}&${login}`);
         return resp.data;
     }
-    getEnergyIQ(home_id) {
-        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/consumption`);
+    async getEnergyIQ(home_id) {
+        const home = await this.getHome(home_id);
+        const country = home.address.country;
+        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/consumption?country=${country}`);
     }
     // FIXME: not working?
     getEnergyIQTariff(home_id) {

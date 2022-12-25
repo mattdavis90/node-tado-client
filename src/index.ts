@@ -675,9 +675,11 @@ export class Tado {
         return resp.data
     }
 
-    getEnergyIQ(home_id: number): Promise<EnergyIQ> {
+    async getEnergyIQ(home_id: number): Promise<EnergyIQ> {
+        const home = await this.getHome(home_id);
+        const country = home.address.country;
         return this.apiCall(
-            `https://energy-insights.tado.com/api/homes/${home_id}/consumption`
+            `https://energy-insights.tado.com/api/homes/${home_id}/consumption?country=${country}`
         )
     }
 
