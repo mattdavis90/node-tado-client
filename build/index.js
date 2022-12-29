@@ -220,7 +220,12 @@ class Tado {
                         config.setting.temperature = { celsius: temperature };
                     }
                     if (fan_speed) {
-                        config.setting.fanLevel = fan_speed.toUpperCase();
+                        if (zone_state.setting['fanLevel']) {
+                            config.setting.fanLevel = fan_speed.toUpperCase();
+                        }
+                        else {
+                            config.setting.fanSpeed = fan_speed.toUpperCase();
+                        }
                     }
                 }
             }
@@ -298,7 +303,6 @@ class Tado {
                 'power',
                 'mode',
                 'temperature',
-                'fanLevel',
                 'verticalSwing',
                 'horizontalSwing',
                 'light',
@@ -313,6 +317,14 @@ class Tado {
                     }
                 }
             });
+            if (overlay['fanLevel']) {
+                if (zone_state.setting['fanLevel']) {
+                    overlay_config.overlay.setting.fanLevel = overlay.fanLevel.toUpperCase();
+                }
+                else {
+                    overlay_config.overlay.setting.fanSpeed = overlay.fanLevel.toUpperCase();
+                }
+            }
             config.overlays.push(overlay_config);
         }
         return this.apiCall(`/api/v2/homes/${home_id}/overlay`, 'post', config);

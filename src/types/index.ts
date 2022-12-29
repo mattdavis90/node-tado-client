@@ -1,6 +1,5 @@
 export * from './enums'
 import {
-    Feature,
     AirComfortFreshnessValue,
     AwayConfigurationPreheatingLevel,
     DataPointType,
@@ -10,19 +9,22 @@ import {
     DeviceType,
     EnergyIQConsumptionInputState,
     EnergySavingReportUnit,
+    FanLevel,
+    FanSpeed,
+    Feature,
     HumidityLevel,
     IQUnit,
     OutdoorPollensTypeValue,
     OutdoorQualityLevel,
+    Platform,
     StatePresence,
     StripeTypeValue,
     TemperatureLevel,
+    TemperatureUnit,
     TimeTableDayType,
     WeatherStateValue,
     ZoneDeviceDuty,
     ZoneType,
-    Platform,
-    TemperatureUnit,
 } from './enums'
 
 // utils
@@ -299,6 +301,11 @@ export type TimeTableSettings = {
     type: ZoneType
     power: Power
     temperature: Temperature | null
+    fanSpeed?: FanSpeed
+    fanLevel?: FanLevel
+    verticalSwing?: any
+    horizontalSwing?: any
+    light?: any
 }
 
 export type ZoneStateNextScheduleChange = {

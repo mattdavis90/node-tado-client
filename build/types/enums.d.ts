@@ -1,7 +1,8 @@
 export declare type Platform = 'iOS' | 'Android';
 export declare type TemperatureUnit = 'CELSIUS';
 export declare type Feature = 'ELIGIBLE_FOR_ENERGY_CONSUMPTION' | 'ENERGY_CONSUMPTION' | 'HEATING_ROOM_DETAILS_AS_WEBVIEW' | 'HOME_SCREEN_AS_WEBVIEW_PROD_ANDROID';
-export declare type FanSpeed = 'LEVEL1' | 'LEVEL2' | 'LEVEL3' | 'AUTO';
+export declare type FanLevel = 'LEVEL1' | 'LEVEL2' | 'LEVEL3' | 'AUTO';
+export declare type FanSpeed = 'HIGH' | 'MIDDLE' | 'LOW' | 'AUTO';
 export declare type ACMode = 'COOL' | 'HEAT' | 'DRY' | 'FAN' | 'AUTO';
 export declare type Termination = 'AUTO' | 'NEXT_TIME_BLOCK' | 'MANUAL';
 export declare type OutdoorQualityLevel = 'EXCELLENT' | 'NONE';

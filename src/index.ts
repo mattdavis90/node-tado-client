@@ -40,6 +40,7 @@ import {
     RunningTimes,
     RunningTimeAggregation,
     RunningTimesSummaryOnly,
+    FanLevel,
 } from './types'
 
 export * from './types'
@@ -309,7 +310,7 @@ export class Tado {
 
     /**
      * @param from Start date in foramt YYYY-MM-DD
-     * @param end Start date in foramt YYYY-MM-DD
+     * @param to Start date in foramt YYYY-MM-DD
      * @param aggregate Period to aggregate metrics by
      * @param summary_only Only report back a summary
      */
@@ -358,7 +359,7 @@ export class Tado {
         power: Power,
         temperature: number,
         termination?: Termination | undefined | number,
-        fan_speed?: FanSpeed,
+        fan_speed?: FanSpeed | FanLevel,
         ac_mode?: ACMode
     ): Promise<ZoneOverlay> {
         console.warn(
@@ -370,6 +371,7 @@ export class Tado {
             setting: DeepPartial<TimeTableSettings> & {
                 mode?: any
                 fanLevel?: any
+                fanSpeed?: any
             }
             termination: any
             type?: any
@@ -399,7 +401,11 @@ export class Tado {
                     }
 
                     if (fan_speed) {
-                        config.setting.fanLevel = fan_speed.toUpperCase()
+                        if (zone_state.setting['fanLevel']) {
+                            config.setting.fanLevel = fan_speed.toUpperCase()
+                        } else {
+                            config.setting.fanSpeed = fan_speed.toUpperCase()
+                        }
                     }
                 }
             }
@@ -459,7 +465,7 @@ export class Tado {
             power?: Power
             mode?: any
             temperature?: Temperature
-            fanLevel?: any
+            fanLevel?: FanSpeed | FanLevel
             verticalSwing?: any
             horizontalSwing?: any
             light?: any
@@ -509,7 +515,6 @@ export class Tado {
                 'power',
                 'mode',
                 'temperature',
-                'fanLevel',
                 'verticalSwing',
                 'horizontalSwing',
                 'light',
@@ -529,6 +534,14 @@ export class Tado {
                     }
                 }
             })
+
+            if (overlay['fanLevel']) {
+                if (zone_state.setting['fanLevel']) {
+                    overlay_config.overlay.setting.fanLevel = overlay.fanLevel.toUpperCase()
+                } else {
+                    overlay_config.overlay.setting.fanSpeed = overlay.fanLevel.toUpperCase()
+                }
+            }
 
             config.overlays.push(overlay_config)
         }

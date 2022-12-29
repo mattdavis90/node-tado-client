@@ -1,5 +1,5 @@
 export * from './enums';
-import { Feature, AirComfortFreshnessValue, AwayConfigurationPreheatingLevel, DataPointType, DeviceBatteryState, DeviceCharacteristicsCapabilities, DeviceOrientation, DeviceType, EnergyIQConsumptionInputState, EnergySavingReportUnit, HumidityLevel, IQUnit, OutdoorPollensTypeValue, OutdoorQualityLevel, StatePresence, StripeTypeValue, TemperatureLevel, TimeTableDayType, WeatherStateValue, ZoneDeviceDuty, ZoneType, Platform, TemperatureUnit } from './enums';
+import { AirComfortFreshnessValue, AwayConfigurationPreheatingLevel, DataPointType, DeviceBatteryState, DeviceCharacteristicsCapabilities, DeviceOrientation, DeviceType, EnergyIQConsumptionInputState, EnergySavingReportUnit, FanLevel, FanSpeed, Feature, HumidityLevel, IQUnit, OutdoorPollensTypeValue, OutdoorQualityLevel, Platform, StatePresence, StripeTypeValue, TemperatureLevel, TemperatureUnit, TimeTableDayType, WeatherStateValue, ZoneDeviceDuty, ZoneType } from './enums';
 export declare type DeepPartial<T> = T extends object ? {
     [P in keyof T]?: DeepPartial<T[P]>;
 } : T;
@@ -231,6 +231,11 @@ export declare type TimeTableSettings = {
     type: ZoneType;
     power: Power;
     temperature: Temperature | null;
+    fanSpeed?: FanSpeed;
+    fanLevel?: FanLevel;
+    verticalSwing?: any;
+    horizontalSwing?: any;
+    light?: any;
 };
 export declare type ZoneStateNextScheduleChange = {
     start: string;

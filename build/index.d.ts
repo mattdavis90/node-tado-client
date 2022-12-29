@@ -1,5 +1,5 @@
 import { Method } from 'axios';
-import { ACMode, AddEnergiIQMeterReadingResponse, AirComfort, AirComfortDetailed, AwayConfiguration, Country, Device, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, FanSpeed, HeatingCircuit, Home, IQUnit, Me, MobileDevice, MobileDeviceSettings, Power, State, StatePresence, Temperature, Termination, TimeTable, TimeTables, User, Weather, Zone, ZoneCapabilities, ZoneDayReport, ZoneOverlay, ZoneState, ZoneStates, ZoneControl, RunningTimes, RunningTimeAggregation, RunningTimesSummaryOnly } from './types';
+import { ACMode, AddEnergiIQMeterReadingResponse, AirComfort, AirComfortDetailed, AwayConfiguration, Country, Device, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, FanSpeed, HeatingCircuit, Home, IQUnit, Me, MobileDevice, MobileDeviceSettings, Power, State, StatePresence, Temperature, Termination, TimeTable, TimeTables, User, Weather, Zone, ZoneCapabilities, ZoneDayReport, ZoneOverlay, ZoneState, ZoneStates, ZoneControl, RunningTimes, RunningTimeAggregation, RunningTimesSummaryOnly, FanLevel } from './types';
 export * from './types';
 export declare class Tado {
     private _httpsAgent;
@@ -42,7 +42,7 @@ export declare class Tado {
     getTimeTable(home_id: number, zone_id: number, timetable_id: string): Promise<TimeTable>;
     /**
      * @param from Start date in foramt YYYY-MM-DD
-     * @param end Start date in foramt YYYY-MM-DD
+     * @param to Start date in foramt YYYY-MM-DD
      * @param aggregate Period to aggregate metrics by
      * @param summary_only Only report back a summary
      */
@@ -53,7 +53,7 @@ export declare class Tado {
      * @param temperature in celcius
      * @param termination if number then duration in seconds
      */
-    setZoneOverlay(home_id: number, zone_id: number, power: Power, temperature: number, termination?: Termination | undefined | number, fan_speed?: FanSpeed, ac_mode?: ACMode): Promise<ZoneOverlay>;
+    setZoneOverlay(home_id: number, zone_id: number, power: Power, temperature: number, termination?: Termination | undefined | number, fan_speed?: FanSpeed | FanLevel, ac_mode?: ACMode): Promise<ZoneOverlay>;
     clearZoneOverlays(home_id: number, zone_ids: number[]): Promise<void>;
     /**
      * @param termination if number then duration in seconds
@@ -63,7 +63,7 @@ export declare class Tado {
         power?: Power;
         mode?: any;
         temperature?: Temperature;
-        fanLevel?: any;
+        fanLevel?: FanSpeed | FanLevel;
         verticalSwing?: any;
         horizontalSwing?: any;
         light?: any;
