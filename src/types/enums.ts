@@ -61,9 +61,14 @@ export enum DataPointType {
 
 export type TimeTableDayType =
     | 'MONDAY_TO_SUNDAY'
+    | 'MONDAY_TO_FRIDAY'
+    | 'MONDAY'
+    | 'TUESDAY'
+    | 'WEDNESDAY'
+    | 'THURSDAY'
+    | 'FRIDAY'
     | 'SATURDAY'
     | 'SUNDAY'
-    | 'MONDAY_TO_FRIDAY'
 
 export type AwayConfigurationPreheatingLevel = 'MEDIUM'
 

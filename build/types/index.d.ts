@@ -347,7 +347,7 @@ export declare type AwayConfiguration = {
     preheatingLevel: AwayConfigurationPreheatingLevel;
     minimumAwayTemperature: Temperature;
 };
-export declare type TimeTable = {
+export declare type TimeTableBlock = {
     dayType: TimeTableDayType;
     /** HH:mm */
     start: string;
@@ -356,6 +356,7 @@ export declare type TimeTable = {
     geolocationOverride: boolean;
     setting: TimeTableSettings;
 };
+export declare type TimeTable = TimeTableBlock[];
 export declare type TimeTables = {
     id: 0;
     type: 'ONE_DAY';

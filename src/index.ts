@@ -41,6 +41,7 @@ import {
     RunningTimeAggregation,
     RunningTimesSummaryOnly,
     FanLevel,
+    TimeTableDayType,
 } from './types'
 
 export * from './types'
@@ -283,12 +284,6 @@ export class Tado {
         )
     }
 
-    getTimeTables(home_id: number, zone_id: number): Promise<TimeTables> {
-        return this.apiCall(
-            `/api/v2/homes/${home_id}/zones/${zone_id}/schedule/activeTimetable`
-        )
-    }
-
     getAwayConfiguration(
         home_id: number,
         zone_id: number
@@ -298,13 +293,41 @@ export class Tado {
         )
     }
 
+    getTimeTables(home_id: number, zone_id: number): Promise<TimeTables> {
+        return this.apiCall(
+            `/api/v2/homes/${home_id}/zones/${zone_id}/schedule/activeTimetable`
+        )
+    }
+
+    setActiveTimeTable(home_id: number, zone_id: number, timetable: TimeTables): Promise<TimeTables> {
+        return this.apiCall(
+            `/api/v2/homes/${home_id}/zones/${zone_id}/schedule/activeTimetable`,
+            'PUT',
+            timetable,
+        )
+    }
+
     getTimeTable(
         home_id: number,
         zone_id: number,
-        timetable_id: string
+        timetable_id: number
     ): Promise<TimeTable> {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/schedule/timetables/${timetable_id}/blocks`
+        )
+    }
+
+    setTimeTable(
+        home_id: number,
+        zone_id: number,
+        timetable_id: number,
+        timetable: TimeTable,
+        day_type: TimeTableDayType
+    ): Promise<TimeTables> {
+        return this.apiCall(
+            `/api/v2/homes/${home_id}/zones/${zone_id}/schedule/timetables/${timetable_id}/blocks/${day_type}`,
+            'PUT',
+            timetable,
         )
     }
 
@@ -334,8 +357,7 @@ export class Tado {
         to: string,
         aggregate: RunningTimeAggregation,
         summary_only: boolean,
-    ): Promise<RunningTimes | RunningTimesSummaryOnly>
-    {
+    ): Promise<RunningTimes | RunningTimesSummaryOnly> {
         return this.apiCall(`https://minder.tado.com/v1/homes/${home_id}/runningTimes?from=${from}&to=${to}&aggregate=${aggregate}&summary_only=${summary_only}`)
     }
 

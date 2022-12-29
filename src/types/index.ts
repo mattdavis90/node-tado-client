@@ -436,7 +436,7 @@ export type AwayConfiguration = {
     minimumAwayTemperature: Temperature
 }
 
-export type TimeTable = {
+export type TimeTableBlock = {
     dayType: TimeTableDayType
     /** HH:mm */
     start: string
@@ -445,6 +445,8 @@ export type TimeTable = {
     geolocationOverride: boolean
     setting: TimeTableSettings
 }
+
+export type TimeTable = TimeTableBlock[]
 
 export type TimeTables =
     | { id: 0; type: 'ONE_DAY' }

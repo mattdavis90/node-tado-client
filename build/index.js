@@ -178,14 +178,20 @@ class Tado {
     getZoneDayReport(home_id, zone_id, reportDate) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/dayReport?date=${reportDate}`);
     }
-    getTimeTables(home_id, zone_id) {
-        return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/schedule/activeTimetable`);
-    }
     getAwayConfiguration(home_id, zone_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/awayConfiguration`);
     }
+    getTimeTables(home_id, zone_id) {
+        return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/schedule/activeTimetable`);
+    }
+    setActiveTimeTable(home_id, zone_id, timetable) {
+        return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/schedule/activeTimetable`, 'PUT', timetable);
+    }
     getTimeTable(home_id, zone_id, timetable_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/schedule/timetables/${timetable_id}/blocks`);
+    }
+    setTimeTable(home_id, zone_id, timetable_id, timetable, day_type) {
+        return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/schedule/timetables/${timetable_id}/blocks/${day_type}`, 'PUT', timetable);
     }
     getRunningTimes(home_id, from, to, aggregate, summary_only) {
         return this.apiCall(`https://minder.tado.com/v1/homes/${home_id}/runningTimes?from=${from}&to=${to}&aggregate=${aggregate}&summary_only=${summary_only}`);

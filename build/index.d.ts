@@ -1,5 +1,5 @@
 import { Method } from 'axios';
-import { ACMode, AddEnergiIQMeterReadingResponse, AirComfort, AirComfortDetailed, AwayConfiguration, Country, Device, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, FanSpeed, HeatingCircuit, Home, IQUnit, Me, MobileDevice, MobileDeviceSettings, Power, State, StatePresence, Temperature, Termination, TimeTable, TimeTables, User, Weather, Zone, ZoneCapabilities, ZoneDayReport, ZoneOverlay, ZoneState, ZoneStates, ZoneControl, RunningTimes, RunningTimeAggregation, RunningTimesSummaryOnly, FanLevel } from './types';
+import { ACMode, AddEnergiIQMeterReadingResponse, AirComfort, AirComfortDetailed, AwayConfiguration, Country, Device, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, FanSpeed, HeatingCircuit, Home, IQUnit, Me, MobileDevice, MobileDeviceSettings, Power, State, StatePresence, Temperature, Termination, TimeTable, TimeTables, User, Weather, Zone, ZoneCapabilities, ZoneDayReport, ZoneOverlay, ZoneState, ZoneStates, ZoneControl, RunningTimes, RunningTimeAggregation, RunningTimesSummaryOnly, FanLevel, TimeTableDayType } from './types';
 export * from './types';
 export declare class Tado {
     private _httpsAgent;
@@ -37,9 +37,11 @@ export declare class Tado {
      * @param reportDate date with YYYY-MM-DD format (ex: `2022-11-12`)
      */
     getZoneDayReport(home_id: number, zone_id: number, reportDate: string): Promise<ZoneDayReport>;
-    getTimeTables(home_id: number, zone_id: number): Promise<TimeTables>;
     getAwayConfiguration(home_id: number, zone_id: number): Promise<AwayConfiguration>;
-    getTimeTable(home_id: number, zone_id: number, timetable_id: string): Promise<TimeTable>;
+    getTimeTables(home_id: number, zone_id: number): Promise<TimeTables>;
+    setActiveTimeTable(home_id: number, zone_id: number, timetable: TimeTables): Promise<TimeTables>;
+    getTimeTable(home_id: number, zone_id: number, timetable_id: number): Promise<TimeTable>;
+    setTimeTable(home_id: number, zone_id: number, timetable_id: number, timetable: TimeTable, day_type: TimeTableDayType): Promise<TimeTables>;
     /**
      * @param from Start date in foramt YYYY-MM-DD
      * @param to Start date in foramt YYYY-MM-DD

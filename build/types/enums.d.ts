@@ -22,7 +22,7 @@ export declare enum DataPointType {
     PERCENTAGE = "PERCENTAGE",
     TEMPERATURE = "TEMPERATURE"
 }
-export declare type TimeTableDayType = 'MONDAY_TO_SUNDAY' | 'SATURDAY' | 'SUNDAY' | 'MONDAY_TO_FRIDAY';
+export declare type TimeTableDayType = 'MONDAY_TO_SUNDAY' | 'MONDAY_TO_FRIDAY' | 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
 export declare type AwayConfigurationPreheatingLevel = 'MEDIUM';
 export declare type AirComfortFreshnessValue = 'FAIR';
 export declare type TemperatureLevel = 'COLD' | 'COMFY' | 'HOT';
