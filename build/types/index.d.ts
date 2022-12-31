@@ -211,6 +211,14 @@ export declare type ZoneOverlay = {
     setting: TimeTableSettings;
     termination: ZoneOverlayTermination;
 };
+export declare type ZoneOpenWindow = {
+    /** `RFC3339 formatted datetime */
+    detectedTime: string;
+    durationInSeconds: number;
+    /** `RFC3339 formatted datetime */
+    expiry: string;
+    remainingTimeInSeconds: number;
+};
 export declare type Zone = {
     id: number;
     name: string;
@@ -274,7 +282,7 @@ export declare type ZoneState = {
     setting: TimeTableSettings;
     overlayType: 'MANUAL';
     overlay: ZoneOverlay;
-    openWindow: any;
+    openWindow: ZoneOpenWindow;
     nextScheduleChange: ZoneStateNextScheduleChange;
     nextTimeBlock: ZoneNextTimeBlock;
     link: ZoneLink;

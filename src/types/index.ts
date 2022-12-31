@@ -278,6 +278,15 @@ export type ZoneOverlay = {
     termination: ZoneOverlayTermination
 }
 
+export type ZoneOpenWindow = {
+    /** `RFC3339 formatted datetime */
+    detectedTime: string,
+    durationInSeconds: number,
+    /** `RFC3339 formatted datetime */
+    expiry: string,
+    remainingTimeInSeconds: number
+}
+
 export type Zone = {
     id: number
     name: string
@@ -350,7 +359,7 @@ export type ZoneState = {
     setting: TimeTableSettings
     overlayType: 'MANUAL'
     overlay: ZoneOverlay
-    openWindow: any // TODO:
+    openWindow: ZoneOpenWindow
     nextScheduleChange: ZoneStateNextScheduleChange
     nextTimeBlock: ZoneNextTimeBlock
     link: ZoneLink
