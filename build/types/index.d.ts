@@ -400,6 +400,7 @@ export declare type EnergyIQTariffInfo = {
     tariffInCents: number;
     customTariff: boolean;
 };
+export declare type EnergyIQTariff = unknown;
 export declare type EnergyIQDetailPerDay = {
     /** `YYYY-MM-DD` format date */
     date: string;

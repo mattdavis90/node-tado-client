@@ -489,6 +489,9 @@ export type EnergyIQTariffInfo = {
     customTariff: boolean
 }
 
+// FIXME: Need to find a type for this
+export type EnergyIQTariff = unknown
+
 export type EnergyIQDetailPerDay = {
     /** `YYYY-MM-DD` format date */
     date: string

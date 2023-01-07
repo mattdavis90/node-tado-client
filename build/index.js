@@ -413,16 +413,14 @@ class Tado {
         const country = home.address.country;
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/consumption?country=${country}`);
     }
-    // FIXME: not working?
     getEnergyIQTariff(home_id) {
-        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariff`);
+        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariffs`);
     }
-    // FIXME: not working?
-    updateEnergyIQTariff(home_id, unit, tariffInCents) {
+    updateEnergyIQTariff(home_id, tariff_id, unit, tariffInCents) {
         if (!['m3', 'kWh'].includes(unit)) {
             throw new Error(`Invalid unit "${unit}" must be "m3", or "kWh"`);
         }
-        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariff`, 'put', { unit: unit, tariffInCents: tariffInCents });
+        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariffs/${tariff_id}`, 'put', { unit: unit, tariffInCents: tariffInCents });
     }
     getEnergyIQMeterReadings(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`);

@@ -1,5 +1,5 @@
 import { Method } from 'axios';
-import { ACMode, AddEnergiIQMeterReadingResponse, AirComfort, AirComfortDetailed, AwayConfiguration, Country, Device, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, FanSpeed, HeatingCircuit, Home, IQUnit, Me, MobileDevice, MobileDeviceSettings, Power, State, StatePresence, Temperature, Termination, TimeTable, TimeTables, User, Weather, Zone, ZoneCapabilities, ZoneDayReport, ZoneOverlay, ZoneState, ZoneStates, ZoneControl, RunningTimes, RunningTimeAggregation, RunningTimesSummaryOnly, FanLevel, TimeTableDayType } from './types';
+import { ACMode, AddEnergiIQMeterReadingResponse, AirComfort, AirComfortDetailed, AwayConfiguration, Country, Device, EnergyIQ, EnergyIQMeterReadings, EnergySavingReport, FanSpeed, HeatingCircuit, Home, IQUnit, Me, MobileDevice, MobileDeviceSettings, Power, State, StatePresence, Temperature, Termination, TimeTable, TimeTables, User, Weather, Zone, ZoneCapabilities, ZoneDayReport, ZoneOverlay, ZoneState, ZoneStates, ZoneControl, RunningTimes, RunningTimeAggregation, RunningTimesSummaryOnly, FanLevel, TimeTableDayType, EnergyIQTariff } from './types';
 export * from './types';
 export declare class Tado {
     private _httpsAgent;
@@ -85,8 +85,8 @@ export declare class Tado {
     getAirComfort(home_id: number): Promise<AirComfort>;
     getAirComfortDetailed(home_id: number): Promise<AirComfortDetailed>;
     getEnergyIQ(home_id: number): Promise<EnergyIQ>;
-    getEnergyIQTariff(home_id: number): Promise<unknown>;
-    updateEnergyIQTariff(home_id: number, unit: IQUnit, tariffInCents: number): Promise<unknown>;
+    getEnergyIQTariff(home_id: number): Promise<EnergyIQTariff>;
+    updateEnergyIQTariff(home_id: number, tariff_id: string, unit: IQUnit, tariffInCents: number): Promise<unknown>;
     getEnergyIQMeterReadings(home_id: number): Promise<EnergyIQMeterReadings>;
     /**
      * @param date format `YYYY-MM-DD`

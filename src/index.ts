@@ -42,6 +42,7 @@ import {
     RunningTimesSummaryOnly,
     FanLevel,
     TimeTableDayType,
+    EnergyIQTariff,
 } from './types'
 
 export * from './types'
@@ -718,21 +719,19 @@ export class Tado {
         )
     }
 
-    // FIXME: not working?
-    getEnergyIQTariff(home_id: number) {
+    getEnergyIQTariff(home_id: number): Promise<EnergyIQTariff> {
         return this.apiCall(
-            `https://energy-insights.tado.com/api/homes/${home_id}/tariff`
+            `https://energy-insights.tado.com/api/homes/${home_id}/tariffs`
         )
     }
 
-    // FIXME: not working?
-    updateEnergyIQTariff(home_id: number, unit: IQUnit, tariffInCents: number) {
+    updateEnergyIQTariff(home_id: number, tariff_id: string, unit: IQUnit, tariffInCents: number) {
         if (!['m3', 'kWh'].includes(unit)) {
             throw new Error(`Invalid unit "${unit}" must be "m3", or "kWh"`)
         }
 
         return this.apiCall(
-            `https://energy-insights.tado.com/api/homes/${home_id}/tariff`,
+            `https://energy-insights.tado.com/api/homes/${home_id}/tariffs/${tariff_id}`,
             'put',
             { unit: unit, tariffInCents: tariffInCents }
         )
