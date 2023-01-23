@@ -638,7 +638,7 @@ export type MeasureTemperature = {
     valueType: 'temperature'
     min: Temperature
     max: Temperature
-    dataPoints: MeasureDataPoint<Temperature>
+    dataPoints: MeasureDataPoint<Temperature>[]
 }
 
 export type MeasurePercentage = {
@@ -647,7 +647,7 @@ export type MeasurePercentage = {
     percentageUnit: 'UNIT_INTERVAL'
     min: number
     max: number
-    dataPoints: MeasureDataPoint<number>
+    dataPoints: MeasureDataPoint<number>[]
 }
 
 export type MeasureStripeData =
@@ -666,19 +666,19 @@ export type MeasureStripeData =
 export type MeasureStripe = {
     timeSeriesType: 'dataIntervals'
     valueType: 'stripes'
-    dataIntervals: MeasureDataInterval<MeasureStripeData>
+    dataIntervals: MeasureDataInterval<MeasureStripeData>[]
 }
 
 export type MeasureSettings = {
     timeSeriesType: 'dataIntervals'
     valueType: 'heatingSetting'
-    dataIntervals: MeasureDataInterval<MeasureStripeData>
+    dataIntervals: MeasureDataInterval<MeasureStripeData>[]
 }
 
 export type MeasureCallForHeat = {
     timeSeriesType: 'dataIntervals'
     valueType: 'callForHeat'
-    dataIntervals: MeasureDataInterval<'NONE' | 'LOW' | 'MEDIUM' | 'HIGH'>
+    dataIntervals: MeasureDataInterval<'NONE' | 'LOW' | 'MEDIUM' | 'HIGH'>[]
 }
 
 export type MeasureWeatherConditionData = {
@@ -689,13 +689,13 @@ export type MeasureWeatherConditionData = {
 export type MeasureWeatherCondition = {
     timeSeriesType: 'dataIntervals'
     valueType: 'weatherCondition'
-    dataIntervals: MeasureDataInterval<MeasureWeatherConditionData>
+    dataIntervals: MeasureDataInterval<MeasureWeatherConditionData>[]
 }
 
 export type MeasureWeatherSunny = {
     timeSeriesType: 'dataIntervals'
     valueType: 'boolean'
-    dataIntervals: MeasureDataInterval<boolean>
+    dataIntervals: MeasureDataInterval<boolean>[]
 }
 
 export type MeasureWeatherSlotData = {

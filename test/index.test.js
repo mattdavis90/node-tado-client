@@ -17,6 +17,7 @@ const state_response = require('./response.state')
 const zones_response = require('./response.zones')
 const zone_state_response = require('./response.zone.state')
 const zone_capabilities_response = require('./response.zone.capabilities')
+const zone_day_report = require('./response.zone.dayReport')
 const timetables_response = require('./response.timetables')
 const away_configuration_response = require('./response.away')
 const timetable_response = require('./response.timetable')
@@ -346,6 +347,20 @@ describe('High-level API tests', () => {
             .reply(200, zone_capabilities_response)
 
         tado.getZoneCapabilities(1907, 1)
+            .then((response) => {
+                expect(typeof response).to.equal('object')
+
+                done()
+            })
+            .catch((err) => {})
+    })
+
+    it("Should get a zone's day report", (done) => {
+        nock('https://my.tado.com')
+            .get('/api/v2/homes/1907/zones/1/dayReport?date=2023-01-19')
+            .reply(200, zone_day_report)
+
+        tado.getZoneDayReport(1907, 1, "2023-01-19")
             .then((response) => {
                 expect(typeof response).to.equal('object')
 
