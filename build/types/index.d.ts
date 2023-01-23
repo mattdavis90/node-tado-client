@@ -540,7 +540,7 @@ export declare type MeasureTemperature = {
     valueType: 'temperature';
     min: Temperature;
     max: Temperature;
-    dataPoints: MeasureDataPoint<Temperature>;
+    dataPoints: MeasureDataPoint<Temperature>[];
 };
 export declare type MeasurePercentage = {
     timeSeriesType: 'dataPoints';
@@ -548,7 +548,7 @@ export declare type MeasurePercentage = {
     percentageUnit: 'UNIT_INTERVAL';
     min: number;
     max: number;
-    dataPoints: MeasureDataPoint<number>;
+    dataPoints: MeasureDataPoint<number>[];
 };
 export declare type MeasureStripeData = {
     stripeType: StripeTypeValue;
@@ -563,17 +563,17 @@ export declare type MeasureStripeData = {
 export declare type MeasureStripe = {
     timeSeriesType: 'dataIntervals';
     valueType: 'stripes';
-    dataIntervals: MeasureDataInterval<MeasureStripeData>;
+    dataIntervals: MeasureDataInterval<MeasureStripeData>[];
 };
 export declare type MeasureSettings = {
     timeSeriesType: 'dataIntervals';
     valueType: 'heatingSetting';
-    dataIntervals: MeasureDataInterval<MeasureStripeData>;
+    dataIntervals: MeasureDataInterval<MeasureStripeData>[];
 };
 export declare type MeasureCallForHeat = {
     timeSeriesType: 'dataIntervals';
     valueType: 'callForHeat';
-    dataIntervals: MeasureDataInterval<'NONE' | 'LOW' | 'MEDIUM' | 'HIGH'>;
+    dataIntervals: MeasureDataInterval<'NONE' | 'LOW' | 'MEDIUM' | 'HIGH'>[];
 };
 export declare type MeasureWeatherConditionData = {
     state: WeatherStateValue;
@@ -582,12 +582,12 @@ export declare type MeasureWeatherConditionData = {
 export declare type MeasureWeatherCondition = {
     timeSeriesType: 'dataIntervals';
     valueType: 'weatherCondition';
-    dataIntervals: MeasureDataInterval<MeasureWeatherConditionData>;
+    dataIntervals: MeasureDataInterval<MeasureWeatherConditionData>[];
 };
 export declare type MeasureWeatherSunny = {
     timeSeriesType: 'dataIntervals';
     valueType: 'boolean';
-    dataIntervals: MeasureDataInterval<boolean>;
+    dataIntervals: MeasureDataInterval<boolean>[];
 };
 export declare type MeasureWeatherSlotData = {
     state: WeatherStateValue;
