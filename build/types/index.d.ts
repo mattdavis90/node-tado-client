@@ -300,8 +300,11 @@ export type ZoneControl = {
         uis: Device[];
     };
 };
+type ZoneStatesMapping = {
+    [key: string]: ZoneState;
+}
 export type ZoneStates = {
-    zoneStates: ZoneState[];
+    zoneStates: ZoneStatesMapping;
 };
 export type HeatingCircuit = {
     number: number;
