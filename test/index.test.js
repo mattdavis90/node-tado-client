@@ -360,7 +360,7 @@ describe('High-level API tests', () => {
             .get('/api/v2/homes/1907/zones/1/dayReport?date=2023-01-19')
             .reply(200, zone_day_report)
 
-        tado.getZoneDayReport(1907, 1, "2023-01-19")
+        tado.getZoneDayReport(1907, 1, '2023-01-19')
             .then((response) => {
                 expect(typeof response).to.equal('object')
 

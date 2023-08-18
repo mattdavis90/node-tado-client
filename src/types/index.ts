@@ -30,8 +30,8 @@ import {
 // utils
 export type DeepPartial<T> = T extends object
     ? {
-        [P in keyof T]?: DeepPartial<T[P]>
-    }
+          [P in keyof T]?: DeepPartial<T[P]>
+      }
     : T
 
 // tado
@@ -280,10 +280,10 @@ export type ZoneOverlay = {
 
 export type ZoneOpenWindow = {
     /** `RFC3339 formatted datetime */
-    detectedTime: string,
-    durationInSeconds: number,
+    detectedTime: string
+    durationInSeconds: number
     /** `RFC3339 formatted datetime */
-    expiry: string,
+    expiry: string
     remainingTimeInSeconds: number
 }
 
@@ -652,16 +652,16 @@ export type MeasurePercentage = {
 
 export type MeasureStripeData =
     | {
-        stripeType: StripeTypeValue
-        setting: {
-            type: 'HEATING'
-            power: Power
-            temperature: Temperature | null
-        }
-    }
+          stripeType: StripeTypeValue
+          setting: {
+              type: 'HEATING'
+              power: Power
+              temperature: Temperature | null
+          }
+      }
     | {
-        stripeType: 'AWAY'
-    }
+          stripeType: 'AWAY'
+      }
 
 export type MeasureStripe = {
     timeSeriesType: 'dataIntervals'

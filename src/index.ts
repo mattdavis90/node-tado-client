@@ -300,11 +300,15 @@ export class Tado {
         )
     }
 
-    setActiveTimeTable(home_id: number, zone_id: number, timetable: TimeTables): Promise<TimeTables> {
+    setActiveTimeTable(
+        home_id: number,
+        zone_id: number,
+        timetable: TimeTables
+    ): Promise<TimeTables> {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/schedule/activeTimetable`,
             'PUT',
-            timetable,
+            timetable
         )
     }
 
@@ -328,7 +332,7 @@ export class Tado {
         return this.apiCall(
             `/api/v2/homes/${home_id}/zones/${zone_id}/schedule/timetables/${timetable_id}/blocks/${day_type}`,
             'PUT',
-            timetable,
+            timetable
         )
     }
 
@@ -343,23 +347,25 @@ export class Tado {
         from: string,
         to: string,
         aggregate: RunningTimeAggregation,
-        summary_only: true,
+        summary_only: true
     ): Promise<RunningTimesSummaryOnly>
     getRunningTimes(
         home_id: number,
         from: string,
         to: string,
         aggregate: RunningTimeAggregation,
-        summary_only: false,
+        summary_only: false
     ): Promise<RunningTimes>
     getRunningTimes(
         home_id: number,
         from: string,
         to: string,
         aggregate: RunningTimeAggregation,
-        summary_only: boolean,
+        summary_only: boolean
     ): Promise<RunningTimes | RunningTimesSummaryOnly> {
-        return this.apiCall(`https://minder.tado.com/v1/homes/${home_id}/runningTimes?from=${from}&to=${to}&aggregate=${aggregate}&summary_only=${summary_only}`)
+        return this.apiCall(
+            `https://minder.tado.com/v1/homes/${home_id}/runningTimes?from=${from}&to=${to}&aggregate=${aggregate}&summary_only=${summary_only}`
+        )
     }
 
     clearZoneOverlay(home_id: number, zone_id: number): Promise<void> {
@@ -406,7 +412,11 @@ export class Tado {
         if (power.toUpperCase() == 'ON') {
             config.setting.power = 'ON'
 
-            if ((config.setting.type == 'HEATING' || config.setting.type == 'HOT_WATER') && temperature) {
+            if (
+                (config.setting.type == 'HEATING' ||
+                    config.setting.type == 'HOT_WATER') &&
+                temperature
+            ) {
                 config.setting.temperature = { celsius: temperature }
             }
 
@@ -437,7 +447,7 @@ export class Tado {
         }
 
         if (!termination) {
-            termination = "MANUAL"
+            termination = 'MANUAL'
         }
 
         if (typeof termination === 'string' && !isNaN(parseInt(termination))) {
@@ -501,7 +511,7 @@ export class Tado {
         } = {}
 
         if (!termination) {
-            termination = "MANUAL"
+            termination = 'MANUAL'
         }
 
         if (typeof termination === 'string' && !isNaN(parseInt(termination))) {
@@ -532,9 +542,9 @@ export class Tado {
                     termination: termination_config,
                 },
                 room: overlay.zone_id,
-            };
+            }
 
-            [
+            ;[
                 'power',
                 'mode',
                 'temperature',
@@ -560,9 +570,11 @@ export class Tado {
 
             if (overlay['fanLevel']) {
                 if (zone_state.setting['fanLevel']) {
-                    overlay_config.overlay.setting.fanLevel = overlay.fanLevel.toUpperCase()
+                    overlay_config.overlay.setting.fanLevel =
+                        overlay.fanLevel.toUpperCase()
                 } else {
-                    overlay_config.overlay.setting.fanSpeed = overlay.fanLevel.toUpperCase()
+                    overlay_config.overlay.setting.fanSpeed =
+                        overlay.fanLevel.toUpperCase()
                 }
             }
 
@@ -694,7 +706,9 @@ export class Tado {
     }
 
     setChildlock(serial_no: string, child_lock: boolean): Promise<void> {
-        return this.apiCall(`/api/v2/devices/${serial_no}/childLock`, 'PUT', { childLockEnabled: child_lock })
+        return this.apiCall(`/api/v2/devices/${serial_no}/childLock`, 'PUT', {
+            childLockEnabled: child_lock,
+        })
     }
 
     getAirComfort(home_id: number): Promise<AirComfort> {
@@ -712,8 +726,8 @@ export class Tado {
     }
 
     async getEnergyIQ(home_id: number): Promise<EnergyIQ> {
-        const home = await this.getHome(home_id);
-        const country = home.address.country;
+        const home = await this.getHome(home_id)
+        const country = home.address.country
         return this.apiCall(
             `https://energy-insights.tado.com/api/homes/${home_id}/consumption?country=${country}`
         )
@@ -725,7 +739,12 @@ export class Tado {
         )
     }
 
-    updateEnergyIQTariff(home_id: number, tariff_id: string, unit: IQUnit, tariffInCents: number) {
+    updateEnergyIQTariff(
+        home_id: number,
+        tariff_id: string,
+        unit: IQUnit,
+        tariffInCents: number
+    ) {
         if (!['m3', 'kWh'].includes(unit)) {
             throw new Error(`Invalid unit "${unit}" must be "m3", or "kWh"`)
         }

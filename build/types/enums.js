@@ -5,4 +5,4 @@ var DataPointType;
 (function (DataPointType) {
     DataPointType["PERCENTAGE"] = "PERCENTAGE";
     DataPointType["TEMPERATURE"] = "TEMPERATURE";
-})(DataPointType = exports.DataPointType || (exports.DataPointType = {}));
+})(DataPointType || (exports.DataPointType = DataPointType = {}));
