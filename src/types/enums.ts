@@ -3,12 +3,18 @@ export type Platform = 'iOS' | 'Android'
 export type TemperatureUnit = 'CELSIUS'
 
 export type Feature =
+    | 'EIQ_SETTINGS_AS_WEBVIEW'
     | 'ELIGIBLE_FOR_ENERGY_CONSUMPTION'
     | 'ENERGY_CONSUMPTION'
     | 'HEATING_ROOM_DETAILS_AS_WEBVIEW'
+    | 'HIDE_BOILER_REPAIR_SERVICE'
+    | 'HOME_SCREEN_AS_WEBVIEW_PROD'
     | 'HOME_SCREEN_AS_WEBVIEW_PROD_ANDROID'
+    | 'OWD_SETTINGS_AS_WEBVIEW'
+    | 'ROOMS_AND_DEVICES_SETTING_AS_WEBVIEW'
+    | 'SMART_SCHEDULE_AS_WEBVIEW'
 
-export type FanLevel = 'LEVEL1' | 'LEVEL2' | 'LEVEL3' | 'AUTO'
+export type FanLevel = 'LEVEL1' | 'LEVEL2' | 'LEVEL3' | 'LEVEL4' | 'AUTO' | 'SILENT'
 
 export type FanSpeed = 'HIGH' | 'MIDDLE' | 'LOW' | 'AUTO'
 

@@ -74,7 +74,7 @@ export type HomeContactDetail = {
 
 export type HomeAddress = {
     addressLine1: string
-    addressLine2: string
+    addressLine2: string | null
     zipCode: string
     city: string
     state: string | null
@@ -93,6 +93,7 @@ export type Home = {
     awayRadiusInMeters: number
     installationCompleted: boolean
     incidentDetection: HomeIncidentDetection
+    zonesCount: number
     skills: HomeSkill[]
     christmasModeEnabled: boolean
     showAutoAssistReminders: boolean
@@ -103,6 +104,9 @@ export type Home = {
     enabledFeatures: Feature[]
     isAirComfortEligible: boolean
     isBalanceAcEligible: boolean
+    isBalanceHpEligible: boolean
+    isEnergyIqEligible: boolean
+    isHeatSourceInstalled: boolean
 }
 
 export type MeHome = Pick<Home, 'id' | 'name'>
