@@ -437,10 +437,10 @@ export type StepTemperature = {
 }
 
 export type ZoneCapabilitiesAC = {
-    fanLevel: FanLevel,
+    fanLevel: FanLevel
     temperatures?: ZoneCapabilitiesTemperatures
-    verticalSwing: ACVerticalSwing,
-    horizontalSwing: ACHorizontalSwing,
+    verticalSwing: ACVerticalSwing
+    horizontalSwing: ACHorizontalSwing
 }
 
 export type ZoneCapabilitiesTemperatures = {
@@ -448,16 +448,19 @@ export type ZoneCapabilitiesTemperatures = {
     fahrenheit: StepTemperature
 }
 
-export type ZoneCapabilities = {
-    type: 'HEATING'
-    temperatures: ZoneCapabilitiesTemperatures
-} | {
-    type: 'AIR_CONDITIONING'
-} & {
-    [key in ACMode]: ZoneCapabilitiesAC
-} | {
-    type: 'HOT_WATER'
-}
+export type ZoneCapabilities =
+    | {
+          type: 'HEATING'
+          temperatures: ZoneCapabilitiesTemperatures
+      }
+    | ({
+          type: 'AIR_CONDITIONING'
+      } & {
+          [key in ACMode]: ZoneCapabilitiesAC
+      })
+    | {
+          type: 'HOT_WATER'
+      }
 
 export type AwayConfiguration = {
     type: ZoneType

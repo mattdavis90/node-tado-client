@@ -14,15 +14,34 @@ export type Feature =
     | 'ROOMS_AND_DEVICES_SETTING_AS_WEBVIEW'
     | 'SMART_SCHEDULE_AS_WEBVIEW'
 
-export type FanLevel = 'LEVEL1' | 'LEVEL2' | 'LEVEL3' | 'LEVEL4' | 'AUTO' | 'SILENT'
+export type FanLevel =
+    | 'LEVEL1'
+    | 'LEVEL2'
+    | 'LEVEL3'
+    | 'LEVEL4'
+    | 'AUTO'
+    | 'SILENT'
 
 export type FanSpeed = 'HIGH' | 'MIDDLE' | 'LOW' | 'AUTO'
 
 export type ACMode = 'COOL' | 'HEAT' | 'DRY' | 'FAN' | 'AUTO'
 
-export type ACVerticalSwing = 'ON' | 'MID' | 'AUTO' | 'UP' | 'DOWN' | 'MID_UP' | 'MID_DOWN'
+export type ACVerticalSwing =
+    | 'ON'
+    | 'MID'
+    | 'AUTO'
+    | 'UP'
+    | 'DOWN'
+    | 'MID_UP'
+    | 'MID_DOWN'
 
-export type ACHorizontalSwing = 'RIGHT' | 'MID' | 'LEFT' | 'ON' | 'MID_RIGHT' | 'MID_LEFT'
+export type ACHorizontalSwing =
+    | 'RIGHT'
+    | 'MID'
+    | 'LEFT'
+    | 'ON'
+    | 'MID_RIGHT'
+    | 'MID_LEFT'
 
 export type Termination = 'AUTO' | 'NEXT_TIME_BLOCK' | 'MANUAL'
 

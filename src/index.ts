@@ -534,7 +534,10 @@ export class Tado {
         }
 
         for (let overlay of overlays) {
-            const zone_capabilities = await this.getZoneCapabilities(home_id, overlay.zone_id)
+            const zone_capabilities = await this.getZoneCapabilities(
+                home_id,
+                overlay.zone_id
+            )
 
             const overlay_config: any = {
                 overlay: {
@@ -569,11 +572,13 @@ export class Tado {
             })
 
             if (overlay['fanLevel']) {
-                if (zone_capabilities.type == "AIR_CONDITIONING") {
+                if (zone_capabilities.type == 'AIR_CONDITIONING') {
                     if (zone_capabilities.AUTO.fanLevel !== undefined) {
-                        overlay_config.overlay.setting.fanLevel = overlay.fanLevel.toUpperCase()
+                        overlay_config.overlay.setting.fanLevel =
+                            overlay.fanLevel.toUpperCase()
                     } else {
-                        overlay_config.overlay.setting.fanSpeed = overlay.fanLevel.toUpperCase()
+                        overlay_config.overlay.setting.fanSpeed =
+                            overlay.fanLevel.toUpperCase()
                     }
                 }
             }
