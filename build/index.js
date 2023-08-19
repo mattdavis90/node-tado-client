@@ -302,7 +302,9 @@ class Tado {
             const zone_capabilities = await this.getZoneCapabilities(home_id, overlay.zone_id);
             const overlay_config = {
                 overlay: {
-                    setting: {},
+                    setting: {
+                        type: zone_capabilities.type,
+                    },
                     termination: termination_config,
                 },
                 room: overlay.zone_id,

@@ -541,7 +541,9 @@ export class Tado {
 
             const overlay_config: any = {
                 overlay: {
-                    setting: {},
+                    setting: {
+                        type: zone_capabilities.type,
+                    },
                     termination: termination_config,
                 },
                 room: overlay.zone_id,
