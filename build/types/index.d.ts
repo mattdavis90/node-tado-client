@@ -1,5 +1,5 @@
 export * from './enums';
-import { AirComfortFreshnessValue, AwayConfigurationPreheatingLevel, DataPointType, DeviceBatteryState, DeviceCharacteristicsCapabilities, DeviceOrientation, DeviceType, EnergyIQConsumptionInputState, EnergySavingReportUnit, FanLevel, FanSpeed, Feature, HumidityLevel, IQUnit, OutdoorPollensTypeValue, OutdoorQualityLevel, Platform, StatePresence, StripeTypeValue, TemperatureLevel, TemperatureUnit, TimeTableDayType, WeatherStateValue, ZoneDeviceDuty, ZoneType } from './enums';
+import { ACHorizontalSwing, ACMode, ACVerticalSwing, AirComfortFreshnessValue, AwayConfigurationPreheatingLevel, DataPointType, DeviceBatteryState, DeviceCharacteristicsCapabilities, DeviceOrientation, DeviceType, EnergyIQConsumptionInputState, EnergySavingReportUnit, FanLevel, FanSpeed, Feature, HumidityLevel, IQUnit, OutdoorPollensTypeValue, OutdoorQualityLevel, Platform, StatePresence, StripeTypeValue, TemperatureLevel, TemperatureUnit, TimeTableDayType, WeatherStateValue, ZoneDeviceDuty, ZoneType } from './enums';
 export type DeepPartial<T> = T extends object ? {
     [P in keyof T]?: DeepPartial<T[P]>;
 } : T;
@@ -35,7 +35,7 @@ export type HomeContactDetail = {
 };
 export type HomeAddress = {
     addressLine1: string;
-    addressLine2: string;
+    addressLine2: string | null;
     zipCode: string;
     city: string;
     state: string | null;
@@ -53,6 +53,7 @@ export type Home = {
     awayRadiusInMeters: number;
     installationCompleted: boolean;
     incidentDetection: HomeIncidentDetection;
+    zonesCount: number;
     skills: HomeSkill[];
     christmasModeEnabled: boolean;
     showAutoAssistReminders: boolean;
@@ -63,6 +64,9 @@ export type Home = {
     enabledFeatures: Feature[];
     isAirComfortEligible: boolean;
     isBalanceAcEligible: boolean;
+    isBalanceHpEligible: boolean;
+    isEnergyIqEligible: boolean;
+    isHeatSourceInstalled: boolean;
 };
 export type MeHome = Pick<Home, 'id' | 'name'>;
 export type MobileDeviceSettingsPushNotification = {
@@ -342,13 +346,25 @@ export type StepTemperature = {
     max: number;
     step: number;
 };
+export type ZoneCapabilitiesAC = {
+    fanLevel: FanLevel;
+    temperatures?: ZoneCapabilitiesTemperatures;
+    verticalSwing: ACVerticalSwing;
+    horizontalSwing: ACHorizontalSwing;
+};
 export type ZoneCapabilitiesTemperatures = {
     celsius: StepTemperature;
     fahrenheit: StepTemperature;
 };
 export type ZoneCapabilities = {
-    type: ZoneType;
+    type: 'HEATING';
     temperatures: ZoneCapabilitiesTemperatures;
+} | {
+    type: 'AIR_CONDITIONING';
+} & {
+    [key in ACMode]: ZoneCapabilitiesAC;
+} | {
+    type: 'HOT_WATER';
 };
 export type AwayConfiguration = {
     type: ZoneType;

@@ -20,6 +20,10 @@ export type FanSpeed = 'HIGH' | 'MIDDLE' | 'LOW' | 'AUTO'
 
 export type ACMode = 'COOL' | 'HEAT' | 'DRY' | 'FAN' | 'AUTO'
 
+export type ACVerticalSwing = 'ON' | 'MID' | 'AUTO' | 'UP' | 'DOWN' | 'MID_UP' | 'MID_DOWN'
+
+export type ACHorizontalSwing = 'RIGHT' | 'MID' | 'LEFT' | 'ON' | 'MID_RIGHT' | 'MID_LEFT'
+
 export type Termination = 'AUTO' | 'NEXT_TIME_BLOCK' | 'MANUAL'
 
 export type OutdoorQualityLevel = 'EXCELLENT' | 'NONE'

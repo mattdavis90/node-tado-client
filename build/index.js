@@ -213,7 +213,9 @@ class Tado {
         };
         if (power.toUpperCase() == 'ON') {
             config.setting.power = 'ON';
-            if ((config.setting.type == 'HEATING' || config.setting.type == 'HOT_WATER') && temperature) {
+            if ((config.setting.type == 'HEATING' ||
+                config.setting.type == 'HOT_WATER') &&
+                temperature) {
                 config.setting.temperature = { celsius: temperature };
             }
             if (config.setting.type == 'AIR_CONDITIONING') {
@@ -240,7 +242,7 @@ class Tado {
             config.setting.power = 'OFF';
         }
         if (!termination) {
-            termination = "MANUAL";
+            termination = 'MANUAL';
         }
         if (typeof termination === 'string' && !isNaN(parseInt(termination))) {
             termination = parseInt(termination);
@@ -275,7 +277,7 @@ class Tado {
     async setZoneOverlays(home_id, overlays, termination) {
         let termination_config = {};
         if (!termination) {
-            termination = "MANUAL";
+            termination = 'MANUAL';
         }
         if (typeof termination === 'string' && !isNaN(parseInt(termination))) {
             termination = parseInt(termination);
@@ -297,10 +299,10 @@ class Tado {
             overlays: [],
         };
         for (let overlay of overlays) {
-            const zone_state = await this.getZoneState(home_id, overlay.zone_id);
+            const zone_capabilities = await this.getZoneCapabilities(home_id, overlay.zone_id);
             const overlay_config = {
                 overlay: {
-                    setting: zone_state.setting,
+                    setting: {},
                     termination: termination_config,
                 },
                 room: overlay.zone_id,
@@ -324,11 +326,13 @@ class Tado {
                 }
             });
             if (overlay['fanLevel']) {
-                if (zone_state.setting['fanLevel']) {
-                    overlay_config.overlay.setting.fanLevel = overlay.fanLevel.toUpperCase();
-                }
-                else {
-                    overlay_config.overlay.setting.fanSpeed = overlay.fanLevel.toUpperCase();
+                if (zone_capabilities.type == "AIR_CONDITIONING") {
+                    if (zone_capabilities.AUTO.fanLevel !== undefined) {
+                        overlay_config.overlay.setting.fanLevel = overlay.fanLevel.toUpperCase();
+                    }
+                    else {
+                        overlay_config.overlay.setting.fanSpeed = overlay.fanLevel.toUpperCase();
+                    }
                 }
             }
             config.overlays.push(overlay_config);
@@ -396,7 +400,9 @@ class Tado {
         return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow`, 'DELETE');
     }
     setChildlock(serial_no, child_lock) {
-        return this.apiCall(`/api/v2/devices/${serial_no}/childLock`, 'PUT', { childLockEnabled: child_lock });
+        return this.apiCall(`/api/v2/devices/${serial_no}/childLock`, 'PUT', {
+            childLockEnabled: child_lock,
+        });
     }
     getAirComfort(home_id) {
         return this.apiCall(`/api/v2/homes/${home_id}/airComfort`);

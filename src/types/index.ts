@@ -1,5 +1,8 @@
 export * from './enums'
 import {
+    ACHorizontalSwing,
+    ACMode,
+    ACVerticalSwing,
     AirComfortFreshnessValue,
     AwayConfigurationPreheatingLevel,
     DataPointType,
@@ -433,14 +436,27 @@ export type StepTemperature = {
     step: number
 }
 
+export type ZoneCapabilitiesAC = {
+    fanLevel: FanLevel,
+    temperatures?: ZoneCapabilitiesTemperatures
+    verticalSwing: ACVerticalSwing,
+    horizontalSwing: ACHorizontalSwing,
+}
+
 export type ZoneCapabilitiesTemperatures = {
     celsius: StepTemperature
     fahrenheit: StepTemperature
 }
 
 export type ZoneCapabilities = {
-    type: ZoneType
+    type: 'HEATING'
     temperatures: ZoneCapabilitiesTemperatures
+} | {
+    type: 'AIR_CONDITIONING'
+} & {
+    [key in ACMode]: ZoneCapabilitiesAC
+} | {
+    type: 'HOT_WATER'
 }
 
 export type AwayConfiguration = {
