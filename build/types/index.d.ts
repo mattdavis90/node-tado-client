@@ -359,11 +359,11 @@ export type ZoneCapabilitiesTemperatures = {
 export type ZoneCapabilities = {
     type: 'HEATING';
     temperatures: ZoneCapabilitiesTemperatures;
-} | {
+} | ({
     type: 'AIR_CONDITIONING';
 } & {
     [key in ACMode]: ZoneCapabilitiesAC;
-} | {
+}) | {
     type: 'HOT_WATER';
 };
 export type AwayConfiguration = {

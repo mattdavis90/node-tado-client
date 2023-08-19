@@ -326,12 +326,14 @@ class Tado {
                 }
             });
             if (overlay['fanLevel']) {
-                if (zone_capabilities.type == "AIR_CONDITIONING") {
+                if (zone_capabilities.type == 'AIR_CONDITIONING') {
                     if (zone_capabilities.AUTO.fanLevel !== undefined) {
-                        overlay_config.overlay.setting.fanLevel = overlay.fanLevel.toUpperCase();
+                        overlay_config.overlay.setting.fanLevel =
+                            overlay.fanLevel.toUpperCase();
                     }
                     else {
-                        overlay_config.overlay.setting.fanSpeed = overlay.fanLevel.toUpperCase();
+                        overlay_config.overlay.setting.fanSpeed =
+                            overlay.fanLevel.toUpperCase();
                     }
                 }
             }
