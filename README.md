@@ -122,11 +122,12 @@ tado.setZoneOverlay(home_id, zone_id, power, temperature, termination);
 /* EnergyIQ & Savings methods */
 /**********************/
 tado.getEnergyIQ(home_id);
-tado.getEnergyIQTariff(home_id)
-tado.updateEnergyIQTariff(home_id, unit, tariffInCents)
-tado.getEnergyIQMeterReadings(home_id)
+tado.getEnergyIQTariff(home_id);
+tado.addEnergyIQTariff(home_id, unit, startDate, endDate, tariffInCents);
+tado.updateEnergyIQTariff(home_id, unit, tariffInCents);
+tado.getEnergyIQMeterReadings(home_id);
 tado.addEnergyIQMeterReading(home_id, date, reading);
-tado.deleteEnergyIQMeterReading(home_id, reading_id)
+tado.deleteEnergyIQMeterReading(home_id, reading_id);
 tado.getEnergySavingsReport(home_id, year, month, countryCode); // countryCode should match home country, it can be retrieved from getHome(home_id).address.country
 ```
 
