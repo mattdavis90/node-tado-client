@@ -746,6 +746,24 @@ export class Tado {
         )
     }
 
+    addEnergyIQTariff(
+        home_id: number,
+        unit: IQUnit,
+        startDate: string,
+	    endDate: string,
+        tariffInCents: number
+    ) {
+        if (!['m3', 'kWh'].includes(unit)) {
+            throw new Error(`Invalid unit "${unit}" must be "m3", or "kWh"`)
+        }
+
+        return this.apiCall(
+            `https://energy-insights.tado.com/api/homes/${home_id}/tariffs`,
+            'post',
+            { unit: unit, startDate: startDate, endDate: endDate, tariffInCents: tariffInCents }
+        )
+    }
+
     updateEnergyIQTariff(
         home_id: number,
         tariff_id: string,
