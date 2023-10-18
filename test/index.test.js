@@ -222,9 +222,6 @@ describe('High-level API tests', () => {
                 done()
             })
             .catch(done)
-            .catch((err) => {
-                console.log(err)
-            })
     })
 
     it('Should get the installations', (done) => {
