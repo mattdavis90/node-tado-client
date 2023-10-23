@@ -426,6 +426,17 @@ class Tado {
     getEnergyIQTariff(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariffs`);
     }
+    addEnergyIQTariff(home_id, unit, startDate, endDate, tariffInCents) {
+        if (!['m3', 'kWh'].includes(unit)) {
+            throw new Error(`Invalid unit "${unit}" must be "m3", or "kWh"`);
+        }
+        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariffs`, 'post', {
+            unit: unit,
+            startDate: startDate,
+            endDate: endDate,
+            tariffInCents: tariffInCents,
+        });
+    }
     updateEnergyIQTariff(home_id, tariff_id, unit, tariffInCents) {
         if (!['m3', 'kWh'].includes(unit)) {
             throw new Error(`Invalid unit "${unit}" must be "m3", or "kWh"`);
