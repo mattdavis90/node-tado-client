@@ -69,9 +69,11 @@ describe('OAuth2 tests', () => {
 
             // Force a refresh
             tado._accessToken.token.expires_at = new Date()
-            tado._refreshToken().then((res) => {
-                done()
-            })
+            tado._refreshToken()
+                .then((res) => {
+                    done()
+                })
+                .catch(done)
         })
     })
 })
@@ -86,12 +88,14 @@ describe('Low-level API tests', () => {
         nock('https://my.tado.com').get('/api/v2/me').reply(200, me_response)
 
         tado.login('username', 'password').then((response) => {
-            tado.apiCall('/api/v2/me').then((response) => {
-                expect(typeof response).to.equal('object')
-                expect(response.name).to.equal('John Doe')
+            tado.apiCall('/api/v2/me')
+                .then((response) => {
+                    expect(typeof response).to.equal('object')
+                    expect(response.name).to.equal('John Doe')
 
-                done()
-            })
+                    done()
+                })
+                .catch(done)
         })
     })
 
@@ -112,9 +116,11 @@ describe('Low-level API tests', () => {
         nock('https://my.tado.com').get('/api/v2/me').reply(500, {})
 
         tado.login('username', 'password').then((response) => {
-            tado.apiCall('/api/v2/me').catch((error) => {
-                done()
-            })
+            tado.apiCall('/api/v2/me')
+                .catch((error) => {
+                    done()
+                })
+                .catch(done)
         })
     })
 })
@@ -145,7 +151,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it('Should get home', (done) => {
@@ -165,7 +171,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it('Should get the weather', (done) => {
@@ -181,7 +187,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it('Should get the devices', (done) => {
@@ -198,7 +204,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it('Should get the device temperature offset', (done) => {
@@ -215,9 +221,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {
-                console.log(err)
-            })
+            .catch(done)
     })
 
     it('Should get the installations', (done) => {
@@ -237,7 +241,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it('Should get the users', (done) => {
@@ -254,7 +258,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it('should get the home state', (done) => {
@@ -268,7 +272,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it('Should get the mobile devices', (done) => {
@@ -282,7 +286,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it('Should get a mobile device', (done) => {
@@ -296,7 +300,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it('Should get a mobile device settings', (done) => {
@@ -310,7 +314,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it('Should get zones', (done) => {
@@ -324,7 +328,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it("Should get a zone's state", (done) => {
@@ -338,7 +342,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it("Should get a zone's capabilities", (done) => {
@@ -352,7 +356,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it("Should get a zone's day report", (done) => {
@@ -366,7 +370,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it("Should get a zone's overlay", (done) => {
@@ -380,7 +384,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it("should get a zone's timetables", (done) => {
@@ -394,7 +398,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it("should get a zone's away configuration", (done) => {
@@ -408,7 +412,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it('should get a timetable', (done) => {
@@ -422,7 +426,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it("Should clear a zone's overlay", (done) => {
@@ -436,7 +440,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it("Should set a zone's overlay to Off", (done) => {
@@ -456,7 +460,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it("Should set a zone's overlay to On with no temperature", (done) => {
@@ -476,7 +480,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it("Should set a zone's overlay to On with Timer resume", (done) => {
@@ -496,7 +500,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it("Should set a zone's overlay to On with Auto resume", (done) => {
@@ -516,7 +520,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it("Should set a zone's overlay to On until next time block ", (done) => {
@@ -536,7 +540,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it("Should set a device's temperature offset", (done) => {
@@ -552,7 +556,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it('Should get identify a device', (done) => {
@@ -566,7 +570,7 @@ describe('High-level API tests', () => {
 
                 done()
             })
-            .catch((err) => {})
+            .catch(done)
     })
 
     it('Should get energyIQ', (done) => {
@@ -579,10 +583,7 @@ describe('High-level API tests', () => {
                 expect(typeof response).to.equal('object')
                 done()
             })
-            .catch((err) => {
-                console.log(err)
-                done()
-            })
+            .catch(done)
     })
 
     it('Should get energyIQ Tariff', (done) => {
@@ -595,10 +596,7 @@ describe('High-level API tests', () => {
                 expect(typeof response).to.equal('object')
                 done()
             })
-            .catch((err) => {
-                console.log(err)
-                done()
-            })
+            .catch(done)
     })
 
     it('Should update energyIQ Tariff', (done) => {
@@ -608,15 +606,12 @@ describe('High-level API tests', () => {
                 return req
             })
 
-        tado.updateEnergyIQTariff('1907', 'm3', 303)
+        tado.updateEnergyIQTariff('1907', 'tariff-id', 'm3', 303)
             .then((response) => {
                 expect(typeof response).to.equal('object')
                 done()
             })
-            .catch((err) => {
-                console.log(err)
-                done()
-            })
+            .catch(done)
     })
 
     it('Should get energyIQ meter readings', (done) => {
@@ -629,10 +624,7 @@ describe('High-level API tests', () => {
                 expect(typeof response).to.equal('object')
                 done()
             })
-            .catch((err) => {
-                console.log(err)
-                done()
-            })
+            .catch(done)
     })
 
     it('Should add energyIQ meter readings', (done) => {
@@ -647,10 +639,7 @@ describe('High-level API tests', () => {
                 expect(typeof response).to.equal('object')
                 done()
             })
-            .catch((err) => {
-                console.log(err)
-                done()
-            })
+            .catch(done)
     })
 
     it('Should get energyIQ savings', (done) => {
@@ -663,9 +652,6 @@ describe('High-level API tests', () => {
                 expect(typeof response).to.equal('object')
                 done()
             })
-            .catch((err) => {
-                console.log(err)
-                done()
-            })
+            .catch(done)
     })
 })
