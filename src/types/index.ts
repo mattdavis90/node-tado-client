@@ -154,7 +154,7 @@ export type MobileDevice = {
     name: string
     id: number
     settings: MobileDeviceSettings
-    location: Nullable<MobileDeviceLocation>
+    location?: Nullable<MobileDeviceLocation>
     deviceMetadata: MobileDeviceMetadata
 }
 
