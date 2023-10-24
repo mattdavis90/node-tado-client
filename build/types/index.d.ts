@@ -3,6 +3,7 @@ import { ACHorizontalSwing, ACMode, ACVerticalSwing, AirComfortFreshnessValue, A
 export type DeepPartial<T> = T extends object ? {
     [P in keyof T]?: DeepPartial<T[P]>;
 } : T;
+type Nullable<T> = T | null;
 /** Example: `'en'`  */
 export type Locale = string;
 /** Example: `'Europe/Paris'` */
@@ -102,7 +103,7 @@ export type MobileDevice = {
     name: string;
     id: number;
     settings: MobileDeviceSettings;
-    location: MobileDeviceLocation;
+    location?: Nullable<MobileDeviceLocation>;
     deviceMetadata: MobileDeviceMetadata;
 };
 export type Me = {
