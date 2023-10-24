@@ -37,6 +37,8 @@ export type DeepPartial<T> = T extends object
       }
     : T
 
+type Nullable<T> = T | null
+
 // tado
 /** Example: `'en'`  */
 export type Locale = string
@@ -152,7 +154,7 @@ export type MobileDevice = {
     name: string
     id: number
     settings: MobileDeviceSettings
-    location: MobileDeviceLocation
+    location?: Nullable<MobileDeviceLocation>
     deviceMetadata: MobileDeviceMetadata
 }
 
