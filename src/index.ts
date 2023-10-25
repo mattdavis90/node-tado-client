@@ -773,6 +773,8 @@ export class Tado {
         home_id: number,
         tariff_id: string,
         unit: IQUnit,
+        startDate: string,
+        endDate: string,
         tariffInCents: number
     ) {
         if (!['m3', 'kWh'].includes(unit)) {
@@ -782,7 +784,7 @@ export class Tado {
         return this.apiCall(
             `https://energy-insights.tado.com/api/homes/${home_id}/tariffs/${tariff_id}`,
             'put',
-            { unit: unit, tariffInCents: tariffInCents }
+            { unit: unit, startDate: startDate, endDate: endDate, tariffInCents: tariffInCents }
         )
     }
 

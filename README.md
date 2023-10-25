@@ -124,7 +124,7 @@ tado.setZoneOverlay(home_id, zone_id, power, temperature, termination);
 tado.getEnergyIQ(home_id);
 tado.getEnergyIQTariff(home_id);
 tado.addEnergyIQTariff(home_id, unit, startDate, endDate, tariffInCents);
-tado.updateEnergyIQTariff(home_id, tariff_id, unit, tariffInCents);
+tado.updateEnergyIQTariff(home_id, tariff_id, unit, startDate, endDate, tariffInCents);
 tado.getEnergyIQMeterReadings(home_id);
 tado.addEnergyIQMeterReading(home_id, date, reading);
 tado.deleteEnergyIQMeterReading(home_id, reading_id);
