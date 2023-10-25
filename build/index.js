@@ -329,7 +329,7 @@ class Tado {
             });
             if (overlay['fanLevel']) {
                 if (zone_capabilities.type == 'AIR_CONDITIONING') {
-                    if (zone_capabilities.AUTO.fanLevel !== undefined) {
+                    if (zone_capabilities.FAN.fanLevel !== undefined) {
                         overlay_config.overlay.setting.fanLevel =
                             overlay.fanLevel.toUpperCase();
                     }
@@ -437,11 +437,16 @@ class Tado {
             tariffInCents: tariffInCents,
         });
     }
-    updateEnergyIQTariff(home_id, tariff_id, unit, tariffInCents) {
+    updateEnergyIQTariff(home_id, tariff_id, unit, startDate, endDate, tariffInCents) {
         if (!['m3', 'kWh'].includes(unit)) {
             throw new Error(`Invalid unit "${unit}" must be "m3", or "kWh"`);
         }
-        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariffs/${tariff_id}`, 'put', { unit: unit, tariffInCents: tariffInCents });
+        return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariffs/${tariff_id}`, 'put', {
+            unit: unit,
+            startDate: startDate,
+            endDate: endDate,
+            tariffInCents: tariffInCents,
+        });
     }
     getEnergyIQMeterReadings(home_id) {
         return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/meterReadings`);
