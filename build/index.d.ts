@@ -87,7 +87,7 @@ export declare class Tado {
     getEnergyIQ(home_id: number): Promise<EnergyIQ>;
     getEnergyIQTariff(home_id: number): Promise<EnergyIQTariff>;
     addEnergyIQTariff(home_id: number, unit: IQUnit, startDate: string, endDate: string, tariffInCents: number): Promise<unknown>;
-    updateEnergyIQTariff(home_id: number, tariff_id: string, unit: IQUnit, tariffInCents: number): Promise<unknown>;
+    updateEnergyIQTariff(home_id: number, tariff_id: string, unit: IQUnit, startDate: string, endDate: string, tariffInCents: number): Promise<unknown>;
     getEnergyIQMeterReadings(home_id: number): Promise<EnergyIQMeterReadings>;
     /**
      * @param date format `YYYY-MM-DD`
