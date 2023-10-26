@@ -206,9 +206,11 @@ class Tado {
      */
     async setZoneOverlay(home_id, zone_id, power, temperature, termination, fan_speed, ac_mode) {
         console.warn('This method of setting zone overlays will soon be deprecated, please use setZoneOverlays');
-        const zone_state = await this.getZoneState(home_id, zone_id);
+        const zone_capabilities = await this.getZoneCapabilities(home_id, zone_id);
         const config = {
-            setting: zone_state.setting,
+            setting: {
+                type: zone_capabilities.type,
+            },
             termination: {},
         };
         if (power.toUpperCase() == 'ON') {
@@ -218,7 +220,7 @@ class Tado {
                 temperature) {
                 config.setting.temperature = { celsius: temperature };
             }
-            if (config.setting.type == 'AIR_CONDITIONING') {
+            if (zone_capabilities.type == 'AIR_CONDITIONING') {
                 if (ac_mode) {
                     config.setting.mode = ac_mode.toUpperCase();
                 }
@@ -228,7 +230,7 @@ class Tado {
                         config.setting.temperature = { celsius: temperature };
                     }
                     if (fan_speed) {
-                        if (zone_state.setting['fanLevel']) {
+                        if (zone_capabilities.FAN.fanLevel !== undefined) {
                             config.setting.fanLevel = fan_speed.toUpperCase();
                         }
                         else {
@@ -257,8 +259,6 @@ class Tado {
             config.termination.typeSkillBasedApp = 'MANUAL';
         }
         else if (termination.toLowerCase() == 'auto') {
-            // Not sure how to test this is the web app
-            // But seems to by a combo of 'next_time_block' and geo
             config.termination.type = 'TADO_MODE';
         }
         else if (termination.toLowerCase() == 'next_time_block') {

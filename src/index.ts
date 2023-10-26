@@ -394,7 +394,10 @@ export class Tado {
         console.warn(
             'This method of setting zone overlays will soon be deprecated, please use setZoneOverlays'
         )
-        const zone_capabilities = await this.getZoneCapabilities(home_id, zone_id)
+        const zone_capabilities = await this.getZoneCapabilities(
+            home_id,
+            zone_id
+        )
 
         const config: {
             setting: DeepPartial<TimeTableSettings> & {
