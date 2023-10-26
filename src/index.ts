@@ -394,7 +394,7 @@ export class Tado {
         console.warn(
             'This method of setting zone overlays will soon be deprecated, please use setZoneOverlays'
         )
-        const zone_state = await this.getZoneState(home_id, zone_id)
+        const zone_capabilities = await this.getZoneCapabilities(home_id, zone_id)
 
         const config: {
             setting: DeepPartial<TimeTableSettings> & {
@@ -405,7 +405,9 @@ export class Tado {
             termination: any
             type?: any
         } = {
-            setting: zone_state.setting,
+            setting: {
+                type: zone_capabilities.type,
+            },
             termination: {},
         }
 
@@ -420,7 +422,7 @@ export class Tado {
                 config.setting.temperature = { celsius: temperature }
             }
 
-            if (config.setting.type == 'AIR_CONDITIONING') {
+            if (zone_capabilities.type == 'AIR_CONDITIONING') {
                 if (ac_mode) {
                     config.setting.mode = ac_mode.toUpperCase()
                 }
@@ -434,7 +436,7 @@ export class Tado {
                     }
 
                     if (fan_speed) {
-                        if (zone_state.setting['fanLevel']) {
+                        if (zone_capabilities.FAN.fanLevel !== undefined) {
                             config.setting.fanLevel = fan_speed.toUpperCase()
                         } else {
                             config.setting.fanSpeed = fan_speed.toUpperCase()
@@ -462,8 +464,6 @@ export class Tado {
             config.type = 'MANUAL'
             config.termination.typeSkillBasedApp = 'MANUAL'
         } else if (termination.toLowerCase() == 'auto') {
-            // Not sure how to test this is the web app
-            // But seems to by a combo of 'next_time_block' and geo
             config.termination.type = 'TADO_MODE'
         } else if (termination.toLowerCase() == 'next_time_block') {
             config.type = 'MANUAL'
