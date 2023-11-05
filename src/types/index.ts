@@ -389,7 +389,8 @@ export type ZoneControl = {
 }
 
 export type ZoneStates = {
-    zoneStates: ZoneState[]
+    // The string key looks to always be a stringified integer
+    zoneStates: Record<string, ZoneState>
 }
 
 export type HeatingCircuit = {
