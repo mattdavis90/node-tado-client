@@ -33,8 +33,8 @@ import {
 // utils
 export type DeepPartial<T> = T extends object
     ? {
-          [P in keyof T]?: DeepPartial<T[P]>
-      }
+        [P in keyof T]?: DeepPartial<T[P]>
+    }
     : T
 
 type Nullable<T> = T | null
@@ -388,9 +388,9 @@ export type ZoneControl = {
     }
 }
 
+type ZoneId = string
 export type ZoneStates = {
-    // The string key looks to always be a stringified integer
-    zoneStates: Record<string, ZoneState>
+    zoneStates: Record<ZoneId, ZoneState>
 }
 
 export type HeatingCircuit = {
@@ -453,17 +453,17 @@ export type ZoneCapabilitiesTemperatures = {
 
 export type ZoneCapabilities =
     | {
-          type: 'HEATING'
-          temperatures: ZoneCapabilitiesTemperatures
-      }
+        type: 'HEATING'
+        temperatures: ZoneCapabilitiesTemperatures
+    }
     | ({
-          type: 'AIR_CONDITIONING'
-      } & {
-          [key in ACMode]: ZoneCapabilitiesAC
-      })
+        type: 'AIR_CONDITIONING'
+    } & {
+            [key in ACMode]: ZoneCapabilitiesAC
+        })
     | {
-          type: 'HOT_WATER'
-      }
+        type: 'HOT_WATER'
+    }
 
 export type AwayConfiguration = {
     type: ZoneType
@@ -678,16 +678,16 @@ export type MeasurePercentage = {
 
 export type MeasureStripeData =
     | {
-          stripeType: StripeTypeValue
-          setting: {
-              type: 'HEATING'
-              power: Power
-              temperature: Temperature | null
-          }
-      }
+        stripeType: StripeTypeValue
+        setting: {
+            type: 'HEATING'
+            power: Power
+            temperature: Temperature | null
+        }
+    }
     | {
-          stripeType: 'AWAY'
-      }
+        stripeType: 'AWAY'
+    }
 
 export type MeasureStripe = {
     timeSeriesType: 'dataIntervals'
