@@ -366,11 +366,11 @@ export type ZoneState = {
     geolocationOverrideDisableTime: boolean | null
     preparation: any // TODO:
     setting: TimeTableSettings
-    overlayType: 'MANUAL'
-    overlay: ZoneOverlay
-    openWindow: ZoneOpenWindow
-    nextScheduleChange: ZoneStateNextScheduleChange
-    nextTimeBlock: ZoneNextTimeBlock
+    overlayType: Nullable<'MANUAL'>
+    overlay: Nullable<ZoneOverlay>
+    openWindow: Nullable<ZoneOpenWindow>
+    nextScheduleChange: Nullable<ZoneStateNextScheduleChange>
+    nextTimeBlock: Nullable<ZoneNextTimeBlock>
     link: ZoneLink
     activityDataPoints: ZoneActivityDataPoints
     sensorDataPoints: ZoneStateSensorDataPoints
