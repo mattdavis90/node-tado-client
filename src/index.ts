@@ -728,11 +728,9 @@ export class Tado {
     async getAirComfortDetailed(home_id: number): Promise<AirComfortDetailed> {
         const home = await this.getHome(home_id)
         const location = `latitude=${home.geolocation.latitude}&longitude=${home.geolocation.longitude}`
-        const login = `username=${this._username}&password=${this._password}`
-        const resp = await axios(
-            `https://acme.tado.com/v1/homes/${home_id}/airComfort?${location}&${login}`
+        return this.apiCall(
+            `https://acme.tado.com/v1/homes/${home_id}/airComfort?${location}`
         )
-        return resp.data
     }
 
     async getEnergyIQ(home_id: number): Promise<EnergyIQ> {
