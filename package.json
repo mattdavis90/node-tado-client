@@ -5,17 +5,17 @@
     "main": "build/index.js",
     "types": "build/index.d.ts",
     "dependencies": {
-        "axios": "^1.5.1",
+        "axios": "^1.6.2",
         "simple-oauth2": "^5.0.0"
     },
     "devDependencies": {
-        "@types/node": "^20.8.7",
-        "@types/simple-oauth2": "^5.0.6",
+        "@types/node": "^20.9.1",
+        "@types/simple-oauth2": "^5.0.7",
         "chai": "^4.3.10",
         "mocha": "^10.2.0",
-        "nock": "^13.3.6",
+        "nock": "^13.3.8",
         "nyc": "^15.1.0",
-        "prettier": "^3.0.3",
+        "prettier": "^3.1.0",
         "typescript": "^5.2.2"
     },
     "scripts": {
