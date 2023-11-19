@@ -1,6 +1,6 @@
 {
     "name": "node-tado-client",
-    "version": "0.13.8",
+    "version": "0.14.0",
     "description": "A Tado client for nodejs",
     "main": "build/index.js",
     "types": "build/index.d.ts",

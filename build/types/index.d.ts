@@ -285,11 +285,11 @@ export type ZoneState = {
     geolocationOverrideDisableTime: boolean | null;
     preparation: any;
     setting: TimeTableSettings;
-    overlayType: 'MANUAL';
-    overlay: ZoneOverlay;
-    openWindow: ZoneOpenWindow;
-    nextScheduleChange: ZoneStateNextScheduleChange;
-    nextTimeBlock: ZoneNextTimeBlock;
+    overlayType: Nullable<'MANUAL'>;
+    overlay: Nullable<ZoneOverlay>;
+    openWindow: Nullable<ZoneOpenWindow>;
+    nextScheduleChange: Nullable<ZoneStateNextScheduleChange>;
+    nextTimeBlock: Nullable<ZoneNextTimeBlock>;
     link: ZoneLink;
     activityDataPoints: ZoneActivityDataPoints;
     sensorDataPoints: ZoneStateSensorDataPoints;
@@ -305,8 +305,9 @@ export type ZoneControl = {
         uis: Device[];
     };
 };
+type ZoneId = string;
 export type ZoneStates = {
-    zoneStates: ZoneState[];
+    zoneStates: Record<ZoneId, ZoneState>;
 };
 export type HeatingCircuit = {
     number: number;
