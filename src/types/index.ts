@@ -388,8 +388,9 @@ export type ZoneControl = {
     }
 }
 
+type ZoneId = string
 export type ZoneStates = {
-    zoneStates: ZoneState[]
+    zoneStates: Record<ZoneId, ZoneState>
 }
 
 export type HeatingCircuit = {
