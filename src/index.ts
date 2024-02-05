@@ -598,7 +598,7 @@ export class Tado {
      * @param temperatureOffset in celcius
      */
     setDeviceTemperatureOffset(
-        serial_no: number,
+        serial_no: string,
         temperatureOffset: number
     ): Promise<Temperature> {
         const config = {
