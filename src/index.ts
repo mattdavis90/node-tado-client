@@ -439,7 +439,10 @@ export class Tado {
                     }
 
                     if (fan_speed) {
-                        if (zone_capabilities.FAN.fanLevel !== undefined) {
+                        if (
+                            (zone_capabilities.FAN || zone_capabilities.AUTO)
+                                .fanLevel !== undefined
+                        ) {
                             config.setting.fanLevel = fan_speed.toUpperCase()
                         } else {
                             config.setting.fanSpeed = fan_speed.toUpperCase()
@@ -578,7 +581,10 @@ export class Tado {
 
             if (overlay['fanLevel']) {
                 if (zone_capabilities.type == 'AIR_CONDITIONING') {
-                    if (zone_capabilities.FAN.fanLevel !== undefined) {
+                    if (
+                        (zone_capabilities.FAN || zone_capabilities.AUTO)
+                            .fanLevel !== undefined
+                    ) {
                         overlay_config.overlay.setting.fanLevel =
                             overlay.fanLevel.toUpperCase()
                     } else {
