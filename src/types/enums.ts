@@ -114,3 +114,21 @@ export type EnergySavingReportUnit = 'HOURS' | 'PERCENTAGE'
 export type OutdoorPollensTypeValue = 'GRASS' | 'WEED' | 'TREE'
 
 export type StripeTypeValue = 'HOME' | 'OPEN_WINDOW_DETECTED' | 'OVERLAY_ACTIVE'
+
+export type HorizontalSwing =
+    | 'ON'
+    | 'OFF'
+    | 'RIGHT'
+    | 'MID-RIGHT'
+    | 'MID'
+    | 'MID-LEFT'
+    | 'LEFT'
+
+export type VerticalSwing =
+    | 'ON'
+    | 'OFF'
+    | 'DOWN'
+    | 'MID-DOWN'
+    | 'MID'
+    | 'MID-UP'
+    | 'UP'

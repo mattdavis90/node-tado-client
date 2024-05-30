@@ -43,6 +43,8 @@ import {
     FanLevel,
     TimeTableDayType,
     EnergyIQTariff,
+    VerticalSwing,
+    HorizontalSwing,
 } from './types'
 
 export * from './types'
@@ -379,6 +381,7 @@ export class Tado {
     }
 
     /**
+     * @deprecated use `setZoneOverlays` instead
      * @param temperature in celcius
      * @param termination if number then duration in seconds
      */
@@ -389,11 +392,10 @@ export class Tado {
         temperature: number,
         termination?: Termination | undefined | number,
         fan_speed?: FanSpeed | FanLevel,
-        ac_mode?: ACMode
+        ac_mode?: ACMode,
+        verticalSwing?: VerticalSwing,
+        horizontalSwing?: HorizontalSwing
     ): Promise<ZoneOverlay> {
-        console.warn(
-            'This method of setting zone overlays will soon be deprecated, please use setZoneOverlays'
-        )
         const zone_capabilities = await this.getZoneCapabilities(
             home_id,
             zone_id
@@ -428,6 +430,14 @@ export class Tado {
             if (zone_capabilities.type == 'AIR_CONDITIONING') {
                 if (ac_mode) {
                     config.setting.mode = ac_mode.toUpperCase()
+                }
+
+                if (verticalSwing) {
+                    config.setting.verticalSwing = verticalSwing
+                }
+
+                if (horizontalSwing) {
+                    config.setting.horizontalSwing = horizontalSwing
                 }
 
                 if (
@@ -505,8 +515,8 @@ export class Tado {
             mode?: any
             temperature?: Temperature
             fanLevel?: FanSpeed | FanLevel
-            verticalSwing?: any
-            horizontalSwing?: any
+            verticalSwing?: VerticalSwing
+            horizontalSwing?: HorizontalSwing
             light?: any
         }[],
         termination: Termination | undefined | number
