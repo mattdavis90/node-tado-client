@@ -1,1 +1,1 @@
-module.exports = { unit: 'm3', tariffInCents: 303 }
+module.exports = { unit: "m3", tariffInCents: 303 };

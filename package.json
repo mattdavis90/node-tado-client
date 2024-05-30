@@ -1,51 +1,56 @@
 {
-    "name": "node-tado-client",
-    "version": "0.14.3",
-    "description": "A Tado client for nodejs",
-    "main": "build/index.js",
-    "types": "build/index.d.ts",
-    "dependencies": {
-        "axios": "^1.6.2",
-        "simple-oauth2": "^5.0.0"
-    },
-    "devDependencies": {
-        "@types/node": "^20.9.1",
-        "@types/simple-oauth2": "^5.0.7",
-        "chai": "^4.3.10",
-        "husky": "^9.0.11",
-        "lint-staged": "^15.2.5",
-        "mocha": "^10.2.0",
-        "nock": "^13.3.8",
-        "nyc": "^15.1.0",
-        "prettier": "^3.1.0",
-        "typescript": "^5.2.2"
-    },
-    "scripts": {
-        "build": "tsc",
-        "test": "nyc mocha",
-        "format": "prettier -w -u .",
-        "prepare": "husky"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/mattdavis90/node-tado-client.git"
-    },
-    "keywords": [
-        "tado",
-        "tado-api"
-    ],
-    "author": "Matt Davis <mattdavis90@googlemail.com>",
-    "contributors": [
-        "Fabien JUIF <fabien.juif@gmail.com>"
-    ],
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/mattdavis90/node-tado-client/issues"
-    },
-    "homepage": "https://github.com/mattdavis90/node-tado-client#readme",
-    "lint-staged": {
-        "*": [
-            "prettier -w -u ."
-        ]
-    }
+  "name": "node-tado-client",
+  "version": "0.14.3",
+  "description": "A Tado client for nodejs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattdavis90/node-tado-client.git"
+  },
+  "author": "Matt Davis <mattdavis90@googlemail.com>",
+  "contributors": [
+    "Fabien JUIF <fabien.juif@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/mattdavis90/node-tado-client#readme",
+  "bugs": {
+    "url": "https://github.com/mattdavis90/node-tado-client/issues"
+  },
+  "keywords": [
+    "tado",
+    "tado-api"
+  ],
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "nyc mocha",
+    "format": "prettier -w -u .",
+    "lint": "eslint .",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "simple-oauth2": "^5.0.0"
+  },
+  "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.2.1",
+    "@types/node": "^20.9.1",
+    "@types/simple-oauth2": "^5.0.7",
+    "@typescript-eslint/eslint-plugin": "^7.11.0",
+    "chai": "^4.3.10",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.5",
+    "mocha": "^10.2.0",
+    "nock": "^13.3.8",
+    "nyc": "^15.1.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.2.2"
+  },
+  "lint-staged": {
+    "*": [
+      "prettier -w -u ."
+    ]
+  }
 }
