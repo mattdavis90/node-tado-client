@@ -248,10 +248,10 @@ class Tado {
       `https://minder.tado.com/v1/homes/${home_id}/runningTimes?from=${from}&to=${to}&aggregate=${aggregate}&summary_only=${summary_only}`,
     );
   }
+  /**
+   * @deprecated use `clearZoneOverlays` instead
+   */
   clearZoneOverlay(home_id, zone_id) {
-    console.warn(
-      "This method of clearing zone overlays will soon be deprecated, please use clearZoneOverlays",
-    );
     return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, "delete");
   }
   /**

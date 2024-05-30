@@ -337,10 +337,10 @@ export class Tado {
     );
   }
 
+  /**
+   * @deprecated use `clearZoneOverlays` instead
+   */
   clearZoneOverlay(home_id: number, zone_id: number): Promise<void> {
-    console.warn(
-      "This method of clearing zone overlays will soon be deprecated, please use clearZoneOverlays",
-    );
     return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, "delete");
   }
 

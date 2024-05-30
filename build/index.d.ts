@@ -130,6 +130,9 @@ export declare class Tado {
     aggregate: RunningTimeAggregation,
     summary_only: false,
   ): Promise<RunningTimes>;
+  /**
+   * @deprecated use `clearZoneOverlays` instead
+   */
   clearZoneOverlay(home_id: number, zone_id: number): Promise<void>;
   /**
    * @deprecated use `setZoneOverlays` instead
