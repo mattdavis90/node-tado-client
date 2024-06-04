@@ -112,6 +112,8 @@ tado.setWindowDetection(home_id, zone_id, enabled, timeout);
 tado.getAirComfort(home_id);
 tado.clearZoneOverlays(home_id, [zone_id, ...]);
 tado.setZoneOverlays(home_id, [overlays, ...], termination);
+tado.getZoneDefaultOverlay(home_id, zone_id);
+tado.setZoneDefaultOverlay(home_id, zone_id, overlay);
 /**********************/
 /* Deprecated methods */
 /**********************/
@@ -158,7 +160,8 @@ It is not required to use upper case in the values, the library will convert the
 The `termination` argument should be one of the following:
 
 -   A positive integer - this will be interpreted as the number of seconds to set the overlay for
--   "auto" - this will put the overlay into "TADO_MODE" _Note: This uses the default termination type set on the zone_
+-   "auto" - this will put the overlay into "TADO_MODE"
+    -   _Note: This uses the default termination type set on the zone_
 -   "next_time_block" - overlay until the next scheduled event
 -   Anything else - the overlay will exist indefinitely and will need manually clearing
 

@@ -9,6 +9,7 @@ import {
   AwayConfiguration,
   Country,
   DeepPartial,
+  DefaultOverlay,
   Device,
   EnergyIQ,
   EnergyIQMeterReadings,
@@ -531,6 +532,22 @@ export class Tado {
     }
 
     return this.apiCall(`/api/v2/homes/${home_id}/overlay`, "post", { overlays: config });
+  }
+
+  getZoneDefaultOverlay(home_id: number, zone_id: number): Promise<DefaultOverlay> {
+    return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/defaultOverlay`);
+  }
+
+  setZoneDefaultOverlay(
+    home_id: number,
+    zone_id: number,
+    overlay: DefaultOverlay,
+  ): Promise<DefaultOverlay> {
+    return this.apiCall(
+      `/api/v2/homes/${home_id}/zones/${zone_id}/defaultOverlay`,
+      "PUT",
+      overlay,
+    );
   }
 
   /**
