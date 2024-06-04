@@ -6,6 +6,7 @@ import {
   AirComfortDetailed,
   AwayConfiguration,
   Country,
+  DefaultOverlay,
   Device,
   EnergyIQ,
   EnergyIQMeterReadings,
@@ -159,6 +160,12 @@ export declare class Tado {
     overlays: SetZoneOverlaysArg[],
     termination: Termination | undefined | number,
   ): Promise<void>;
+  getZoneDefaultOverlay(home_id: number, zone_id: number): Promise<DefaultOverlay>;
+  setZoneDefaultOverlay(
+    home_id: number,
+    zone_id: number,
+    overlay: DefaultOverlay,
+  ): Promise<DefaultOverlay>;
   /**
    * @param temperatureOffset in celcius
    */

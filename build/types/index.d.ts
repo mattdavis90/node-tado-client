@@ -267,6 +267,18 @@ export type ZoneMultiOverlay = {
   };
   room: number;
 };
+export type DefaultOverlay =
+  | {
+      terminationCondition: {
+        type: "MANUAL" | "TADO_MODE";
+      };
+    }
+  | {
+      terminationCondition: {
+        type: "TIMER";
+        durationInSeconds: number;
+      };
+    };
 export type ZoneOpenWindow = {
   /** `RFC3339 formatted datetime */
   detectedTime: string;

@@ -419,6 +419,16 @@ class Tado {
     }
     return this.apiCall(`/api/v2/homes/${home_id}/overlay`, "post", { overlays: config });
   }
+  getZoneDefaultOverlay(home_id, zone_id) {
+    return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/defaultOverlay`);
+  }
+  setZoneDefaultOverlay(home_id, zone_id, overlay) {
+    return this.apiCall(
+      `/api/v2/homes/${home_id}/zones/${zone_id}/defaultOverlay`,
+      "PUT",
+      overlay,
+    );
+  }
   /**
    * @param temperatureOffset in celcius
    */

@@ -301,11 +301,15 @@ export type ZoneMultiOverlay = {
 
 export type DefaultOverlay =
   | {
-      terminationCondition: "MANUAL" | "TADO_MODE";
+      terminationCondition: {
+        type: "MANUAL" | "TADO_MODE";
+      };
     }
   | {
-      terminationCondition: "TIMER";
-      durationInSeconds: number;
+      terminationCondition: {
+        type: "TIMER";
+        durationInSeconds: number;
+      };
     };
 
 export type ZoneOpenWindow = {
