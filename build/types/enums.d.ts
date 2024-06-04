@@ -66,8 +66,8 @@ export type HorizontalSwing =
   | "ON"
   | "OFF"
   | "RIGHT"
-  | "MID-RIGHT"
+  | "MID_RIGHT"
   | "MID"
-  | "MID-LEFT"
+  | "MID_LEFT"
   | "LEFT";
-export type VerticalSwing = "ON" | "OFF" | "DOWN" | "MID-DOWN" | "MID" | "MID-UP" | "UP";
+export type VerticalSwing = "ON" | "OFF" | "DOWN" | "MID_DOWN" | "MID" | "MID_UP" | "UP";

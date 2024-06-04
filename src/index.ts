@@ -398,13 +398,15 @@ export class Tado {
 
         if (
           config.setting.mode?.toLowerCase() == "heat" ||
-          config.setting.mode?.toLowerCase() == "cool"
+          config.setting.mode?.toLowerCase() == "cool" ||
+          config.setting.mode?.toLowerCase() == "auto" ||
+          config.setting.mode?.toLowerCase() == "dry"
         ) {
           if (temperature) {
             config.setting.temperature = { celsius: temperature };
           }
 
-          if (fan_speed) {
+          if (fan_speed && config.setting.mode?.toLowerCase() != "dry") {
             if ((zone_capabilities.FAN || zone_capabilities.AUTO).fanLevel !== undefined) {
               config.setting.fanLevel = fan_speed.toUpperCase() as FanLevel;
             } else {

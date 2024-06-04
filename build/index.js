@@ -270,7 +270,7 @@ class Tado {
     verticalSwing,
     horizontalSwing,
   ) {
-    var _a, _b;
+    var _a, _b, _c, _d, _e;
     const zone_capabilities = await this.getZoneCapabilities(home_id, zone_id);
     const config = {
       setting: {
@@ -300,12 +300,21 @@ class Tado {
           ((_a = config.setting.mode) === null || _a === void 0 ? void 0 : _a.toLowerCase()) ==
             "heat" ||
           ((_b = config.setting.mode) === null || _b === void 0 ? void 0 : _b.toLowerCase()) ==
-            "cool"
+            "cool" ||
+          ((_c = config.setting.mode) === null || _c === void 0 ? void 0 : _c.toLowerCase()) ==
+            "auto" ||
+          ((_d = config.setting.mode) === null || _d === void 0 ? void 0 : _d.toLowerCase()) ==
+            "dry"
         ) {
           if (temperature) {
             config.setting.temperature = { celsius: temperature };
           }
-          if (fan_speed) {
+          if (
+            fan_speed &&
+            ((_e = config.setting.mode) === null || _e === void 0
+              ? void 0
+              : _e.toLowerCase()) != "dry"
+          ) {
             if ((zone_capabilities.FAN || zone_capabilities.AUTO).fanLevel !== undefined) {
               config.setting.fanLevel = fan_speed.toUpperCase();
             } else {
