@@ -158,8 +158,8 @@ It is not required to use upper case in the values, the library will convert the
 The `termination` argument should be one of the following:
 
 -   A positive integer - this will be interpreted as the number of seconds to set the overlay for
--   "auto" - this will put the overlay into "TADO*MODE" \_Note: I haven't been able to replicate this mode in the Tado App so not sure what it does*
--   ""next_time_block" - overlay until the next scheduled event
+-   "auto" - this will put the overlay into "TADO_MODE" _Note: This uses the default termination type set on the zone_
+-   "next_time_block" - overlay until the next scheduled event
 -   Anything else - the overlay will exist indefinitely and will need manually clearing
 
 ### Setting Geo Presence
