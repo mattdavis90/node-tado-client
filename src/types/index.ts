@@ -9,7 +9,6 @@ import {
   DeviceCharacteristicsCapabilities,
   DeviceOrientation,
   DeviceType,
-  EnergyIQConsumptionInputState,
   EnergySavingReportUnit,
   FanLevel,
   FanSpeed,
@@ -565,15 +564,32 @@ export type EnergyIQDetail = {
   perDay: EnergyIQDetailPerDay[];
 };
 
-export type EnergyIQ = {
-  currency: Currency;
-  /** Example: `'0.104 €/kWh'` */
-  tariff: string;
-  tariffInfo: EnergyIQTariffInfo;
-  customTariff: boolean;
-  consumptionInputState: EnergyIQConsumptionInputState;
+export type EnergyIQMonthOverview = {
+  startDate: string;
+  endDate: string;
+  totalConsumption: number;
+  totalCostInCents: number;
+  consumptionPerDate: Array<{
+    date: string;
+    consumption: number;
+    costInCents: number;
+  }>;
+};
+
+export type EnergyIQOverview = {
   unit: IQUnit;
-  details: EnergyIQDetail;
+  monthlyAggregation: {
+    endOfMonthForecast: unknown;
+    requestedMonth: EnergyIQMonthOverview;
+    monthBefore: EnergyIQMonthOverview;
+    yearBefore: EnergyIQMonthOverview;
+  };
+  isInPreferredUnit: boolean;
+  energySavingsReport: {
+    totalSavingsInPercent: number;
+    yearMonth: string;
+  };
+  ecogaz: unknown;
 };
 
 export type EnergyIQMeterReading = {

@@ -85,8 +85,6 @@ export type TemperatureLevel = "COLD" | "COMFY" | "HOT";
 
 export type HumidityLevel = "HUMID" | "COMFY" | "DRY";
 
-export type EnergyIQConsumptionInputState = "partial";
-
 export type EnergySavingReportUnit = "HOURS" | "PERCENTAGE";
 
 export type OutdoorPollensTypeValue = "GRASS" | "WEED" | "TREE";

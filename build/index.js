@@ -508,11 +508,12 @@ class Tado {
     const location = `latitude=${home.geolocation.latitude}&longitude=${home.geolocation.longitude}`;
     return this.apiCall(`https://acme.tado.com/v1/homes/${home_id}/airComfort?${location}`);
   }
-  async getEnergyIQ(home_id) {
+  async getEnergyIQOverview(home_id, month, year) {
     const home = await this.getHome(home_id);
     const country = home.address.country;
+    const date = `${year}-${month.toString().padStart(2, "0")}`;
     return this.apiCall(
-      `https://energy-insights.tado.com/api/homes/${home_id}/consumption?country=${country}`,
+      `https://energy-insights.tado.com/api/homes/${home_id}/consumptionOverview?month=${date}&country=${country}`,
     );
   }
   getEnergyIQTariff(home_id) {

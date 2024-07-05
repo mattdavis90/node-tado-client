@@ -11,8 +11,8 @@ import {
   DeepPartial,
   DefaultOverlay,
   Device,
-  EnergyIQ,
   EnergyIQMeterReadings,
+  EnergyIQOverview,
   EnergyIQTariff,
   EnergySavingReport,
   FanLevel,
@@ -662,11 +662,16 @@ export class Tado {
     return this.apiCall(`https://acme.tado.com/v1/homes/${home_id}/airComfort?${location}`);
   }
 
-  async getEnergyIQ(home_id: number): Promise<EnergyIQ> {
+  async getEnergyIQOverview(
+    home_id: number,
+    month: number,
+    year: number,
+  ): Promise<EnergyIQOverview> {
     const home = await this.getHome(home_id);
     const country = home.address.country;
+    const date = `${year}-${month.toString().padStart(2, "0")}`;
     return this.apiCall(
-      `https://energy-insights.tado.com/api/homes/${home_id}/consumption?country=${country}`,
+      `https://energy-insights.tado.com/api/homes/${home_id}/consumptionOverview?month=${date}&country=${country}`,
     );
   }
 

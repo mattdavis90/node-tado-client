@@ -8,8 +8,8 @@ import {
   Country,
   DefaultOverlay,
   Device,
-  EnergyIQ,
   EnergyIQMeterReadings,
+  EnergyIQOverview,
   EnergyIQTariff,
   EnergySavingReport,
   FanLevel,
@@ -188,7 +188,7 @@ export declare class Tado {
   setChildlock(serial_no: string, child_lock: boolean): Promise<void>;
   getAirComfort(home_id: number): Promise<AirComfort>;
   getAirComfortDetailed(home_id: number): Promise<AirComfortDetailed>;
-  getEnergyIQ(home_id: number): Promise<EnergyIQ>;
+  getEnergyIQOverview(home_id: number, month: number, year: number): Promise<EnergyIQOverview>;
   getEnergyIQTariff(home_id: number): Promise<EnergyIQTariff>;
   addEnergyIQTariff(
     home_id: number,

@@ -58,7 +58,6 @@ export type AwayConfigurationPreheatingLevel = "MEDIUM";
 export type AirComfortFreshnessValue = "FAIR";
 export type TemperatureLevel = "COLD" | "COMFY" | "HOT";
 export type HumidityLevel = "HUMID" | "COMFY" | "DRY";
-export type EnergyIQConsumptionInputState = "partial";
 export type EnergySavingReportUnit = "HOURS" | "PERCENTAGE";
 export type OutdoorPollensTypeValue = "GRASS" | "WEED" | "TREE";
 export type StripeTypeValue = "HOME" | "OPEN_WINDOW_DETECTED" | "OVERLAY_ACTIVE";
