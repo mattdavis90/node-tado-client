@@ -1,7 +1,6 @@
 # node-tado-client
 
-[![Node.js Package](https://github.com/mattdavis90/node-tado-client/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/mattdavis90/node-tado-client/actions/workflows/npm-publish.yml)
-[![CodeQL](https://github.com/mattdavis90/node-tado-client/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/mattdavis90/node-tado-client/actions/workflows/codeql-analysis.yml)
+[Documentation](https://mattdavis90.github.io/node-tado-client/)
 
 A Tado API client for Node
 
