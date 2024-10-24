@@ -40,7 +40,7 @@ jobs:
   deploy:
     name: Deploy Documentation
     needs: build
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/master'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
