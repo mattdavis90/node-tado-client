@@ -19,5 +19,10 @@
     "target": "ES2019"
   },
   "exclude": ["node_modules"],
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts"],
+  "typedocOptions": {
+    "entryPoints": ["src/index.ts"],
+    "intentionallyNotExported": ["Nullable", "ZoneId"],
+    "out": "docs"
+  }
 }
