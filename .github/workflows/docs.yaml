@@ -56,6 +56,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: docs
+          path: docs/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
