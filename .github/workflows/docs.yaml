@@ -2,10 +2,11 @@ name: Generate Documentation
 
 on:
   push:
-    branches: ["main"]
+    branches: ["master"]
     paths:
       - src/**
       - package.json
+      - README.md
       - .github/workflows/docs.yaml
   pull_request:
   workflow_dispatch:
