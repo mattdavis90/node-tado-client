@@ -22,7 +22,7 @@ const timetables_response = require("./response.timetables");
 const away_configuration_response = require("./response.away");
 const timetable_response = require("./response.timetable");
 const zone_overlay_response = require("./response.zone.overlay");
-const eneryIQ_response = require("./response.eneryIQ");
+const eneryIQOverview_response = require("./response.energyIQOverview");
 const eneryIQ_tariff_response = require("./response.eneryIQ.tariff");
 const eneryIQ_meter_readings_response = require("./response.eneryIQ.meterReadings");
 const eneryIQ_savings_response = require("./response.eneryIQ.savings");
@@ -153,10 +153,16 @@ describe("High-level API tests", () => {
       .getHome(1907)
       .then((response) => {
         expect(typeof response).to.equal("object");
-
-        expect(response.length).to.equal(1);
-        expect(response[0].devices.length).to.equal(1);
-        expect(response[0].devices[0].shortSerialNo).to.equal("RU04932458");
+        expect(response.id).to.equal(1907);
+        expect(response.name).to.equal("Dummy Home");
+        expect(response.address).to.deep.equals({
+          addressLine1: "Museumplein 6",
+          addressLine2: null,
+          zipCode: "1071",
+          city: "Amsterdam",
+          state: null,
+          country: "NLD",
+        });
 
         done();
       })
@@ -438,6 +444,10 @@ describe("High-level API tests", () => {
 
   it("Should set a zone's overlay to Off", (done) => {
     nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/zones/1/capabilities")
+      .reply(200, zone_capabilities_response);
+
+    nock("https://my.tado.com")
       .put("/api/v2/homes/1907/zones/1/overlay")
       .reply(200, (uri, req) => {
         return req;
@@ -458,6 +468,10 @@ describe("High-level API tests", () => {
   });
 
   it("Should set a zone's overlay to On with no temperature", (done) => {
+    nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/zones/1/capabilities")
+      .reply(200, zone_capabilities_response);
+
     nock("https://my.tado.com")
       .put("/api/v2/homes/1907/zones/1/overlay")
       .reply(200, (uri, req) => {
@@ -480,6 +494,10 @@ describe("High-level API tests", () => {
 
   it("Should set a zone's overlay to On with Timer resume", (done) => {
     nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/zones/1/capabilities")
+      .reply(200, zone_capabilities_response);
+
+    nock("https://my.tado.com")
       .put("/api/v2/homes/1907/zones/1/overlay")
       .reply(200, (uri, req) => {
         return req;
@@ -501,6 +519,10 @@ describe("High-level API tests", () => {
 
   it("Should set a zone's overlay to On with Auto resume", (done) => {
     nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/zones/1/capabilities")
+      .reply(200, zone_capabilities_response);
+
+    nock("https://my.tado.com")
       .put("/api/v2/homes/1907/zones/1/overlay")
       .reply(200, (uri, req) => {
         return req;
@@ -521,6 +543,10 @@ describe("High-level API tests", () => {
   });
 
   it("Should set a zone's overlay to On until next time block ", (done) => {
+    nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/zones/1/capabilities")
+      .reply(200, zone_capabilities_response);
+
     nock("https://my.tado.com")
       .put("/api/v2/homes/1907/zones/1/overlay")
       .reply(200, (uri, req) => {
@@ -571,13 +597,15 @@ describe("High-level API tests", () => {
       .catch(done);
   });
 
-  it("Should get energyIQ", (done) => {
+  it("Should get getEnergyIQOverview", (done) => {
+    nock("https://my.tado.com").get("/api/v2/homes/1907").reply(200, home_response);
+
     nock("https://energy-insights.tado.com")
-      .get("/api/homes/1907/consumption")
-      .reply(200, eneryIQ_response);
+      .get("/api/homes/1907/consumptionOverview?month=2024-10&country=NLD")
+      .reply(200, eneryIQOverview_response);
 
     tado
-      .getEnergyIQ("1907")
+      .getEnergyIQOverview("1907", 10, 2024)
       .then((response) => {
         expect(typeof response).to.equal("object");
         done();
@@ -587,7 +615,7 @@ describe("High-level API tests", () => {
 
   it("Should get energyIQ Tariff", (done) => {
     nock("https://energy-insights.tado.com")
-      .get("/api/homes/1907/tariff")
+      .get("/api/homes/1907/tariffs")
       .reply(200, eneryIQ_tariff_response);
 
     tado
@@ -601,7 +629,7 @@ describe("High-level API tests", () => {
 
   it("Should update energyIQ Tariff", (done) => {
     nock("https://energy-insights.tado.com")
-      .put("/api/homes/1907/tariff")
+      .put("/api/homes/1907/tariffs/tariff-id")
       .reply(200, (uri, req) => {
         return req;
       });
