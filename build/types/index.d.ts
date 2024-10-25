@@ -531,6 +531,24 @@ export type EnergyIQOverview = {
   };
   ecogaz: unknown;
 };
+export type EnergyIQConsumptionDetailsSummary = {
+  costInCents: number;
+  costForecastInCents: number;
+  averageDailyCostInCents: number;
+  consumption: number;
+  consumptionForecast: number;
+  averageDailyConsumption: number;
+  unit: IQUnit;
+  tariff: {
+    unit: IQUnit;
+    unitPriceInCents: number;
+  };
+};
+export type EnergyIQConsumptionDetails = {
+  isInPreferredUnit: boolean;
+  summary: EnergyIQConsumptionDetailsSummary;
+  graphConsumption: EnergyIQOverview;
+};
 export type EnergyIQMeterReading = {
   id: string;
   homeId: number;
