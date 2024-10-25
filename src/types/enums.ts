@@ -30,12 +30,18 @@ export type OutdoorQualityLevel = "EXCELLENT" | "NONE";
 
 export type WeatherStateValue =
   | "CLOUDY"
-  | "CLOUDY_PARTLY"
   | "CLOUDY_MOSTLY"
-  | "NIGHT_CLOUDY"
+  | "CLOUDY_PARTLY"
+  | "DRIZZLE"
+  | "FOGGY"
   | "NIGHT_CLEAR"
+  | "NIGHT_CLOUDY"
+  | "RAIN"
+  | "SCATTERED_RAIN"
+  | "SNOW"
   | "SUN"
-  | "SCATTERED_RAIN";
+  | "THUNDERSTORMS"
+  | "WINDY";
 
 export type DeviceType = "VA02" | "SU02";
 
