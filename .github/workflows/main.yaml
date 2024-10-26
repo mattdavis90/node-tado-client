@@ -1,0 +1,111 @@
+name: Main Workflow
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  merge_group:
+
+jobs:
+  lint-checks:
+    name: Lint Check
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup build environment
+        uses: ./.github/actions/setup
+
+      - name: Run Lint
+        shell: bash
+        run: pnpm lint
+
+      - name: Run format checks
+        shell: bash
+        run: pnpm exec prettier --check .
+
+  build-checks:
+    name: Build Check
+    needs:
+      - lint-checks
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup build environment
+        uses: ./.github/actions/setup
+
+      - name: Build distribution
+        shell: bash
+        run: pnpm build
+
+      - name: Verify no files changed during build
+        uses: tj-actions/verify-changed-files@v20
+        id: verify-changed-files
+        with:
+          fail-if-changed: "true"
+          files: |
+            pnpm-lock.yaml
+
+      - name: Build package
+        shell: bash
+        run: pnpm pack
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-tarball
+          path: |
+            node-tado-client-*.tgz
+
+  tests:
+    name: Run Tests
+    needs:
+      - lint-checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup build environment
+        uses: ./.github/actions/setup
+
+      - name: Build distribution
+        shell: bash
+        run: pnpm build
+
+      - name: Run test suite
+        shell: bash
+        run: pnpm test
+
+  publish-check:
+    name: Check publishing
+    needs:
+      - build-checks
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup build environment
+        uses: ./.github/actions/setup
+
+      - name: Build distribution
+        shell: bash
+        run: pnpm build
+
+      - name: Publish package
+        run: pnpm publish --access public --no-git-checks --dry-run
