@@ -23,6 +23,7 @@ const away_configuration_response = require("./response.away");
 const timetable_response = require("./response.timetable");
 const zone_overlay_response = require("./response.zone.overlay");
 const eneryIQOverview_response = require("./response.energyIQOverview");
+const eneryIQConsumptionDetails_response = require("./response.energyIQConsumptionDetails");
 const eneryIQ_tariff_response = require("./response.eneryIQ.tariff");
 const eneryIQ_meter_readings_response = require("./response.eneryIQ.meterReadings");
 const eneryIQ_savings_response = require("./response.eneryIQ.savings");
@@ -608,6 +609,22 @@ describe("High-level API tests", () => {
       .getEnergyIQOverview("1907", 10, 2024)
       .then((response) => {
         expect(typeof response).to.equal("object");
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should get getEnergyIQConsumptionDetails", (done) => {
+    nock("https://energy-insights.tado.com")
+      .get("/api/homes/1907/consumptionDetails?month=2024-10")
+      .reply(200, eneryIQConsumptionDetails_response);
+
+    tado
+      .EnergyIQConsumptionDetails("1907", 10, 2024)
+      .then((response) => {
+        expect(typeof response).to.equal("object");
+        expect(response.summary.averageDailyCostInCents).to.equal(164.7665);
+        expect(response.graphConsumption).to.deep.equal(eneryIQOverview_response);
         done();
       })
       .catch(done);
