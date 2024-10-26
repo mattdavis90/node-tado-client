@@ -21,6 +21,7 @@ import {
   HeatingCircuit,
   Home,
   HorizontalSwing,
+  Installation,
   IQUnit,
   Me,
   MobileDevice,
@@ -168,12 +169,11 @@ export class Tado {
     return this.apiCall(`/api/v2/devices/${serial_no}/temperatureOffset`);
   }
 
-  // TODO: type
-  getInstallations(home_id: number): Promise<unknown[]> {
+  getInstallations(home_id: number): Promise<Installation[]> {
     return this.apiCall(`/api/v2/homes/${home_id}/installations`);
   }
 
-  getUsers(home_id: number): Promise<User> {
+  getUsers(home_id: number): Promise<User[]> {
     return this.apiCall(`/api/v2/homes/${home_id}/users`);
   }
 
@@ -767,8 +767,8 @@ export class Tado {
 
   getEnergySavingsReport(
     home_id: number,
-    year: string,
-    month: string,
+    year: number,
+    month: number,
     countryCode: Country,
   ): Promise<EnergySavingReport> {
     return this.apiCall(

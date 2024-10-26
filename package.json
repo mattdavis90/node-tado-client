@@ -24,7 +24,7 @@
   "scripts": {
     "build": "tsc",
     "build:docs": "npx typedoc",
-    "test": "nyc mocha",
+    "test": "nyc mocha --loader=tsx test/index.ts",
     "format": "prettier -w -u .",
     "lint": "eslint .",
     "prepare": "husky"
@@ -37,6 +37,8 @@
     "@eslint/eslintrc": "^3.1.0",
     "@eslint/js": "^9.13.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.2.1",
+    "@types/chai": "^5.0.0",
+    "@types/mocha": "^10.0.9",
     "@types/node": "^22.8.1",
     "@types/simple-oauth2": "^5.0.7",
     "@typescript-eslint/eslint-plugin": "^8.11.0",
@@ -47,16 +49,22 @@
     "globals": "^15.11.0",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.5",
-    "mocha": "^10.2.0",
+    "mocha": "^10.7.3",
     "nock": "^13.3.8",
     "nyc": "^17.1.0",
     "prettier": "^3.1.0",
+    "tsx": "^4.19.1",
     "typedoc": "^0.26.10",
     "typescript": "^5.2.2"
   },
   "lint-staged": {
     "*": [
       "prettier -w -u ."
+    ]
+  },
+  "mocha": {
+    "node-option": [
+      "import=tsx"
     ]
   }
 }

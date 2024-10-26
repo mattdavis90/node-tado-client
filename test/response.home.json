@@ -1,0 +1,57 @@
+{
+  "id": 1907,
+  "name": "Dummy Home",
+  "dateTimeZone": "Europe/Amsterdam",
+  "dateCreated": "2021-11-15T12:27:24.825Z",
+  "temperatureUnit": "CELSIUS",
+  "partner": null,
+  "simpleSmartScheduleEnabled": true,
+  "awayRadiusInMeters": 500,
+  "installationCompleted": true,
+  "incidentDetection": {
+    "supported": true,
+    "enabled": true
+  },
+  "generation": "PRE_LINE_X",
+  "zonesCount": 8,
+  "language": "en",
+  "skills": ["AUTO_ASSIST"],
+  "christmasModeEnabled": true,
+  "showAutoAssistReminders": true,
+  "contactDetails": {
+    "name": "Tado User",
+    "email": "tado.user@tado.com",
+    "phone": "+3112115194351"
+  },
+  "address": {
+    "addressLine1": "Museumplein 6",
+    "addressLine2": null,
+    "zipCode": "1071",
+    "city": "Amsterdam",
+    "state": null,
+    "country": "NLD"
+  },
+  "geolocation": {
+    "latitude": 51.2993,
+    "longitude": 9.491
+  },
+  "consentGrantSkippable": true,
+  "enabledFeatures": [
+    "DARK_MODE",
+    "EIQ_SETTINGS_AS_WEBVIEW",
+    "HIDE_BOILER_REPAIR_SERVICE",
+    "HOME_DETAILS_AS_WEBVIEW",
+    "MORE_AS_WEBVIEW",
+    "OFFLINE_SCHEDULE_ENABLED",
+    "OWD_SETTINGS_AS_WEBVIEW",
+    "PEOPLE_AS_WEBVIEW",
+    "SETTINGS_OVERVIEW_AS_WEBVIEW"
+  ],
+  "isAirComfortEligible": true,
+  "isBalanceAcEligible": false,
+  "isEnergyIqEligible": true,
+  "isHeatSourceInstalled": false,
+  "isHeatPumpInstalled": false,
+  "isBalanceHpEligible": false,
+  "supportsFlowTemperatureOptimization": false
+}
