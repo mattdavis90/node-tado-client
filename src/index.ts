@@ -111,7 +111,7 @@ export class Tado {
     if (shouldRefresh) {
       try {
         this._accessToken = await this._accessToken.refresh();
-      } catch (error) {
+      } catch (_error) {
         this._accessToken = null;
         await this._login();
       }
