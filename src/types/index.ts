@@ -221,11 +221,11 @@ export type Device = {
   currentFwVersion: string;
   connectionState: DeviceConnectionState;
   characteristics: DeviceCharacteristics;
-  mountingState: DeviceMountingState;
-  mountingStateWithError: DeviceMountingStateValue;
   batteryState: DeviceBatteryState;
-  orientation: DeviceOrientation;
-  childLockEnabled: boolean;
+  mountingState?: DeviceMountingState;
+  mountingStateWithError?: DeviceMountingStateValue;
+  orientation?: DeviceOrientation;
+  childLockEnabled?: boolean;
 };
 
 export type UserHome = Pick<Home, "id" | "name">;
@@ -825,4 +825,12 @@ export type ZoneDayReport = {
     sunny: MeasureWeatherSunny;
     slots: MeasureWeatherSlot;
   };
+};
+
+export type Installation = {
+  id: number;
+  type: "SALE_FITTING_ST_G1"; // TODO: More options?
+  revision: number;
+  state: "COMPLETED"; // TODO: More options?
+  devices: Device[];
 };

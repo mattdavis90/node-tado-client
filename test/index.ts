@@ -1,32 +1,33 @@
-const expect = require("chai").expect;
-const nock = require("nock");
+import type { Me } from "../src/index.ts";
 
-const { Tado } = require("../");
-const auth_response = require("./response.auth");
-const me_response = require("./response.me");
-const home_response = require("./response.home");
-const weather_response = require("./response.weather");
-const devices_response = require("./response.devices");
-const devices_offset_response = require("./response.devices.offset");
-const installations_response = require("./response.installations");
-const users_response = require("./response.users");
-const mobileDevices_response = require("./response.mobileDevices");
-const mobileDevice_response = require("./response.mobileDevice");
-const mobileDevice_settings_response = require("./response.mobileDevice.settings");
-const state_response = require("./response.state");
-const zones_response = require("./response.zones");
-const zone_state_response = require("./response.zone.state");
-const zone_capabilities_response = require("./response.zone.capabilities");
-const zone_day_report = require("./response.zone.dayReport");
-const timetables_response = require("./response.timetables");
-const away_configuration_response = require("./response.away");
-const timetable_response = require("./response.timetable");
-const zone_overlay_response = require("./response.zone.overlay");
-const eneryIQOverview_response = require("./response.energyIQOverview");
-const eneryIQConsumptionDetails_response = require("./response.energyIQConsumptionDetails");
-const eneryIQ_tariff_response = require("./response.eneryIQ.tariff");
-const eneryIQ_meter_readings_response = require("./response.eneryIQ.meterReadings");
-const eneryIQ_savings_response = require("./response.eneryIQ.savings");
+import { expect } from "chai";
+import nock from "nock";
+import { Tado } from "../src/index.ts";
+import auth_response from "./response.auth.json";
+import away_configuration_response from "./response.away.json";
+import devices_response from "./response.devices.json";
+import devices_offset_response from "./response.devices.offset.json";
+import eneryIQConsumptionDetails_response from "./response.energyIQConsumptionDetails.json";
+import eneryIQOverview_response from "./response.energyIQOverview.json";
+import eneryIQ_meter_readings_response from "./response.eneryIQ.meterReadings.json";
+import eneryIQ_savings_response from "./response.eneryIQ.savings.json";
+import eneryIQ_tariff_response from "./response.eneryIQ.tariff.json";
+import home_response from "./response.home.json";
+import installations_response from "./response.installations.json";
+import me_response from "./response.me.json";
+import mobileDevice_response from "./response.mobileDevice.json";
+import mobileDevice_settings_response from "./response.mobileDevice.settings.json";
+import mobileDevices_response from "./response.mobileDevices.json";
+import state_response from "./response.state.json";
+import timetable_response from "./response.timetable.json";
+import timetables_response from "./response.timetables.json";
+import users_response from "./response.users.json";
+import weather_response from "./response.weather.json";
+import zone_capabilities_response from "./response.zone.capabilities.json";
+import zone_day_report from "./response.zone.dayReport.json";
+import zone_overlay_response from "./response.zone.overlay.json";
+import zone_state_response from "./response.zone.state.json";
+import zones_response from "./response.zones.json";
 
 describe("OAuth2 tests", () => {
   it("Should login", (done) => {
@@ -49,7 +50,7 @@ describe("OAuth2 tests", () => {
 
     var tado = new Tado();
 
-    tado.login("username", "password").catch((error) => {
+    tado.login("username", "password").catch((_error) => {
       done();
     });
   });
@@ -59,7 +60,7 @@ describe("OAuth2 tests", () => {
 
     var tado = new Tado();
 
-    tado.login("username", "password").then((response) => {
+    tado.login("username", "password").then((_response) => {
       nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
 
       // Force a refresh
@@ -81,9 +82,9 @@ describe("Low-level API tests", () => {
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
     nock("https://my.tado.com").get("/api/v2/me").reply(200, me_response);
 
-    tado.login("username", "password").then((response) => {
+    tado.login("username", "password").then((_response) => {
       tado
-        .apiCall("/api/v2/me")
+        .apiCall<Me>("/api/v2/me")
         .then((response) => {
           expect(typeof response).to.equal("object");
           expect(response.name).to.equal("John Doe");
@@ -97,7 +98,7 @@ describe("Low-level API tests", () => {
   it('Don\'t login and get "me"', (done) => {
     var tado = new Tado();
 
-    tado.apiCall("/api/v2/me").catch((error) => {
+    tado.apiCall<Me>("/api/v2/me").catch((_error) => {
       done();
     });
   });
@@ -108,10 +109,10 @@ describe("Low-level API tests", () => {
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
     nock("https://my.tado.com").get("/api/v2/me").reply(500, {});
 
-    tado.login("username", "password").then((response) => {
+    tado.login("username", "password").then((_response) => {
       tado
-        .apiCall("/api/v2/me")
-        .catch((error) => {
+        .apiCall<Me>("/api/v2/me")
+        .catch((_error) => {
           done();
         })
         .catch(done);
@@ -120,14 +121,14 @@ describe("Low-level API tests", () => {
 });
 
 describe("High-level API tests", () => {
-  var tado;
+  var tado: Tado;
 
   beforeEach((ready) => {
     tado = new Tado();
 
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
 
-    tado.login("username", "password").then((res) => {
+    tado.login("username", "password").then((_res) => {
       ready();
     });
   });
@@ -212,7 +213,7 @@ describe("High-level API tests", () => {
         expect(typeof response).to.equal("object");
 
         expect(response.celsius).to.equal(0.2);
-        expect(response.farenheit).to.equal(0.2);
+        expect(response.fahrenheit).to.equal(0.2);
 
         done();
       })
@@ -450,7 +451,7 @@ describe("High-level API tests", () => {
 
     nock("https://my.tado.com")
       .put("/api/v2/homes/1907/zones/1/overlay")
-      .reply(200, (uri, req) => {
+      .reply(200, (_uri, req) => {
         return req;
       });
 
@@ -475,7 +476,7 @@ describe("High-level API tests", () => {
 
     nock("https://my.tado.com")
       .put("/api/v2/homes/1907/zones/1/overlay")
-      .reply(200, (uri, req) => {
+      .reply(200, (_uri, req) => {
         return req;
       });
 
@@ -500,7 +501,7 @@ describe("High-level API tests", () => {
 
     nock("https://my.tado.com")
       .put("/api/v2/homes/1907/zones/1/overlay")
-      .reply(200, (uri, req) => {
+      .reply(200, (_uri, req) => {
         return req;
       });
 
@@ -525,7 +526,7 @@ describe("High-level API tests", () => {
 
     nock("https://my.tado.com")
       .put("/api/v2/homes/1907/zones/1/overlay")
-      .reply(200, (uri, req) => {
+      .reply(200, (_uri, req) => {
         return req;
       });
 
@@ -550,7 +551,7 @@ describe("High-level API tests", () => {
 
     nock("https://my.tado.com")
       .put("/api/v2/homes/1907/zones/1/overlay")
-      .reply(200, (uri, req) => {
+      .reply(200, (_uri, req) => {
         return req;
       });
 
@@ -571,7 +572,7 @@ describe("High-level API tests", () => {
   it("Should set a device's temperature offset", (done) => {
     nock("https://my.tado.com")
       .put("/api/v2/devices/RU04932458/temperatureOffset")
-      .reply(200, (uri, req) => {
+      .reply(200, (_uri, req) => {
         return req;
       });
 
@@ -606,7 +607,7 @@ describe("High-level API tests", () => {
       .reply(200, eneryIQOverview_response);
 
     tado
-      .getEnergyIQOverview("1907", 10, 2024)
+      .getEnergyIQOverview(1907, 10, 2024)
       .then((response) => {
         expect(typeof response).to.equal("object");
         done();
@@ -620,7 +621,7 @@ describe("High-level API tests", () => {
       .reply(200, eneryIQConsumptionDetails_response);
 
     tado
-      .EnergyIQConsumptionDetails("1907", 10, 2024)
+      .EnergyIQConsumptionDetails(1907, 10, 2024)
       .then((response) => {
         expect(typeof response).to.equal("object");
         expect(response.summary.averageDailyCostInCents).to.equal(164.7665);
@@ -636,7 +637,7 @@ describe("High-level API tests", () => {
       .reply(200, eneryIQ_tariff_response);
 
     tado
-      .getEnergyIQTariff("1907")
+      .getEnergyIQTariff(1907)
       .then((response) => {
         expect(typeof response).to.equal("object");
         done();
@@ -652,7 +653,7 @@ describe("High-level API tests", () => {
       });
 
     tado
-      .updateEnergyIQTariff("1907", "tariff-id", "m3", 303)
+      .updateEnergyIQTariff(1907, "tariff-id", "m3", "1/1/1970", "2/1/1970", 1)
       .then((response) => {
         expect(typeof response).to.equal("object");
         done();
@@ -666,7 +667,7 @@ describe("High-level API tests", () => {
       .reply(200, eneryIQ_meter_readings_response);
 
     tado
-      .getEnergyIQMeterReadings("1907")
+      .getEnergyIQMeterReadings(1907)
       .then((response) => {
         expect(typeof response).to.equal("object");
         done();
@@ -677,12 +678,12 @@ describe("High-level API tests", () => {
   it("Should add energyIQ meter readings", (done) => {
     nock("https://energy-insights.tado.com")
       .post("/api/homes/1907/meterReadings")
-      .reply(200, (uri, req) => {
+      .reply(200, (_uri, req) => {
         return req;
       });
 
     tado
-      .addEnergyIQMeterReading("1907", "2022-01-05", 6813)
+      .addEnergyIQMeterReading(1907, "2022-01-05", 6813)
       .then((response) => {
         expect(typeof response).to.equal("object");
         done();
@@ -696,7 +697,7 @@ describe("High-level API tests", () => {
       .reply(200, eneryIQ_savings_response);
 
     tado
-      .getEnergySavingsReport("1907", 2021, 11, "NLD")
+      .getEnergySavingsReport(1907, 2021, 11, "NLD")
       .then((response) => {
         expect(typeof response).to.equal("object");
         done();
