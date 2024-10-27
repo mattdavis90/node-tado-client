@@ -1,8 +1,8 @@
-import type { Me } from "../src/index.ts";
+import type { Me } from "../src";
 
 import { expect } from "chai";
 import nock from "nock";
-import { Tado } from "../src/index.ts";
+import { Tado } from "../src";
 import auth_response from "./response.auth.json";
 import away_configuration_response from "./response.away.json";
 import devices_response from "./response.devices.json";
@@ -36,10 +36,13 @@ describe("OAuth2 tests", () => {
     var tado = new Tado();
 
     tado.login("username", "password").then(() => {
+      // @ts-ignore
       expect(typeof tado._accessToken).to.equal("object");
 
-      expect(tado._accessToken.token.access_token).to.equal("eyJraW0UQ");
-      expect(tado._accessToken.token.token_type).to.equal("bearer");
+      // @ts-ignore
+      expect(tado._accessToken?.token.access_token).to.equal("eyJraW0UQ");
+      // @ts-ignore
+      expect(tado._accessToken?.token.token_type).to.equal("bearer");
 
       done();
     });
@@ -64,10 +67,12 @@ describe("OAuth2 tests", () => {
       nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
 
       // Force a refresh
+      // @ts-ignore
       tado._accessToken.token.expires_at = new Date();
       tado
+        // @ts-ignore
         ._refreshToken()
-        .then((res) => {
+        .then((_res) => {
           done();
         })
         .catch(done);
@@ -460,7 +465,7 @@ describe("High-level API tests", () => {
       .reply(200, zone_state_response);
 
     tado
-      .setZoneOverlay(1907, 1, "off")
+      .setZoneOverlay(1907, 1, "OFF")
       .then((response) => {
         expect(typeof response).to.equal("object");
 
@@ -485,7 +490,7 @@ describe("High-level API tests", () => {
       .reply(200, zone_state_response);
 
     tado
-      .setZoneOverlay(1907, 1, "on")
+      .setZoneOverlay(1907, 1, "ON")
       .then((response) => {
         expect(typeof response).to.equal("object");
 
@@ -510,7 +515,7 @@ describe("High-level API tests", () => {
       .reply(200, zone_state_response);
 
     tado
-      .setZoneOverlay(1907, 1, "on", 20, 300)
+      .setZoneOverlay(1907, 1, "ON", 20, 300)
       .then((response) => {
         expect(typeof response).to.equal("object");
 
@@ -535,7 +540,7 @@ describe("High-level API tests", () => {
       .reply(200, zone_state_response);
 
     tado
-      .setZoneOverlay(1907, 1, "on", 20, "auto")
+      .setZoneOverlay(1907, 1, "ON", 20, "AUTO")
       .then((response) => {
         expect(typeof response).to.equal("object");
 
@@ -560,7 +565,7 @@ describe("High-level API tests", () => {
       .reply(200, zone_state_response);
 
     tado
-      .setZoneOverlay(1907, 1, "on", 20, "next_time_block")
+      .setZoneOverlay(1907, 1, "ON", 20, "NEXT_TIME_BLOCK")
       .then((response) => {
         expect(typeof response).to.equal("object");
 
@@ -648,7 +653,7 @@ describe("High-level API tests", () => {
   it("Should update energyIQ Tariff", (done) => {
     nock("https://energy-insights.tado.com")
       .put("/api/homes/1907/tariffs/tariff-id")
-      .reply(200, (uri, req) => {
+      .reply(200, (_uri, req) => {
         return req;
       });
 
