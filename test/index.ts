@@ -704,4 +704,61 @@ describe("High-level API tests", () => {
       })
       .catch(done);
   });
+
+  it("Should allow boosting heating of all rooms", (done) => {
+    nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/zones/1/capabilities")
+      .reply(200, zone_capabilities_response);
+
+    nock("https://my.tado.com")
+      .post("/api/v2/homes/1907/overlay", (body): boolean => {
+        expect(body).to.deep.equal({
+          overlays: [
+            {
+              overlay: {
+                setting: {
+                  isBoost: true,
+                  power: "ON",
+                  temperature: {
+                    celsius: 25,
+                    fahrenheit: 77,
+                  },
+                  type: "HEATING",
+                },
+                termination: {
+                  typeSkillBasedApp: "TIMER",
+                  durationInSeconds: 1800,
+                },
+              },
+              room: 1,
+            },
+          ],
+        });
+        return true;
+      })
+      .reply(204, {});
+
+    tado
+      .setZoneOverlays(
+        1907,
+        [
+          {
+            isBoost: true,
+            power: "ON",
+            temperature: {
+              celsius: 25,
+              fahrenheit: 77,
+            },
+            zone_id: 1,
+          },
+        ],
+        1800,
+      )
+      .then((response) => {
+        expect(typeof response).to.equal("object");
+
+        done();
+      })
+      .catch(done);
+  });
 });

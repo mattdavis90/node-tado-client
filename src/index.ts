@@ -510,6 +510,7 @@ export class Tado {
         room: overlay.zone_id,
       };
 
+      overlay_config.overlay.setting.isBoost = overlay.isBoost ?? false;
       overlay_config.overlay.setting.mode = overlay.mode;
       overlay_config.overlay.setting.power = overlay.power;
       overlay_config.overlay.setting.temperature = overlay.temperature;

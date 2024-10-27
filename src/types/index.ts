@@ -341,6 +341,7 @@ export type Power = "ON" | "OFF";
 
 export type TimeTableSettings = {
   type: ZoneType;
+  isBoost?: boolean;
   power: Power;
   temperature: Temperature | null;
   fanSpeed?: FanSpeed;
@@ -351,11 +352,11 @@ export type TimeTableSettings = {
 };
 
 export type SetZoneOverlayArg = TimeTableSettings & {
-  mode: ACMode;
+  mode?: ACMode;
 };
 
 export type SetZoneOverlaysArg = Omit<TimeTableSettings, "type"> & {
-  mode: ACMode;
+  mode?: ACMode;
   zone_id: number;
 };
 
