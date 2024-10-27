@@ -355,7 +355,7 @@ export class Tado {
     home_id: number,
     zone_id: number,
     power: Power,
-    temperature: number,
+    temperature?: number,
     termination?: Termination | undefined | number,
     fan_speed?: FanSpeed | FanLevel,
     ac_mode?: ACMode,
