@@ -1103,7 +1103,7 @@ export class Tado {
    * @param year - The specific year for which the consumption details are requested.
    * @returns A promise resolving to the energy consumption details for the specified time period.
    */
-  async EnergyIQConsumptionDetails(
+  async getEnergyIQConsumptionDetails(
     home_id: number,
     month: number,
     year: number,
