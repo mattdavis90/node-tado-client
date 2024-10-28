@@ -175,6 +175,8 @@ export class Tado {
   /**
    * Makes an API call to the provided URL with the specified method and data.
    *
+   * @typeparam R - The type of the response
+   * @typeparam T - The type of the request body
    * @param url - The endpoint to which the request is sent. If the URL contains "https", it will be used as is.
    * @param method - The HTTP method to use for the request (e.g., "get", "post").
    * @param data - The payload to send with the request, if applicable.
