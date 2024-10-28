@@ -111,7 +111,7 @@ export class Tado {
     this._httpsAgent = new Agent({ keepAlive: true });
   }
 
-  private async _login() {
+  private async _login(): Promise<void> {
     if (!this._username || !this._password) {
       throw new Error("Please login before using Tado!");
     }
@@ -135,7 +135,7 @@ export class Tado {
    * @returns A promise that resolves when the token has been refreshed or re-obtained.
    * @throws {@link TadoError} if no access token is available after attempting to login.
    */
-  private async _refreshToken() {
+  private async _refreshToken(): Promise<void> {
     if (!this._accessToken) {
       await this._login();
     }
@@ -166,7 +166,7 @@ export class Tado {
    * @param password - The password of the user attempting to login.
    * @returns A promise that resolves when the login process is complete.
    */
-  async login(username: string, password: string) {
+  async login(username: string, password: string): Promise<void> {
     this._username = username;
     this._password = password;
     await this._login();
@@ -1139,9 +1139,9 @@ export class Tado {
    * Fetches the EnergyIQ tariff for a given home.
    *
    * @param home_id - The unique identifier of the home.
-   * @returns  A promise that resolves to the EnergyIQTariff object.
+   * @returns  A promise that resolves to the {@link EnergyIQTariffs} object.
    */
-  getEnergyIQTariff(home_id: number): Promise<EnergyIQTariff> {
+  getEnergyIQTariff(home_id: number): Promise<EnergyIQTariffs> {
     return this.apiCall(`https://energy-insights.tado.com/api/homes/${home_id}/tariffs`);
   }
 
@@ -1153,7 +1153,7 @@ export class Tado {
    * @param startDate - The start date of the tariff in ISO format.
    * @param endDate - The end date of the tariff in ISO format.
    * @param tariffInCents - The tariff amount in cents.
-   * @returns  A promise that resolves to the API response.
+   * @returns A promise that resolves to the API response.
    * @throws  {@link TadoError} if the unit is not valid.
    */
   addEnergyIQTariff(
@@ -1162,7 +1162,7 @@ export class Tado {
     startDate: string,
     endDate: string,
     tariffInCents: number,
-  ) {
+  ): Promise<void> {
     if (!["m3", "kWh"].includes(unit)) {
       throw new TadoError(`Invalid unit "${unit}" must be "m3", or "kWh"`);
     }
@@ -1198,7 +1198,7 @@ export class Tado {
     startDate: string,
     endDate: string,
     tariffInCents: number,
-  ) {
+  ): Promise<EnergyIQTariffInfo> {
     if (!["m3", "kWh"].includes(unit)) {
       throw new TadoError(`Invalid unit "${unit}" must be "m3", or "kWh"`);
     }
