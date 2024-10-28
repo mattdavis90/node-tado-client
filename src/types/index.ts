@@ -543,14 +543,22 @@ export type AirComfort = {
 };
 
 export type EnergyIQTariffInfo = {
-  currencySign: CurrencySign;
-  consumptionUnit: IQUnit;
+  unit: IQUnit;
+  /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+  lastUpdated: string;
+  /** `YYYY-MM-DD` format date */
+  endDate?: string;
+  homeId: number;
+  /** `YYYY-MM-DD` format date */
+  startDate: string;
   tariffInCents: number;
-  customTariff: boolean;
+  /** UUID string */
+  id: string;
 };
 
-// FIXME: Need to find a type for this
-export type EnergyIQTariff = unknown;
+export type EnergyIQTariffs = {
+  tariffs: EnergyIQTariffInfo[];
+};
 
 export type EnergyIQDetailPerDay = {
   /** `YYYY-MM-DD` format date */
