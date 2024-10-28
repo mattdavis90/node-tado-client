@@ -664,7 +664,7 @@ export class Tado {
     return this.apiCall(`https://acme.tado.com/v1/homes/${home_id}/airComfort?${location}`);
   }
 
-  async EnergyIQConsumptionDetails(
+  async getEnergyIQConsumptionDetails(
     home_id: number,
     month: number,
     year: number,

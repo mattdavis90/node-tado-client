@@ -626,7 +626,7 @@ describe("High-level API tests", () => {
       .reply(200, eneryIQConsumptionDetails_response);
 
     tado
-      .EnergyIQConsumptionDetails(1907, 10, 2024)
+      .getEnergyIQConsumptionDetails(1907, 10, 2024)
       .then((response) => {
         expect(typeof response).to.equal("object");
         expect(response.summary.averageDailyCostInCents).to.equal(164.7665);
