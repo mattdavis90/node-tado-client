@@ -605,10 +605,8 @@ describe("High-level API tests", () => {
   });
 
   it("Should get getEnergyIQOverview", (done) => {
-    nock("https://my.tado.com").get("/api/v2/homes/1907").reply(200, home_response);
-
     nock("https://energy-insights.tado.com")
-      .get("/api/homes/1907/consumptionOverview?month=2024-10&country=NLD")
+      .get("/api/homes/1907/consumptionOverview?month=2024-10")
       .reply(200, eneryIQOverview_response);
 
     tado

@@ -1129,11 +1129,9 @@ export class Tado {
     month: number,
     year: number,
   ): Promise<EnergyIQOverview> {
-    const home = await this.getHome(home_id);
-    const country = home.address.country;
     const date = `${year}-${month.toString().padStart(2, "0")}`;
     return this.apiCall(
-      `https://energy-insights.tado.com/api/homes/${home_id}/consumptionOverview?month=${date}&country=${country}`,
+      `https://energy-insights.tado.com/api/homes/${home_id}/consumptionOverview?month=${date}`,
     );
   }
 
