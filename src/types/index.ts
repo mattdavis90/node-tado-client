@@ -312,10 +312,10 @@ export type DefaultOverlay =
     };
 
 export type ZoneOpenWindow = {
-  /** `RFC3339 formatted datetime */
+  /** RFC3339 formatted datetime */
   detectedTime: string;
   durationInSeconds: number;
-  /** `RFC3339 formatted datetime */
+  /** RFC3339 formatted datetime */
   expiry: string;
   remainingTimeInSeconds: number;
 };

@@ -4,6 +4,7 @@ import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
+import tsdoc from "eslint-plugin-tsdoc";
 import globals from "globals";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -31,6 +32,7 @@ export default [
   {
     plugins: {
       "@typescript-eslint": typescriptEslint,
+      tsdoc,
     },
 
     languageOptions: {
@@ -56,6 +58,8 @@ export default [
       ],
 
       "@typescript-eslint/no-explicit-any": "warn",
+
+      "tsdoc/syntax": "warn",
     },
   },
 ];

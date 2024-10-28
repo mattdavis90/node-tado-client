@@ -175,8 +175,8 @@ export class Tado {
    * Makes an API call to the provided URL with the specified method and data.
    *
    * @param url - The endpoint to which the request is sent. If the URL contains "https", it will be used as is.
-   * @param [method="get"] - The HTTP method to use for the request (e.g., "get", "post").
-   * @param [data] - The payload to send with the request, if applicable.
+   * @param method - The HTTP method to use for the request (e.g., "get", "post").
+   * @param data - The payload to send with the request, if applicable.
    * @returns A promise that resolves to the response data.
    */
   async apiCall<R, T = unknown>(url: string, method: Method = "get", data?: T): Promise<R> {
@@ -599,12 +599,12 @@ export class Tado {
    * @param home_id - The identifier of the home.
    * @param zone_id - The identifier of the zone within the home.
    * @param power - The power state, either 'ON' or 'OFF'.
-   * @param [temperature] - The desired temperature for the overlay, in celsius.
-   * @param [termination] - The termination condition for the overlay. Options include 'MANUAL', 'AUTO', 'NEXT_TIME_BLOCK', or a number representing duration in seconds.
-   * @param [fan_speed] - The desired fan speed or level.
-   * @param [ac_mode] - The air conditioning mode (e.g., 'COOL', 'HEAT').
-   * @param [verticalSwing] - The vertical swing setting for air conditioning.
-   * @param [horizontalSwing] - The horizontal swing setting for air conditioning.
+   * @param temperature - The desired temperature for the overlay, in celsius.
+   * @param termination - The termination condition for the overlay. Options include 'MANUAL', 'AUTO', 'NEXT_TIME_BLOCK', or a number representing duration in seconds.
+   * @param fan_speed - The desired fan speed or level.
+   * @param ac_mode - The air conditioning mode (e.g., 'COOL', 'HEAT').
+   * @param verticalSwing - The vertical swing setting for air conditioning.
+   * @param horizontalSwing - The horizontal swing setting for air conditioning.
    * @returns  A promise that resolves to the created zone overlay.
    * @deprecated Use {@link setZoneOverlays} instead.
    */
@@ -1020,7 +1020,7 @@ export class Tado {
    * @param home_id - The ID of the home.
    * @param zone_id - The ID of the zone within the home.
    * @param enabled - Specifies whether the window detection should be enabled or disabled.
-   * @param [timeout] - An optional timeout duration in seconds for the window detection feature.
+   * @param timeout - An optional timeout duration in seconds for the window detection feature.
    * @returns A promise that resolves when the window detection configuration is successfully updated.
    */
   setWindowDetection(
