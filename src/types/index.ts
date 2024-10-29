@@ -1,5 +1,6 @@
 import {
   ACHorizontalSwing,
+  ACInstallationState,
   ACMode,
   ACVerticalSwing,
   AirComfortFreshnessValue,
@@ -13,8 +14,10 @@ import {
   FanLevel,
   FanSpeed,
   Feature,
+  HeatingInstallationState,
   HorizontalSwing,
   HumidityLevel,
+  InstallationType,
   IQUnit,
   OutdoorPollensTypeValue,
   OutdoorQualityLevel,
@@ -838,8 +841,8 @@ export type ZoneDayReport = {
 
 export type Installation = {
   id: number;
-  type: "SALE_FITTING_ST_G1"; // TODO: More options?
+  type: InstallationType | null;
   revision: number;
-  state: "COMPLETED"; // TODO: More options?
+  state: ACInstallationState | HeatingInstallationState;
   devices: Device[];
 };
