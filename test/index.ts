@@ -764,4 +764,33 @@ describe("High-level API tests", () => {
       })
       .catch(done);
   });
+
+  it("Should allow setting overlay with only celsius", (done) => {
+    nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/zones/1/capabilities")
+      .reply(200, zone_capabilities_response);
+
+    nock("https://my.tado.com").post("/api/v2/homes/1907/overlay").reply(204, {});
+
+    tado
+      .setZoneOverlays(
+        1907,
+        [
+          {
+            power: "ON",
+            temperature: {
+              celsius: 25,
+            },
+            zone_id: 1,
+          },
+        ],
+        "AUTO",
+      )
+      .then((response) => {
+        expect(typeof response).to.equal("object");
+
+        done();
+      })
+      .catch(done);
+  });
 });

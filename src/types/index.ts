@@ -353,11 +353,15 @@ export type TimeTableSettings = {
   light?: unknown;
 };
 
-export type SetZoneOverlayArg = TimeTableSettings & {
+export type SetTimeTableSettings = Omit<TimeTableSettings, "temperature"> & {
+  temperature: Temperature | { celsius: number } | { fahrenheit: number } | null;
+};
+
+export type SetZoneOverlayArg = SetTimeTableSettings & {
   mode?: ACMode;
 };
 
-export type SetZoneOverlaysArg = Omit<TimeTableSettings, "type"> & {
+export type SetZoneOverlaysArg = Omit<SetTimeTableSettings, "type"> & {
   mode?: ACMode;
   zone_id: number;
 };
