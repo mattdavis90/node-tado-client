@@ -21,6 +21,7 @@ import {
   Platform,
   StatePresence,
   StripeTypeValue,
+  TadoMode,
   TemperatureLevel,
   TemperatureUnit,
   TimeTableDayType,
@@ -335,8 +336,6 @@ export type Zone = {
   openWindowDetection: ZoneOpenWindowDetection;
 };
 
-export type TadoMode = "HOME";
-
 export type Power = "ON" | "OFF";
 
 export type TimeTableSettings = {
@@ -394,11 +393,18 @@ export type ZoneStateSensorDataPoints = {
   humidity: DataPointPercentage;
 };
 
+export type Preparation = {
+  tadoMode: TadoMode;
+  /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+  end: string;
+  setting: TimeTableSettings;
+};
+
 export type ZoneState = {
   tadoMode: TadoMode;
   geolocationOverride: boolean | null;
   geolocationOverrideDisableTime: boolean | null;
-  preparation: unknown; // TODO:
+  preparation: Preparation | null;
   setting: TimeTableSettings;
   overlayType: Nullable<"MANUAL">;
   overlay: Nullable<ZoneOverlay>;
