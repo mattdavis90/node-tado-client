@@ -33,15 +33,15 @@ describe("OAuth2 tests", () => {
   it("Should login", (done) => {
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
 
-    var tado = new Tado();
+    const tado = new Tado();
 
     tado.login("username", "password").then(() => {
-      // @ts-ignore
+      // @ts-expect-error testing private property is intentional
       expect(typeof tado._accessToken).to.equal("object");
 
-      // @ts-ignore
+      // @ts-expect-error testing private property is intentional
       expect(tado._accessToken?.token.access_token).to.equal("eyJraW0UQ");
-      // @ts-ignore
+      // @ts-expect-error testing private property is intentional
       expect(tado._accessToken?.token.token_type).to.equal("bearer");
 
       done();
@@ -51,7 +51,7 @@ describe("OAuth2 tests", () => {
   it("Should fail to login", (done) => {
     nock("https://auth.tado.com").post("/oauth/token").reply(500, {});
 
-    var tado = new Tado();
+    const tado = new Tado();
 
     tado.login("username", "password").catch((_error) => {
       done();
@@ -61,16 +61,16 @@ describe("OAuth2 tests", () => {
   it("Should login then refresh token", (done) => {
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
 
-    var tado = new Tado();
+    const tado = new Tado();
 
     tado.login("username", "password").then((_response) => {
       nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
 
       // Force a refresh
-      // @ts-ignore
+      // @ts-expect-error testing private property is intentional
       tado._accessToken.token.expires_at = new Date();
       tado
-        // @ts-ignore
+        // @ts-expect-error testing private property is intentional
         ._refreshToken()
         .then((_res) => {
           done();
@@ -82,7 +82,7 @@ describe("OAuth2 tests", () => {
 
 describe("Low-level API tests", () => {
   it('Login and get "me"', (done) => {
-    var tado = new Tado();
+    const tado = new Tado();
 
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
     nock("https://my.tado.com").get("/api/v2/me").reply(200, me_response);
@@ -101,7 +101,7 @@ describe("Low-level API tests", () => {
   });
 
   it('Don\'t login and get "me"', (done) => {
-    var tado = new Tado();
+    const tado = new Tado();
 
     tado.apiCall<Me>("/api/v2/me").catch((_error) => {
       done();
@@ -109,7 +109,7 @@ describe("Low-level API tests", () => {
   });
 
   it('Login and fail to get "me"', (done) => {
-    var tado = new Tado();
+    const tado = new Tado();
 
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
     nock("https://my.tado.com").get("/api/v2/me").reply(500, {});
@@ -126,7 +126,7 @@ describe("Low-level API tests", () => {
 });
 
 describe("High-level API tests", () => {
-  var tado: Tado;
+  let tado: Tado;
 
   beforeEach((ready) => {
     tado = new Tado();

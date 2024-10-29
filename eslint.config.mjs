@@ -21,7 +21,6 @@ export default [
       "**/.DS_Store",
       "**/node_modules",
       "**/build/",
-      "**/test/",
       "**/docs/",
       "**/pnpm-lock.yaml",
       "**/package-lock.json",
