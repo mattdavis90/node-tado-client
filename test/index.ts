@@ -5,6 +5,7 @@ import nock from "nock";
 import { Tado } from "../src";
 import auth_response from "./response.auth.json";
 import away_configuration_response from "./response.away.json";
+import boiler_information_response from "./response.boilerInformation.json";
 import devices_response from "./response.devices.json";
 import devices_offset_response from "./response.devices.offset.json";
 import eneryIQConsumptionDetails_response from "./response.energyIQConsumptionDetails.json";
@@ -827,6 +828,28 @@ describe("High-level API tests", () => {
         expect(response.boiler.present).to.equal(true);
         expect(response.boiler.found).to.equal(true);
         expect(response.underfloorHeating.present).to.equal(false);
+        done();
+      })
+      .catch(done);
+  });
+
+  it("should get boiler system information", (done) => {
+    nock("https://ivar.tado.com")
+      .post("/graphql", (body): boolean => {
+        expect(body.query).to.equal(
+          "{ system(id: 2017) { modelName shortModelName: modelName(type: SHORT) thumbnail { schematic { url } } manufacturers { name } } }",
+        );
+        return true;
+      })
+      .reply(200, boiler_information_response);
+
+    tado
+      .getBoilerSystemInformation(2017)
+      .then((response) => {
+        expect(typeof response).to.equal("object");
+        expect(response.modelName).to.equal("ZR/ZSR/ZWR ..-2");
+        expect(response.manufacturers.length).to.equal(1);
+        expect(response.manufacturers[0].name).to.equal("Junkers");
         done();
       })
       .catch(done);

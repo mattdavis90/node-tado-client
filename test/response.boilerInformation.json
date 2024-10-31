@@ -1,0 +1,18 @@
+{
+  "data": {
+    "system": {
+      "modelName": "ZR/ZSR/ZWR ..-2",
+      "shortModelName": "ZR/ZSR/ZWR ..-2",
+      "thumbnail": {
+        "schematic": {
+          "url": "https://s3-eu-west-1.amazonaws.com/hvac-files/14c1af6673c7639bbfd17ffc5fb4336dfb5e0326"
+        }
+      },
+      "manufacturers": [
+        {
+          "name": "Junkers"
+        }
+      ]
+    }
+  }
+}

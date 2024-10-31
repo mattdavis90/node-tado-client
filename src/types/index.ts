@@ -902,3 +902,18 @@ export type HeatingSystem = {
   boiler: BoilerAvailability;
   underfloorHeating: UnderfloorHeatingAvailability;
 };
+
+export type Manufacturer = {
+  name: string;
+};
+
+export type BoilerSystemInformation = {
+  modelName: string;
+  shortModelName: string;
+  thumbnail: {
+    schematic: {
+      url: string;
+    };
+  };
+  manufacturers: Manufacturer[];
+};
