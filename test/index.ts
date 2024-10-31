@@ -421,6 +421,25 @@ describe("High-level API tests", () => {
       .catch(done);
   });
 
+  it("should set a zone's away configuration", (done) => {
+    nock("https://my.tado.com").put("/api/v2/homes/1907/zones/1/awayConfiguration").reply(204);
+
+    tado
+      .setAwayConfiguration(1907, 1, {
+        type: "HEATING",
+        preheatingLevel: "ECO",
+        minimumAwayTemperature: {
+          celsius: 5.0,
+          fahrenheit: 41.0,
+        },
+      })
+      .then((response) => {
+        expect(response).to.equal("");
+        done();
+      })
+      .catch(done);
+  });
+
   it("should get a timetable", (done) => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/zones/1/schedule/timetables/0/blocks")

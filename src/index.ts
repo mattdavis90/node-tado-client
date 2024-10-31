@@ -458,6 +458,26 @@ export class Tado {
   }
 
   /**
+   * Sets the away configuration for a specified zone in the home.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @param zone_id - The unique identifier of the zone within the home.
+   * @param config - The configuration settings for away mode.
+   * @returns A promise that resolves when the configuration has been successfully set.
+   */
+  setAwayConfiguration(
+    home_id: number,
+    zone_id: number,
+    config: AwayConfiguration,
+  ): Promise<void> {
+    return this.apiCall(
+      `/api/v2/homes/${home_id}/zones/${zone_id}/awayConfiguration`,
+      "PUT",
+      config,
+    );
+  }
+
+  /**
    * Fetches the active timetable for a specific zone in a home.
    *
    * @param home_id - The unique identifier of the home.
