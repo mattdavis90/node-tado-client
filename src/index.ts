@@ -20,6 +20,7 @@ import {
   FanLevel,
   FanSpeed,
   HeatingCircuit,
+  HeatingSystem,
   Home,
   HorizontalSwing,
   Installation,
@@ -1305,5 +1306,15 @@ export class Tado {
     return this.apiCall(
       `https://energy-bob.tado.com/${home_id}/${year}-${month}?country=${countryCode}`,
     );
+  }
+
+  /**
+   * Retrieves the heating system information for a specific home.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @returns A promise that resolves to the heating system information of the specified home.
+   */
+  getHomeHeatingSystem(home_id: number): Promise<HeatingSystem> {
+    return this.apiCall(`/api/v2/homes/${home_id}/heatingSystem`);
   }
 }
