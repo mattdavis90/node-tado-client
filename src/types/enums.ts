@@ -85,7 +85,7 @@ export type TimeTableDayType =
   | "SATURDAY"
   | "SUNDAY";
 
-export type AwayConfigurationPreheatingLevel = "MEDIUM";
+export type AwayConfigurationPreheatingLevel = "COMFORT" | "ECO" | "MEDIUM" | "OFF";
 
 export type AirComfortFreshnessValue = "FAIR";
 
