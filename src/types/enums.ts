@@ -72,6 +72,7 @@ export type ZoneOverlayTerminationTypeSkillBasedApp = "MANUAL" | "NEXT_TIME_BLOC
 export enum DataPointType {
   PERCENTAGE = "PERCENTAGE",
   TEMPERATURE = "TEMPERATURE",
+  POWER = "POWER",
 }
 
 export type TimeTableDayType =
