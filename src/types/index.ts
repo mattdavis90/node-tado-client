@@ -387,13 +387,29 @@ export type DataPointTemperature = Temperature & {
   type: DataPointType.TEMPERATURE;
   timestamp: string;
   precision: Temperature;
+} & {
+  value?: Power;
 };
 
-export type DataPoint = DataPointPercentage | DataPointTemperature;
-
-export type ZoneActivityDataPoints = {
-  heatingPower: DataPoint;
+export type DataPointPower = {
+  type: DataPointType.POWER;
+  power: Power;
 };
+
+export type DataPointHeating = DataPointPercentage | DataPointTemperature;
+
+/**
+ * @deprecated Use {@link DataPointHeating} instead.
+ */
+export type DataPoint = DataPointHeating;
+
+export type ZoneActivityDataPoints =
+  | {
+      heatingPower: DataPointHeating;
+    }
+  | {
+      acPower: DataPointPower;
+    };
 
 export type ZoneStateSensorDataPoints = {
   insideTemperature: DataPointTemperature;
