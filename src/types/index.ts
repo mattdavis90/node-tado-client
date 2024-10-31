@@ -512,11 +512,26 @@ export type ZoneCapabilities =
       type: "HOT_WATER";
     };
 
-export type AwayConfiguration = {
-  type: ZoneType;
+export type HeatingAwayConfiguration = {
+  type: ZoneType & "HEATING";
   preheatingLevel: AwayConfigurationPreheatingLevel;
   minimumAwayTemperature: Temperature;
 };
+
+export type HotWaterAwayConfiguration = {
+  type: ZoneType & "HOT_WATER";
+  power: Power;
+  temperature: Temperature;
+};
+
+export type CoolingAwayConfiguration = Omit<TimeTableSettings, "isBoost"> & {
+  type: ZoneType & "AIR_CONDITIONING";
+};
+
+export type AwayConfiguration =
+  | HeatingAwayConfiguration
+  | HotWaterAwayConfiguration
+  | CoolingAwayConfiguration;
 
 export type TimeTableBlock = {
   dayType: TimeTableDayType;
