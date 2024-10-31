@@ -18,6 +18,7 @@ import me_response from "./response.me.json";
 import mobileDevice_response from "./response.mobileDevice.json";
 import mobileDevice_settings_response from "./response.mobileDevice.settings.json";
 import mobileDevices_response from "./response.mobileDevices.json";
+import mobileDevice_push_notification_registration_response from "./response.pushNotificationRegistration.json";
 import state_response from "./response.state.json";
 import timetable_response from "./response.timetable.json";
 import timetables_response from "./response.timetables.json";
@@ -313,6 +314,35 @@ describe("High-level API tests", () => {
       .then((response) => {
         expect(typeof response).to.equal("object");
 
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should register push notification endpoints", (done) => {
+    const token = "5ad64f2d-b9a2-47ff-be65-3f3f9327a775";
+
+    nock("https://my.tado.com")
+      .put(
+        "/api/v2/homes/1907/mobileDevices/644583/pushNotificationRegistration",
+        (body): boolean => {
+          expect(body).to.deep.equal({
+            token: token,
+            firebaseProject: "tado-app",
+            provider: "FCM",
+          });
+          return true;
+        },
+      )
+      .reply(200, mobileDevice_push_notification_registration_response);
+
+    tado
+      .createPushNotificationRegistration(1907, 644583, token)
+      .then((response) => {
+        expect(typeof response).to.equal("object");
+        expect(response.endpointArnValue).to.equal(
+          "arn:aws:sns:eu-west-0:000000000000:endpoint/GCM/Android-Production/e00000d0-0f00-0000-a0e0-00ee00e0b000",
+        );
         done();
       })
       .catch(done);

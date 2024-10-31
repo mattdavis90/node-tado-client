@@ -131,6 +131,16 @@ export type MobileDeviceSettingsPushNotification = {
   incidentDetection: boolean;
 };
 
+export type PushNotificationRegistrationData = {
+  token: string;
+  firebaseProject: "tado-app" | string;
+  provider: "FCM" | string;
+};
+
+export type PushNotificationRegistration = {
+  endpointArnValue: string;
+};
+
 export type MobileDeviceSettings = {
   geoTrackingEnabled: boolean;
   onDemandLogRetrievalEnabled: boolean;
