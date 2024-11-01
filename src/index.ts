@@ -28,6 +28,8 @@ import {
   MobileDevice,
   MobileDeviceSettings,
   Power,
+  PushNotificationRegistration,
+  PushNotificationRegistrationData,
   RunningTimeAggregation,
   RunningTimes,
   RunningTimesSummaryOnly,
@@ -360,6 +362,33 @@ export class Tado {
         ...settings,
         geoTrackingEnabled: geoTrackingEnabled,
       },
+    );
+  }
+
+  /**
+   * Creates a push notification registration for a given home and mobile device.
+   *
+   * Note: Do not use this unless you know what you are doing, you might want to consider
+   * registering a dummy device.
+   *
+   * @param home_id - The identifier for the home.
+   * @param mobile_device_id - The identifier for the mobile device.
+   * @param token - The push notification token for the device.
+   * @returns A promise that resolves to the push notification registration (AWS SNS Endpoint ARN).
+   */
+  createPushNotificationRegistration(
+    home_id: number,
+    mobile_device_id: number,
+    token: string,
+  ): Promise<PushNotificationRegistration> {
+    return this.apiCall<PushNotificationRegistration>(
+      `/api/v2/homes/${home_id}/mobileDevices/${mobile_device_id}/pushNotificationRegistration`,
+      "put",
+      {
+        token: token,
+        firebaseProject: "tado-app",
+        provider: "FCM",
+      } as PushNotificationRegistrationData,
     );
   }
 
