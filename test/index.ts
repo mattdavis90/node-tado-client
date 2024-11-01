@@ -13,6 +13,7 @@ import eneryIQ_meter_readings_response from "./response.eneryIQ.meterReadings.js
 import eneryIQ_savings_response from "./response.eneryIQ.savings.json";
 import eneryIQ_tariff_response from "./response.eneryIQ.tariff.json";
 import home_response from "./response.home.json";
+import incident_detection_response from "./response.incidentDetection.json";
 import installations_response from "./response.installations.json";
 import me_response from "./response.me.json";
 import mobileDevice_response from "./response.mobileDevice.json";
@@ -190,6 +191,39 @@ describe("High-level API tests", () => {
 
     tado
       .setAwayRadius(1907, radius)
+      .then((response) => {
+        expect(response).to.equal("");
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should get incident detection status", (done) => {
+    nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/incidentDetection")
+      .reply(200, incident_detection_response);
+
+    tado
+      .getIncidentDetection(1907)
+      .then((response) => {
+        expect(response.supported).to.equal(true);
+        expect(response.enabled).to.equal(true);
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should set incident detection status", (done) => {
+    nock("https://my.tado.com")
+      .put("/api/v2/homes/1907/incidentDetection", (body) => {
+        expect(Object.keys(body)).to.deep.equal(["enabled"]);
+        expect(body.enabled).to.equal(false);
+        return true;
+      })
+      .reply(204, "");
+
+    tado
+      .setIncidentDetection(1907, false)
       .then((response) => {
         expect(response).to.equal("");
         done();

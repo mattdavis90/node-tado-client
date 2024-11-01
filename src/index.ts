@@ -21,6 +21,7 @@ import {
   FanSpeed,
   HeatingCircuit,
   Home,
+  HomeIncidentDetection,
   HorizontalSwing,
   Installation,
   IQUnit,
@@ -237,6 +238,29 @@ export class Tado {
   setAwayRadius(home_id: number, away_radius_meters: number): Promise<void> {
     return this.apiCall(`/api/v2/homes/${home_id}/awayRadiusInMeters`, "PUT", {
       awayRadiusInMeters: away_radius_meters,
+    });
+  }
+
+  /**
+   * Fetches incident detection details for the specified home.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @returns A promise that resolves to the incident detection details of the home.
+   */
+  getIncidentDetection(home_id: number): Promise<HomeIncidentDetection> {
+    return this.apiCall(`/api/v2/homes/${home_id}/incidentDetection`);
+  }
+
+  /**
+   * Enables or disables incident detection for a specified home.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @param enabled - Indicates whether incident detection should be enabled (true) or disabled (false).
+   * @returns A promise that resolves when the operation is complete.
+   */
+  setIncidentDetection(home_id: number, enabled: boolean): Promise<void> {
+    return this.apiCall(`/api/v2/homes/${home_id}/incidentDetection`, "PUT", {
+      enabled: enabled,
     });
   }
 
