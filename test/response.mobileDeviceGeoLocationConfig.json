@@ -1,0 +1,19 @@
+{
+  "home": {
+    "geolocation": {
+      "latitude": 51.2993,
+      "longitude": 9.491
+    },
+    "region": 100,
+    "wifiRegion": 1900
+  },
+  "regions": [124, 301, 1933, 2801, 4410],
+  "desiredAccuracy": 200,
+  "maxAccuracy": 2500,
+  "distanceFilter": 200,
+  "maxAge": 60,
+  "providerUpdateInterval": 300,
+  "minIntervalBetweenSentUpdates": 60,
+  "minIntervalBetweenBackgroundUpdates": 1800,
+  "wakeupInterval": 14400
+}

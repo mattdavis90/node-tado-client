@@ -29,6 +29,7 @@ import {
   IQUnit,
   Me,
   MobileDevice,
+  MobileDeviceGeoLocationConfig,
   MobileDeviceSettings,
   Power,
   PushNotificationRegistration,
@@ -454,6 +455,22 @@ export class Tado {
         firebaseProject: "tado-app",
         provider: "FCM",
       } as PushNotificationRegistrationData,
+    );
+  }
+
+  /**
+   * Fetches the geo-location configuration for a specific mobile device in a home.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @param mobile_device_id - The unique identifier of the mobile device.
+   * @returns A promise that resolves to the mobile device's geo-location configuration.
+   */
+  getMobileDeviceGeoLocationConfig(
+    home_id: number,
+    mobile_device_id: number,
+  ): Promise<MobileDeviceGeoLocationConfig> {
+    return this.apiCall(
+      `/api/v2/homes/${home_id}/mobileDevices/${mobile_device_id}/geoLocationConfig`,
     );
   }
 
