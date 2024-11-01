@@ -177,6 +177,26 @@ describe("High-level API tests", () => {
       .catch(done);
   });
 
+  it("Should set the home away radius", (done) => {
+    const radius = 500.0;
+
+    nock("https://my.tado.com")
+      .put("/api/v2/homes/1907/awayRadiusInMeters", (body) => {
+        expect(typeof body.awayRadiusInMeters).to.equal("number");
+        expect(body.awayRadiusInMeters).to.equal(radius);
+        return true;
+      })
+      .reply(204, "");
+
+    tado
+      .setAwayRadius(1907, radius)
+      .then((response) => {
+        expect(response).to.equal("");
+        done();
+      })
+      .catch(done);
+  });
+
   it("Should get the weather", (done) => {
     nock("https://my.tado.com").get("/api/v2/homes/1907/weather").reply(200, weather_response);
 

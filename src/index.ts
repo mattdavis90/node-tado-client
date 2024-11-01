@@ -228,6 +228,19 @@ export class Tado {
   }
 
   /**
+   * Sets the away radius for a specific home.
+   *
+   * @param home_id - The ID of the home.
+   * @param away_radius_meters - The away radius in meters.
+   * @returns A promise that resolves when the away radius is successfully set.
+   */
+  setAwayRadius(home_id: number, away_radius_meters: number): Promise<void> {
+    return this.apiCall(`/api/v2/homes/${home_id}/awayRadiusInMeters`, "PUT", {
+      awayRadiusInMeters: away_radius_meters,
+    });
+  }
+
+  /**
    * Fetches the weather information for a specified home.
    *
    * @param home_id - The unique identifier of the home for which to retrieve the weather data.
