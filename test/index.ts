@@ -5,6 +5,7 @@ import nock from "nock";
 import { Tado } from "../src";
 import auth_response from "./response.auth.json";
 import away_configuration_response from "./response.away.json";
+import boiler_information_response from "./response.boilerInformation.json";
 import devices_response from "./response.devices.json";
 import devices_offset_response from "./response.devices.offset.json";
 import eneryIQConsumptionDetails_response from "./response.energyIQConsumptionDetails.json";
@@ -12,6 +13,7 @@ import eneryIQOverview_response from "./response.energyIQOverview.json";
 import eneryIQ_meter_readings_response from "./response.eneryIQ.meterReadings.json";
 import eneryIQ_savings_response from "./response.eneryIQ.savings.json";
 import eneryIQ_tariff_response from "./response.eneryIQ.tariff.json";
+import heating_system_response from "./response.heatingSystem.json";
 import home_response from "./response.home.json";
 import installations_response from "./response.installations.json";
 import me_response from "./response.me.json";
@@ -838,6 +840,46 @@ describe("High-level API tests", () => {
       .then((response) => {
         expect(typeof response).to.equal("object");
 
+        done();
+      })
+      .catch(done);
+  });
+
+  it("should get home heating system information", (done) => {
+    nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/heatingSystem")
+      .reply(200, heating_system_response);
+
+    tado
+      .getHomeHeatingSystem(1907)
+      .then((response) => {
+        expect(typeof response).to.equal("object");
+        expect(response.boiler.id).to.equal(2017);
+        expect(response.boiler.present).to.equal(true);
+        expect(response.boiler.found).to.equal(true);
+        expect(response.underfloorHeating.present).to.equal(false);
+        done();
+      })
+      .catch(done);
+  });
+
+  it("should get boiler system information", (done) => {
+    nock("https://ivar.tado.com")
+      .post("/graphql", (body): boolean => {
+        expect(body.query).to.equal(
+          "{ system(id: 2017) { modelName shortModelName: modelName(type: SHORT) thumbnail { schematic { url } } manufacturers { name } } }",
+        );
+        return true;
+      })
+      .reply(200, boiler_information_response);
+
+    tado
+      .getBoilerSystemInformation(2017)
+      .then((response) => {
+        expect(typeof response).to.equal("object");
+        expect(response.modelName).to.equal("ZR/ZSR/ZWR ..-2");
+        expect(response.manufacturers.length).to.equal(1);
+        expect(response.manufacturers[0].name).to.equal("Junkers");
         done();
       })
       .catch(done);

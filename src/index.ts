@@ -7,6 +7,7 @@ import {
   AirComfort,
   AirComfortDetailed,
   AwayConfiguration,
+  BoilerSystemInformation,
   Country,
   DeepPartial,
   DefaultOverlay,
@@ -20,6 +21,7 @@ import {
   FanLevel,
   FanSpeed,
   HeatingCircuit,
+  HeatingSystem,
   Home,
   HorizontalSwing,
   Installation,
@@ -1334,5 +1336,48 @@ export class Tado {
     return this.apiCall(
       `https://energy-bob.tado.com/${home_id}/${year}-${month}?country=${countryCode}`,
     );
+  }
+
+  /**
+   * Retrieves the heating system information for a specific home.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @returns A promise that resolves to the heating system information of the specified home.
+   */
+  getHomeHeatingSystem(home_id: number): Promise<HeatingSystem> {
+    return this.apiCall(`/api/v2/homes/${home_id}/heatingSystem`);
+  }
+
+  /**
+   * Retrieves information about the specified boiler system. This includes model name, image
+   * used by the app, and manufacturer names.
+   *
+   * @example
+   * ```typescript
+   * const heatingSystem = await tado.getHomeHeatingSystem(1907);
+   * const boilerInformation = await tado.getBoilerSystemInformation(heatingSystem.boiler.id);
+   * console.log(
+   *   `Your boiler model is ${boilerInformation.modelName} manufactured by ${boilerInformation.manufacturers[0].name}`,
+   * );
+   * ```
+   *
+   * @param system_id - The unique identifier of the boiler system as retrieved in {@link getHomeHeatingSystem}.
+   * @returns A promise that resolves to an object containing the boiler system information.
+   */
+  async getBoilerSystemInformation(system_id: number): Promise<BoilerSystemInformation> {
+    type getBoilerSystemInformationResponse = {
+      data: {
+        system: BoilerSystemInformation;
+      };
+    };
+
+    const response = await this.apiCall<getBoilerSystemInformationResponse>(
+      `https://ivar.tado.com/graphql`,
+      "POST",
+      {
+        query: `{ system(id: ${system_id}) { modelName shortModelName: modelName(type: SHORT) thumbnail { schematic { url } } manufacturers { name } } }`,
+      },
+    );
+    return response.data.system;
   }
 }

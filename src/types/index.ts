@@ -897,3 +897,33 @@ export type Installation = {
   state: ACInstallationState | HeatingInstallationState;
   devices: Device[];
 };
+
+export type BoilerAvailability = {
+  present: boolean;
+  id: number;
+  found: boolean;
+};
+
+export type UnderfloorHeatingAvailability = {
+  present: boolean;
+};
+
+export type HeatingSystem = {
+  boiler: BoilerAvailability;
+  underfloorHeating: UnderfloorHeatingAvailability;
+};
+
+export type Manufacturer = {
+  name: string;
+};
+
+export type BoilerSystemInformation = {
+  modelName: string;
+  shortModelName: string;
+  thumbnail: {
+    schematic: {
+      url: string;
+    };
+  };
+  manufacturers: Manufacturer[];
+};

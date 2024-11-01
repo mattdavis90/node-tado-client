@@ -1,0 +1,10 @@
+{
+  "boiler": {
+    "present": true,
+    "id": 2017,
+    "found": true
+  },
+  "underfloorHeating": {
+    "present": false
+  }
+}
