@@ -107,6 +107,7 @@ export type Home = {
   incidentDetection: HomeIncidentDetection;
   generation: HomeGeneration;
   zonesCount: number;
+  language: string;
   skills: HomeSkill[];
   christmasModeEnabled: boolean;
   showAutoAssistReminders: boolean;
@@ -117,9 +118,11 @@ export type Home = {
   enabledFeatures: Feature[];
   isAirComfortEligible: boolean;
   isBalanceAcEligible: boolean;
-  isBalanceHpEligible: boolean;
+  isBalanceHpEligible?: boolean;
   isEnergyIqEligible: boolean;
   isHeatSourceInstalled: boolean;
+  isHeatPumpInstalled: boolean;
+  supportsFlowTemperatureOptimization: boolean;
 };
 
 export type MeHome = Pick<Home, "id" | "name">;
