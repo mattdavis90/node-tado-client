@@ -144,3 +144,5 @@ export type HeatingInstallationState =
   | "WEB_USER_SUBSTITUTE";
 
 export type InstallationType = "INSTALL_AC_G1" | "SALE_FITTING_ST_G1" | "REPLACE_BRIDGE";
+
+export type HomeGeneration = "UNKNOWN" | "LINE_X" | "PRE_LINE_X";

@@ -23,6 +23,7 @@ import {
   HeatingCircuit,
   HeatingSystem,
   Home,
+  HomeIncidentDetection,
   HorizontalSwing,
   Installation,
   IQUnit,
@@ -227,6 +228,68 @@ export class Tado {
    */
   getHome(home_id: number): Promise<Home> {
     return this.apiCall(`/api/v2/homes/${home_id}`);
+  }
+
+  /**
+   * Sets the away radius for a specific home.
+   *
+   * @param home_id - The ID of the home.
+   * @param away_radius_meters - The away radius in meters.
+   * @returns A promise that resolves when the away radius is successfully set.
+   */
+  setAwayRadius(home_id: number, away_radius_meters: number): Promise<void> {
+    return this.apiCall(`/api/v2/homes/${home_id}/awayRadiusInMeters`, "PUT", {
+      awayRadiusInMeters: away_radius_meters,
+    });
+  }
+
+  /**
+   * Fetches incident detection details for the specified home.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @returns A promise that resolves to the incident detection details of the home.
+   */
+  getIncidentDetection(home_id: number): Promise<HomeIncidentDetection> {
+    return this.apiCall(`/api/v2/homes/${home_id}/incidentDetection`);
+  }
+
+  /**
+   * Enables or disables incident detection for a specified home.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @param enabled - Indicates whether incident detection should be enabled (true) or disabled (false).
+   * @returns A promise that resolves when the operation is complete.
+   */
+  setIncidentDetection(home_id: number, enabled: boolean): Promise<void> {
+    return this.apiCall(`/api/v2/homes/${home_id}/incidentDetection`, "PUT", {
+      enabled: enabled,
+    });
+  }
+
+  /**
+   * Checks if the early start feature is enabled for a given home.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @returns A promise that resolves to a boolean indicating whether the early start feature is enabled.
+   */
+  async isEarlyStartEnabled(home_id: number): Promise<boolean> {
+    const { enabled } = await this.apiCall<{ enabled: boolean }>(
+      `/api/v2/homes/${home_id}/earlyStart`,
+    );
+    return enabled;
+  }
+
+  /**
+   * Sets the early start feature for a specified home.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @param enabled - A boolean indicating whether the early start feature should be enabled or disabled.
+   * @returns A promise that resolves when the early start setting has been successfully updated.
+   */
+  setEarlyStart(home_id: number, enabled: boolean): Promise<void> {
+    return this.apiCall(`/api/v2/homes/${home_id}/earlyStart`, "PUT", {
+      enabled: enabled,
+    });
   }
 
   /**

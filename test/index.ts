@@ -8,6 +8,7 @@ import away_configuration_response from "./response.away.json";
 import boiler_information_response from "./response.boilerInformation.json";
 import devices_response from "./response.devices.json";
 import devices_offset_response from "./response.devices.offset.json";
+import early_start_response from "./response.earlyStart.json";
 import eneryIQConsumptionDetails_response from "./response.energyIQConsumptionDetails.json";
 import eneryIQOverview_response from "./response.energyIQOverview.json";
 import eneryIQ_meter_readings_response from "./response.eneryIQ.meterReadings.json";
@@ -15,6 +16,7 @@ import eneryIQ_savings_response from "./response.eneryIQ.savings.json";
 import eneryIQ_tariff_response from "./response.eneryIQ.tariff.json";
 import heating_system_response from "./response.heatingSystem.json";
 import home_response from "./response.home.json";
+import incident_detection_response from "./response.incidentDetection.json";
 import installations_response from "./response.installations.json";
 import me_response from "./response.me.json";
 import mobileDevice_response from "./response.mobileDevice.json";
@@ -174,6 +176,91 @@ describe("High-level API tests", () => {
           country: "NLD",
         });
 
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should set the home away radius", (done) => {
+    const radius = 500.0;
+
+    nock("https://my.tado.com")
+      .put("/api/v2/homes/1907/awayRadiusInMeters", (body) => {
+        expect(typeof body.awayRadiusInMeters).to.equal("number");
+        expect(body.awayRadiusInMeters).to.equal(radius);
+        return true;
+      })
+      .reply(204, "");
+
+    tado
+      .setAwayRadius(1907, radius)
+      .then((response) => {
+        expect(response).to.equal("");
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should get incident detection status", (done) => {
+    nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/incidentDetection")
+      .reply(200, incident_detection_response);
+
+    tado
+      .getIncidentDetection(1907)
+      .then((response) => {
+        expect(response.supported).to.equal(true);
+        expect(response.enabled).to.equal(true);
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should set incident detection status", (done) => {
+    nock("https://my.tado.com")
+      .put("/api/v2/homes/1907/incidentDetection", (body) => {
+        expect(Object.keys(body)).to.deep.equal(["enabled"]);
+        expect(body.enabled).to.equal(false);
+        return true;
+      })
+      .reply(204, "");
+
+    tado
+      .setIncidentDetection(1907, false)
+      .then((response) => {
+        expect(response).to.equal("");
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should get early start enabled value", (done) => {
+    nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/earlyStart")
+      .reply(200, early_start_response);
+
+    tado
+      .isEarlyStartEnabled(1907)
+      .then((response) => {
+        expect(response).to.equal(true);
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should set early state enabled value", (done) => {
+    nock("https://my.tado.com")
+      .put("/api/v2/homes/1907/earlyStart", (body) => {
+        expect(Object.keys(body)).to.deep.equal(["enabled"]);
+        expect(body.enabled).to.equal(false);
+        return true;
+      })
+      .reply(204, "");
+
+    tado
+      .setEarlyStart(1907, false)
+      .then((response) => {
+        expect(response).to.equal("");
         done();
       })
       .catch(done);
