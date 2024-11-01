@@ -179,6 +179,23 @@ export type MobileDevice = {
   deviceMetadata: MobileDeviceMetadata;
 };
 
+export type MobileDeviceGeoLocationConfig = {
+  home: {
+    geolocation: Geolocation;
+    region: number;
+    wifiRegion: number;
+  };
+  regions: number[];
+  desiredAccuracy: number;
+  maxAccuracy: number;
+  distanceFilter: number;
+  maxAge: number;
+  providerUpdateInterval: number;
+  minIntervalBetweenSentUpdates: number;
+  minIntervalBetweenBackgroundUpdates: number;
+  wakeupInterval: number;
+};
+
 export type Me = {
   name: string;
   email: string;

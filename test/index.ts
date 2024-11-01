@@ -22,6 +22,7 @@ import invitations_response from "./response.invitations.json";
 import me_response from "./response.me.json";
 import mobileDevice_response from "./response.mobileDevice.json";
 import mobileDevice_settings_response from "./response.mobileDevice.settings.json";
+import mobileDevice_geoLocation_config_response from "./response.mobileDeviceGeoLocationConfig.json";
 import mobileDevices_response from "./response.mobileDevices.json";
 import mobileDevice_push_notification_registration_response from "./response.pushNotificationRegistration.json";
 import state_response from "./response.state.json";
@@ -498,6 +499,29 @@ describe("High-level API tests", () => {
       .getMobileDeviceSettings(1907, 644583)
       .then((response) => {
         expect(typeof response).to.equal("object");
+
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should get a mobile device geo-location config", (done) => {
+    nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/mobileDevices/644583/geoLocationConfig")
+      .reply(200, mobileDevice_geoLocation_config_response);
+
+    tado
+      .getMobileDeviceGeoLocationConfig(1907, 644583)
+      .then((response) => {
+        expect(typeof response).to.equal("object");
+        expect(response.home).to.deep.equal({
+          geolocation: {
+            latitude: 51.2993,
+            longitude: 9.491,
+          },
+          region: 100,
+          wifiRegion: 1900,
+        });
 
         done();
       })
