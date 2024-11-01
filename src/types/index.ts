@@ -932,3 +932,18 @@ export type BoilerSystemInformation = {
   };
   manufacturers: Manufacturer[];
 };
+
+export type Inviter = Omit<User, "homes" | "mobileDevices"> & {
+  enabled: boolean;
+  homeId: number;
+  type: string & "WEB_USER";
+};
+
+export type Invitation = {
+  token: string;
+  email: string;
+  firstSent: string; // ISO 8601 format date-time
+  lastSent: string; // ISO 8601 format date-time
+  inviter: Inviter;
+  home: Home;
+};

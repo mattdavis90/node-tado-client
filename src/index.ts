@@ -26,6 +26,7 @@ import {
   HomeIncidentDetection,
   HorizontalSwing,
   Installation,
+  Invitation,
   IQUnit,
   Me,
   MobileDevice,
@@ -330,6 +331,62 @@ export class Tado {
    */
   getInstallations(home_id: number): Promise<Installation[]> {
     return this.apiCall(`/api/v2/homes/${home_id}/installations`);
+  }
+
+  /**
+   * Fetches the list of invitations for a specified home.
+   *
+   * @param home_id - The ID of the home for which to retrieve invitations.
+   * @returns A promise that resolves to an array of Invitation objects.
+   */
+  getInvitations(home_id: number): Promise<Invitation[]> {
+    return this.apiCall(`/api/v2/homes/${home_id}/invitations`);
+  }
+
+  /**
+   * Retrieves an invitation based on the provided home ID and token.
+   *
+   * @param home_id - The ID of the home for which the invitation is to be retrieved.
+   * @param token - The unique token (invitation id) associated with the invitation.
+   * @returns A promise that resolves to the invitation details.
+   */
+  getInvitation(home_id: number, token: string): Promise<Invitation> {
+    return this.apiCall(`/api/v2/homes/${home_id}/invitations/${token}`);
+  }
+
+  /**
+   * Creates an invitation for a specified home.
+   *
+   * @param home_id - The unique identifier of the home to which the invitation will be sent.
+   * @param email - The email address of the invitee.
+   * @returns A promise that resolves to an Invitation object.
+   */
+  createInvitation(home_id: number, email: string): Promise<Invitation> {
+    return this.apiCall(`/api/v2/homes/${home_id}/invitations`, "POST", {
+      email: email,
+    });
+  }
+
+  /**
+   * Resends an invitation to a specific home.
+   *
+   * @param home_id - The ID of the home for which the invitation is to be resent.
+   * @param token - The token representing the invitation to be resent.
+   * @returns A promise that resolves once the invitation has been resent.
+   */
+  resendInvitation(home_id: number, token: string): Promise<void> {
+    return this.apiCall(`/api/v2/homes/${home_id}/invitations/${token}/resend`, "POST", {});
+  }
+
+  /**
+   * Deletes an invitation associated with a home.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @param token - The token associated with the invitation.
+   * @returns A promise that resolves when the invitation is successfully deleted.
+   */
+  deleteInvitation(home_id: number, token: string): Promise<void> {
+    return this.apiCall(`/api/v2/homes/${home_id}/invitations/${token}`, "DELETE");
   }
 
   /**
