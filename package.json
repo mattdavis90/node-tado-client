@@ -1,6 +1,6 @@
 {
   "name": "node-tado-client",
-  "version": "0.18.1",
+  "version": "0.19.0",
   "description": "A Tado client for nodejs",
   "repository": {
     "type": "git",
@@ -8,6 +8,7 @@
   },
   "author": "Matt Davis <mattdavis90@googlemail.com>",
   "contributors": [
+    "Arun Babu Neelicattu <arun.neelicattu@gmail.com>",
     "Fabien JUIF <fabien.juif@gmail.com>"
   ],
   "license": "MIT",
