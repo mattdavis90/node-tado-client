@@ -15,6 +15,7 @@ import {
   FanSpeed,
   Feature,
   HeatingInstallationState,
+  HomeGeneration,
   HorizontalSwing,
   HumidityLevel,
   InstallationType,
@@ -104,6 +105,7 @@ export type Home = {
   awayRadiusInMeters: number;
   installationCompleted: boolean;
   incidentDetection: HomeIncidentDetection;
+  generation: HomeGeneration;
   zonesCount: number;
   skills: HomeSkill[];
   christmasModeEnabled: boolean;
