@@ -18,6 +18,7 @@ import heating_system_response from "./response.heatingSystem.json";
 import home_response from "./response.home.json";
 import incident_detection_response from "./response.incidentDetection.json";
 import installations_response from "./response.installations.json";
+import invitations_response from "./response.invitations.json";
 import me_response from "./response.me.json";
 import mobileDevice_response from "./response.mobileDevice.json";
 import mobileDevice_settings_response from "./response.mobileDevice.settings.json";
@@ -328,6 +329,101 @@ describe("High-level API tests", () => {
         expect(response.length).to.equal(1);
         expect(response[0].devices.length).to.equal(1);
         expect(response[0].devices[0].shortSerialNo).to.equal("RU04932458");
+
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should get the invitations", (done) => {
+    nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/invitations")
+      .reply(200, invitations_response);
+
+    tado
+      .getInvitations(1907)
+      .then((response) => {
+        expect(typeof response).to.equal("object");
+        expect(response.length).to.equal(1);
+        expect(response[0].email).to.equal("person@example.com");
+
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should get a single invitation", (done) => {
+    const invitation_token = "12345";
+    const response_body = invitations_response[0];
+    response_body.token = invitation_token;
+
+    nock("https://my.tado.com")
+      .get(`/api/v2/homes/1907/invitations/${invitation_token}`)
+      .reply(200, response_body);
+
+    tado
+      .getInvitation(1907, invitation_token)
+      .then((response) => {
+        expect(typeof response).to.equal("object");
+        expect(response.token).to.equal(invitation_token);
+
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should create an invitation", (done) => {
+    const invitation = { email: "person@example.com" };
+
+    nock("https://my.tado.com")
+      .post("/api/v2/homes/1907/invitations", (body) => {
+        expect(body).to.deep.equal(invitation);
+        return true;
+      })
+      .reply(200, invitations_response[0]);
+
+    tado
+      .createInvitation(1907, invitation.email)
+      .then((response) => {
+        expect(typeof response).to.equal("object");
+        expect(response.email).to.equal(invitation.email);
+
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should delete an invitation", (done) => {
+    const invitation_token = "12345";
+
+    nock("https://my.tado.com")
+      .delete(`/api/v2/homes/1907/invitations/${invitation_token}`)
+      .reply(204);
+
+    tado
+      .deleteInvitation(1907, invitation_token)
+      .then((response) => {
+        expect(response).to.equal("");
+
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should resend an invitation", (done) => {
+    const invitation_token = "12345";
+
+    nock("https://my.tado.com")
+      .post(`/api/v2/homes/1907/invitations/${invitation_token}/resend`, (body) => {
+        expect(body).to.deep.equal({});
+        return true;
+      })
+      .reply(204);
+
+    tado
+      .resendInvitation(1907, invitation_token)
+      .then((response) => {
+        expect(response).to.equal("");
 
         done();
       })
