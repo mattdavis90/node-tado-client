@@ -7,6 +7,7 @@ import auth_response from "./response.auth.json";
 import away_configuration_response from "./response.away.json";
 import devices_response from "./response.devices.json";
 import devices_offset_response from "./response.devices.offset.json";
+import early_start_response from "./response.earlyStart.json";
 import eneryIQConsumptionDetails_response from "./response.energyIQConsumptionDetails.json";
 import eneryIQOverview_response from "./response.energyIQOverview.json";
 import eneryIQ_meter_readings_response from "./response.eneryIQ.meterReadings.json";
@@ -224,6 +225,38 @@ describe("High-level API tests", () => {
 
     tado
       .setIncidentDetection(1907, false)
+      .then((response) => {
+        expect(response).to.equal("");
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should get early start enabled value", (done) => {
+    nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/earlyStart")
+      .reply(200, early_start_response);
+
+    tado
+      .isEarlyStartEnabled(1907)
+      .then((response) => {
+        expect(response).to.equal(true);
+        done();
+      })
+      .catch(done);
+  });
+
+  it("Should set early state enabled value", (done) => {
+    nock("https://my.tado.com")
+      .put("/api/v2/homes/1907/earlyStart", (body) => {
+        expect(Object.keys(body)).to.deep.equal(["enabled"]);
+        expect(body.enabled).to.equal(false);
+        return true;
+      })
+      .reply(204, "");
+
+    tado
+      .setEarlyStart(1907, false)
       .then((response) => {
         expect(response).to.equal("");
         done();

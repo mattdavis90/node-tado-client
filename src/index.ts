@@ -265,6 +265,32 @@ export class Tado {
   }
 
   /**
+   * Checks if the early start feature is enabled for a given home.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @returns A promise that resolves to a boolean indicating whether the early start feature is enabled.
+   */
+  async isEarlyStartEnabled(home_id: number): Promise<boolean> {
+    const { enabled } = await this.apiCall<{ enabled: boolean }>(
+      `/api/v2/homes/${home_id}/earlyStart`,
+    );
+    return enabled;
+  }
+
+  /**
+   * Sets the early start feature for a specified home.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @param enabled - A boolean indicating whether the early start feature should be enabled or disabled.
+   * @returns A promise that resolves when the early start setting has been successfully updated.
+   */
+  setEarlyStart(home_id: number, enabled: boolean): Promise<void> {
+    return this.apiCall(`/api/v2/homes/${home_id}/earlyStart`, "PUT", {
+      enabled: enabled,
+    });
+  }
+
+  /**
    * Fetches the weather information for a specified home.
    *
    * @param home_id - The unique identifier of the home for which to retrieve the weather data.
