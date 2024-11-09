@@ -107,29 +107,29 @@ export class TadoError extends Error {}
  * ```
  */
 export class Tado {
-  private _httpsAgent: Agent;
-  private _accessToken?: AccessToken | null;
-  private _username?: string;
-  private _password?: string;
+  #httpsAgent: Agent;
+  #accessToken?: AccessToken | undefined;
+  #username?: string;
+  #password?: string;
 
   constructor(username?: string, password?: string) {
-    this._username = username;
-    this._password = password;
-    this._httpsAgent = new Agent({ keepAlive: true });
+    this.#username = username;
+    this.#password = password;
+    this.#httpsAgent = new Agent({ keepAlive: true });
   }
 
-  private async _login(): Promise<void> {
-    if (!this._username || !this._password) {
+  async #login(): Promise<void> {
+    if (!this.#username || !this.#password) {
       throw new Error("Please login before using Tado!");
     }
 
     const tokenParams = {
-      username: this._username,
-      password: this._password,
+      username: this.#username,
+      password: this.#password,
       scope: "home.user",
     };
 
-    this._accessToken = await client.getToken(tokenParams);
+    this.#accessToken = await client.getToken(tokenParams);
   }
 
   /**
@@ -142,26 +142,30 @@ export class Tado {
    * @returns A promise that resolves when the token has been refreshed or re-obtained.
    * @throws {@link TadoError} if no access token is available after attempting to login.
    */
-  private async _refreshToken(): Promise<void> {
-    if (!this._accessToken) {
-      await this._login();
+  async #refreshToken(): Promise<void> {
+    if (!this.#accessToken) {
+      await this.#login();
     }
 
-    if (!this._accessToken) {
+    if (!this.#accessToken) {
       throw new TadoError(`No access token available, even after login in.`);
     }
 
     // If the start of the window has passed, refresh the token
-    const shouldRefresh = this._accessToken.expired(EXPIRATION_WINDOW_IN_SECONDS);
+    const shouldRefresh = this.#accessToken.expired(EXPIRATION_WINDOW_IN_SECONDS);
 
     if (shouldRefresh) {
       try {
-        this._accessToken = await this._accessToken.refresh();
+        this.#accessToken = await this.#accessToken.refresh();
       } catch (_error) {
-        this._accessToken = null;
-        await this._login();
+        this.#accessToken = undefined;
+        await this.#login();
       }
     }
+  }
+
+  get accessToken(): AccessToken | undefined {
+    return this.#accessToken;
   }
 
   /**
@@ -174,9 +178,9 @@ export class Tado {
    * @returns A promise that resolves when the login process is complete.
    */
   async login(username: string, password: string): Promise<void> {
-    this._username = username;
-    this._password = password;
-    await this._login();
+    this.#username = username;
+    this.#password = password;
+    await this.#login();
   }
 
   /**
@@ -190,7 +194,7 @@ export class Tado {
    * @returns A promise that resolves to the response data.
    */
   async apiCall<R, T = unknown>(url: string, method: Method = "get", data?: T): Promise<R> {
-    await this._refreshToken();
+    await this.#refreshToken();
 
     let callUrl = tado_url + url;
     if (url.includes("https")) {
@@ -201,9 +205,9 @@ export class Tado {
       method: method,
       data: data,
       headers: {
-        Authorization: "Bearer " + this._accessToken?.token.access_token,
+        Authorization: "Bearer " + this.#accessToken?.token.access_token,
       },
-      httpsAgent: this._httpsAgent,
+      httpsAgent: this.#httpsAgent,
     };
     if (method !== "get" && method !== "GET") {
       request.data = data;

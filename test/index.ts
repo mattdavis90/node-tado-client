@@ -1,6 +1,7 @@
 import type { Me } from "../src";
 
-import { expect } from "chai";
+import * as chai from "chai";
+import chaiAsPromised from "chai-as-promised";
 import nock from "nock";
 import { Tado } from "../src";
 import auth_response from "./response.auth.json";
@@ -36,154 +37,106 @@ import zone_overlay_response from "./response.zone.overlay.json";
 import zone_state_response from "./response.zone.state.json";
 import zones_response from "./response.zones.json";
 
+chai.use(chaiAsPromised);
+const expect = chai.expect;
+
 describe("OAuth2 tests", () => {
-  it("Should login", (done) => {
+  beforeEach(() => {
+    nock.cleanAll();
+  });
+
+  it("Should login", async () => {
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
 
     const tado = new Tado();
+    await tado.login("username", "password");
 
-    tado.login("username", "password").then(() => {
-      // @ts-expect-error testing private property is intentional
-      expect(typeof tado._accessToken).to.equal("object");
-
-      // @ts-expect-error testing private property is intentional
-      expect(tado._accessToken?.token.access_token).to.equal("eyJraW0UQ");
-      // @ts-expect-error testing private property is intentional
-      expect(tado._accessToken?.token.token_type).to.equal("bearer");
-
-      done();
-    });
+    expect(typeof tado.accessToken).to.equal("object");
+    expect(tado.accessToken?.token.access_token).to.equal("eyJraW0UQ");
+    expect(tado.accessToken?.token.token_type).to.equal("bearer");
   });
 
-  it("Should fail to login", (done) => {
+  it("Should fail to login", async () => {
     nock("https://auth.tado.com").post("/oauth/token").reply(500, {});
 
     const tado = new Tado();
-
-    tado.login("username", "password").catch((_error) => {
-      done();
-    });
-  });
-
-  it("Should login then refresh token", (done) => {
-    nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
-
-    const tado = new Tado();
-
-    tado.login("username", "password").then((_response) => {
-      nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
-
-      // Force a refresh
-      // @ts-expect-error testing private property is intentional
-      tado._accessToken.token.expires_at = new Date();
-      tado
-        // @ts-expect-error testing private property is intentional
-        ._refreshToken()
-        .then((_res) => {
-          done();
-        })
-        .catch(done);
-    });
+    await expect(tado.login("username", "password")).to.be.rejectedWith(Error);
   });
 });
 
 describe("Low-level API tests", () => {
-  it('Login and get "me"', (done) => {
-    const tado = new Tado();
+  beforeEach(() => {
+    nock.cleanAll();
+  });
 
+  it('Login and get "me"', async () => {
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
     nock("https://my.tado.com").get("/api/v2/me").reply(200, me_response);
 
-    tado.login("username", "password").then((_response) => {
-      tado
-        .apiCall<Me>("/api/v2/me")
-        .then((response) => {
-          expect(typeof response).to.equal("object");
-          expect(response.name).to.equal("John Doe");
+    const tado = new Tado();
+    await tado.login("username", "password");
+    const response = await tado.apiCall<Me>("/api/v2/me");
 
-          done();
-        })
-        .catch(done);
-    });
+    expect(typeof response).to.equal("object");
+    expect(response.name).to.equal("John Doe");
   });
 
-  it('Don\'t login and get "me"', (done) => {
+  it('Don\'t login and get "me"', async () => {
     const tado = new Tado();
 
-    tado.apiCall<Me>("/api/v2/me").catch((_error) => {
-      done();
-    });
+    await expect(tado.apiCall<Me>("/api/v2/me")).to.be.rejectedWith(Error);
   });
 
-  it('Login and fail to get "me"', (done) => {
-    const tado = new Tado();
-
+  it('Login and fail to get "me"', async () => {
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
     nock("https://my.tado.com").get("/api/v2/me").reply(500, {});
 
-    tado.login("username", "password").then((_response) => {
-      tado
-        .apiCall<Me>("/api/v2/me")
-        .catch((_error) => {
-          done();
-        })
-        .catch(done);
-    });
+    const tado = new Tado();
+    await tado.login("username", "password");
+
+    await expect(tado.apiCall<Me>("/api/v2/me")).to.be.rejectedWith(Error);
   });
 });
 
 describe("High-level API tests", () => {
   let tado: Tado;
 
-  beforeEach((ready) => {
-    tado = new Tado();
-
+  beforeEach(async () => {
+    nock.cleanAll();
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
 
-    tado.login("username", "password").then((_res) => {
-      ready();
+    tado = new Tado();
+    await tado.login("username", "password");
+  });
+
+  it("Should get the current user", async () => {
+    nock("https://my.tado.com").get("/api/v2/me").reply(200, me_response);
+
+    const response = await tado.getMe();
+
+    expect(typeof response).to.equal("object");
+    expect(response.name).to.equal("John Doe");
+  });
+
+  it("Should get home", async () => {
+    nock("https://my.tado.com").get("/api/v2/homes/1907").reply(200, home_response);
+
+    const response = await tado.getHome(1907);
+
+    expect(typeof response).to.equal("object");
+    expect(response.id).to.equal(1907);
+    expect(response.name).to.equal("Dummy Home");
+    expect(response.address).to.deep.equals({
+      addressLine1: "Museumplein 6",
+      addressLine2: null,
+      zipCode: "1071",
+      city: "Amsterdam",
+      state: null,
+      country: "NLD",
     });
   });
 
-  it("Should get the current user", (done) => {
-    nock("https://my.tado.com").get("/api/v2/me").reply(200, me_response);
-
-    tado
-      .getMe()
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-
-        expect(response.name).to.equal("John Doe");
-
-        done();
-      })
-      .catch(done);
-  });
-
-  it("Should get home", (done) => {
-    nock("https://my.tado.com").get("/api/v2/homes/1907").reply(200, home_response);
-
-    tado
-      .getHome(1907)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-        expect(response.id).to.equal(1907);
-        expect(response.name).to.equal("Dummy Home");
-        expect(response.address).to.deep.equals({
-          addressLine1: "Museumplein 6",
-          addressLine2: null,
-          zipCode: "1071",
-          city: "Amsterdam",
-          state: null,
-          country: "NLD",
-        });
-
-        done();
-      })
-      .catch(done);
-  });
-
-  it("Should set the home away radius", (done) => {
+  it("Should set the home away radius", async () => {
     const radius = 500.0;
 
     nock("https://my.tado.com")
@@ -194,31 +147,23 @@ describe("High-level API tests", () => {
       })
       .reply(204, "");
 
-    tado
-      .setAwayRadius(1907, radius)
-      .then((response) => {
-        expect(response).to.equal("");
-        done();
-      })
-      .catch(done);
+    const response = await tado.setAwayRadius(1907, radius);
+
+    expect(response).to.equal("");
   });
 
-  it("Should get incident detection status", (done) => {
+  it("Should get incident detection status", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/incidentDetection")
       .reply(200, incident_detection_response);
 
-    tado
-      .getIncidentDetection(1907)
-      .then((response) => {
-        expect(response.supported).to.equal(true);
-        expect(response.enabled).to.equal(true);
-        done();
-      })
-      .catch(done);
+    const response = await tado.getIncidentDetection(1907);
+
+    expect(response.supported).to.equal(true);
+    expect(response.enabled).to.equal(true);
   });
 
-  it("Should set incident detection status", (done) => {
+  it("Should set incident detection status", async () => {
     nock("https://my.tado.com")
       .put("/api/v2/homes/1907/incidentDetection", (body) => {
         expect(Object.keys(body)).to.deep.equal(["enabled"]);
@@ -227,30 +172,22 @@ describe("High-level API tests", () => {
       })
       .reply(204, "");
 
-    tado
-      .setIncidentDetection(1907, false)
-      .then((response) => {
-        expect(response).to.equal("");
-        done();
-      })
-      .catch(done);
+    const response = await tado.setIncidentDetection(1907, false);
+
+    expect(response).to.equal("");
   });
 
-  it("Should get early start enabled value", (done) => {
+  it("Should get early start enabled value", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/earlyStart")
       .reply(200, early_start_response);
 
-    tado
-      .isEarlyStartEnabled(1907)
-      .then((response) => {
-        expect(response).to.equal(true);
-        done();
-      })
-      .catch(done);
+    const response = await tado.isEarlyStartEnabled(1907);
+
+    expect(response).to.equal(true);
   });
 
-  it("Should set early state enabled value", (done) => {
+  it("Should set early state enabled value", async () => {
     nock("https://my.tado.com")
       .put("/api/v2/homes/1907/earlyStart", (body) => {
         expect(Object.keys(body)).to.deep.equal(["enabled"]);
@@ -259,101 +196,68 @@ describe("High-level API tests", () => {
       })
       .reply(204, "");
 
-    tado
-      .setEarlyStart(1907, false)
-      .then((response) => {
-        expect(response).to.equal("");
-        done();
-      })
-      .catch(done);
+    const response = await tado.setEarlyStart(1907, false);
+
+    expect(response).to.equal("");
   });
 
-  it("Should get the weather", (done) => {
+  it("Should get the weather", async () => {
     nock("https://my.tado.com").get("/api/v2/homes/1907/weather").reply(200, weather_response);
 
-    tado
-      .getWeather(1907)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getWeather(1907);
 
-        expect(response.weatherState.value).to.equal("DRIZZLE");
-
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
+    expect(response.weatherState.value).to.equal("DRIZZLE");
   });
 
-  it("Should get the devices", (done) => {
+  it("Should get the devices", async () => {
     nock("https://my.tado.com").get("/api/v2/homes/1907/devices").reply(200, devices_response);
 
-    tado
-      .getDevices(1907)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getDevices(1907);
 
-        expect(response.length).to.equal(1);
-        expect(response[0].shortSerialNo).to.equal("RU04932458");
-
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
+    expect(response.length).to.equal(1);
+    expect(response[0].shortSerialNo).to.equal("RU04932458");
   });
 
-  it("Should get the device temperature offset", (done) => {
+  it("Should get the device temperature offset", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/devices/RU04932458/temperatureOffset")
       .reply(200, devices_offset_response);
 
-    tado
-      .getDeviceTemperatureOffset("RU04932458")
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getDeviceTemperatureOffset("RU04932458");
 
-        expect(response.celsius).to.equal(0.2);
-        expect(response.fahrenheit).to.equal(0.2);
-
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
+    expect(response.celsius).to.equal(0.2);
+    expect(response.fahrenheit).to.equal(0.2);
   });
 
-  it("Should get the installations", (done) => {
+  it("Should get the installations", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/installations")
       .reply(200, installations_response);
 
-    tado
-      .getInstallations(1907)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getInstallations(1907);
 
-        expect(response.length).to.equal(1);
-        expect(response[0].devices.length).to.equal(1);
-        expect(response[0].devices[0].shortSerialNo).to.equal("RU04932458");
-
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
+    expect(response.length).to.equal(1);
+    expect(response[0].devices.length).to.equal(1);
+    expect(response[0].devices[0].shortSerialNo).to.equal("RU04932458");
   });
 
-  it("Should get the invitations", (done) => {
+  it("Should get the invitations", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/invitations")
       .reply(200, invitations_response);
 
-    tado
-      .getInvitations(1907)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-        expect(response.length).to.equal(1);
-        expect(response[0].email).to.equal("person@example.com");
+    const response = await tado.getInvitations(1907);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
+    expect(response.length).to.equal(1);
+    expect(response[0].email).to.equal("person@example.com");
   });
 
-  it("Should get a single invitation", (done) => {
+  it("Should get a single invitation", async () => {
     const invitation_token = "12345";
     const response_body = invitations_response[0];
     response_body.token = invitation_token;
@@ -362,18 +266,13 @@ describe("High-level API tests", () => {
       .get(`/api/v2/homes/1907/invitations/${invitation_token}`)
       .reply(200, response_body);
 
-    tado
-      .getInvitation(1907, invitation_token)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-        expect(response.token).to.equal(invitation_token);
+    const response = await tado.getInvitation(1907, invitation_token);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
+    expect(response.token).to.equal(invitation_token);
   });
 
-  it("Should create an invitation", (done) => {
+  it("Should create an invitation", async () => {
     const invitation = { email: "person@example.com" };
 
     nock("https://my.tado.com")
@@ -383,35 +282,25 @@ describe("High-level API tests", () => {
       })
       .reply(200, invitations_response[0]);
 
-    tado
-      .createInvitation(1907, invitation.email)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-        expect(response.email).to.equal(invitation.email);
+    const response = await tado.createInvitation(1907, invitation.email);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
+    expect(response.email).to.equal(invitation.email);
   });
 
-  it("Should delete an invitation", (done) => {
+  it("Should delete an invitation", async () => {
     const invitation_token = "12345";
 
     nock("https://my.tado.com")
       .delete(`/api/v2/homes/1907/invitations/${invitation_token}`)
       .reply(204);
 
-    tado
-      .deleteInvitation(1907, invitation_token)
-      .then((response) => {
-        expect(response).to.equal("");
+    const response = await tado.deleteInvitation(1907, invitation_token);
 
-        done();
-      })
-      .catch(done);
+    expect(response).to.equal("");
   });
 
-  it("Should resend an invitation", (done) => {
+  it("Should resend an invitation", async () => {
     const invitation_token = "12345";
 
     nock("https://my.tado.com")
@@ -421,114 +310,78 @@ describe("High-level API tests", () => {
       })
       .reply(204);
 
-    tado
-      .resendInvitation(1907, invitation_token)
-      .then((response) => {
-        expect(response).to.equal("");
+    const response = await tado.resendInvitation(1907, invitation_token);
 
-        done();
-      })
-      .catch(done);
+    expect(response).to.equal("");
   });
 
-  it("Should get the users", (done) => {
+  it("Should get the users", async () => {
     nock("https://my.tado.com").get("/api/v2/homes/1907/users").reply(200, users_response);
 
-    tado
-      .getUsers(1907)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getUsers(1907);
 
-        expect(response.length).to.equal(1);
-        expect(response[0].name).to.equal("John Doe");
-
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
+    expect(response.length).to.equal(1);
+    expect(response[0].name).to.equal("John Doe");
   });
 
-  it("should get the home state", (done) => {
+  it("should get the home state", async () => {
     nock("https://my.tado.com").get("/api/v2/homes/1907/state").reply(200, state_response);
 
-    tado
-      .getState(1907)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getState(1907);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should get the mobile devices", (done) => {
+  it("Should get the mobile devices", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/mobileDevices")
       .reply(200, mobileDevices_response);
 
-    tado
-      .getMobileDevices(1907)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getMobileDevices(1907);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should get a mobile device", (done) => {
+  it("Should get a mobile device", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/mobileDevices/644583")
       .reply(200, mobileDevice_response);
 
-    tado
-      .getMobileDevice(1907, 644583)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getMobileDevice(1907, 644583);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should get a mobile device settings", (done) => {
+  it("Should get a mobile device settings", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/mobileDevices/644583/settings")
       .reply(200, mobileDevice_settings_response);
 
-    tado
-      .getMobileDeviceSettings(1907, 644583)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getMobileDeviceSettings(1907, 644583);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should get a mobile device geo-location config", (done) => {
+  it("Should get a mobile device geo-location config", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/mobileDevices/644583/geoLocationConfig")
       .reply(200, mobileDevice_geoLocation_config_response);
 
-    tado
-      .getMobileDeviceGeoLocationConfig(1907, 644583)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-        expect(response.home).to.deep.equal({
-          geolocation: {
-            latitude: 51.2993,
-            longitude: 9.491,
-          },
-          region: 100,
-          wifiRegion: 1900,
-        });
+    const response = await tado.getMobileDeviceGeoLocationConfig(1907, 644583);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
+    expect(response.home).to.deep.equal({
+      geolocation: {
+        latitude: 51.2993,
+        longitude: 9.491,
+      },
+      region: 100,
+      wifiRegion: 1900,
+    });
   });
 
-  it("Should register push notification endpoints", (done) => {
+  it("Should register push notification endpoints", async () => {
     const token = "5ad64f2d-b9a2-47ff-be65-3f3f9327a775";
 
     nock("https://my.tado.com")
@@ -545,169 +398,116 @@ describe("High-level API tests", () => {
       )
       .reply(200, mobileDevice_push_notification_registration_response);
 
-    tado
-      .createPushNotificationRegistration(1907, 644583, token)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-        expect(response.endpointArnValue).to.equal(
-          "arn:aws:sns:eu-west-0:000000000000:endpoint/GCM/Android-Production/e00000d0-0f00-0000-a0e0-00ee00e0b000",
-        );
-        done();
-      })
-      .catch(done);
+    const response = await tado.createPushNotificationRegistration(1907, 644583, token);
+
+    expect(typeof response).to.equal("object");
+    expect(response.endpointArnValue).to.equal(
+      "arn:aws:sns:eu-west-0:000000000000:endpoint/GCM/Android-Production/e00000d0-0f00-0000-a0e0-00ee00e0b000",
+    );
   });
 
-  it("Should get zones", (done) => {
+  it("Should get zones", async () => {
     nock("https://my.tado.com").get("/api/v2/homes/1907/zones").reply(200, zones_response);
 
-    tado
-      .getZones(1907)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getZones(1907);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should get a zone's state", (done) => {
+  it("Should get a zone's state", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/zones/1/state")
       .reply(200, zone_state_response);
 
-    tado
-      .getZoneState(1907, 1)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getZoneState(1907, 1);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should get a zone's capabilities", (done) => {
+  it("Should get a zone's capabilities", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/zones/1/capabilities")
       .reply(200, zone_capabilities_response);
 
-    tado
-      .getZoneCapabilities(1907, 1)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getZoneCapabilities(1907, 1);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should get a zone's day report", (done) => {
+  it("Should get a zone's day report", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/zones/1/dayReport?date=2023-01-19")
       .reply(200, zone_day_report);
 
-    tado
-      .getZoneDayReport(1907, 1, "2023-01-19")
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getZoneDayReport(1907, 1, "2023-01-19");
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should get a zone's overlay", (done) => {
+  it("Should get a zone's overlay", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/zones/1/overlay")
       .reply(200, zone_overlay_response);
 
-    tado
-      .getZoneOverlay(1907, 1)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getZoneOverlay(1907, 1);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("should get a zone's timetables", (done) => {
+  it("should get a zone's timetables", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/zones/1/schedule/activeTimetable")
       .reply(200, timetables_response);
 
-    tado
-      .getTimeTables(1907, 1)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getTimeTables(1907, 1);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("should get a zone's away configuration", (done) => {
+  it("should get a zone's away configuration", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/zones/1/awayConfiguration")
       .reply(200, away_configuration_response);
 
-    tado
-      .getAwayConfiguration(1907, 1)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getAwayConfiguration(1907, 1);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("should set a zone's away configuration", (done) => {
+  it("should set a zone's away configuration", async () => {
     nock("https://my.tado.com").put("/api/v2/homes/1907/zones/1/awayConfiguration").reply(204);
 
-    tado
-      .setAwayConfiguration(1907, 1, {
-        type: "HEATING",
-        preheatingLevel: "ECO",
-        minimumAwayTemperature: {
-          celsius: 5.0,
-          fahrenheit: 41.0,
-        },
-      })
-      .then((response) => {
-        expect(response).to.equal("");
-        done();
-      })
-      .catch(done);
+    const response = await tado.setAwayConfiguration(1907, 1, {
+      type: "HEATING",
+      preheatingLevel: "ECO",
+      minimumAwayTemperature: {
+        celsius: 5.0,
+        fahrenheit: 41.0,
+      },
+    });
+
+    expect(response).to.equal("");
   });
 
-  it("should get a timetable", (done) => {
+  it("should get a timetable", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/zones/1/schedule/timetables/0/blocks")
       .reply(200, timetable_response);
 
-    tado
-      .getTimeTable(1907, 1, 0)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.getTimeTable(1907, 1, 0);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should clear a zone's overlay", (done) => {
+  it("Should clear a zone's overlay", async () => {
     nock("https://my.tado.com").delete("/api/v2/homes/1907/zones/1/overlay").reply(200, {});
 
-    tado
-      .clearZoneOverlay(1907, 1)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.clearZoneOverlay(1907, 1);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should set a zone's overlay to Off", (done) => {
+  it("Should set a zone's overlay to Off", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/zones/1/capabilities")
       .reply(200, zone_capabilities_response);
@@ -722,17 +522,12 @@ describe("High-level API tests", () => {
       .get("/api/v2/homes/1907/zones/1/state")
       .reply(200, zone_state_response);
 
-    tado
-      .setZoneOverlay(1907, 1, "OFF")
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.setZoneOverlay(1907, 1, "OFF");
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should set a zone's overlay to On with no temperature", (done) => {
+  it("Should set a zone's overlay to On with no temperature", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/zones/1/capabilities")
       .reply(200, zone_capabilities_response);
@@ -747,17 +542,12 @@ describe("High-level API tests", () => {
       .get("/api/v2/homes/1907/zones/1/state")
       .reply(200, zone_state_response);
 
-    tado
-      .setZoneOverlay(1907, 1, "ON")
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.setZoneOverlay(1907, 1, "ON");
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should set a zone's overlay to On with Timer resume", (done) => {
+  it("Should set a zone's overlay to On with Timer resume", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/zones/1/capabilities")
       .reply(200, zone_capabilities_response);
@@ -772,17 +562,12 @@ describe("High-level API tests", () => {
       .get("/api/v2/homes/1907/zones/1/state")
       .reply(200, zone_state_response);
 
-    tado
-      .setZoneOverlay(1907, 1, "ON", 20, 300)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.setZoneOverlay(1907, 1, "ON", 20, 300);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should set a zone's overlay to On with Auto resume", (done) => {
+  it("Should set a zone's overlay to On with Auto resume", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/zones/1/capabilities")
       .reply(200, zone_capabilities_response);
@@ -797,17 +582,12 @@ describe("High-level API tests", () => {
       .get("/api/v2/homes/1907/zones/1/state")
       .reply(200, zone_state_response);
 
-    tado
-      .setZoneOverlay(1907, 1, "ON", 20, "AUTO")
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.setZoneOverlay(1907, 1, "ON", 20, "AUTO");
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should set a zone's overlay to On until next time block ", (done) => {
+  it("Should set a zone's overlay to On until next time block ", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/zones/1/capabilities")
       .reply(200, zone_capabilities_response);
@@ -822,151 +602,115 @@ describe("High-level API tests", () => {
       .get("/api/v2/homes/1907/zones/1/state")
       .reply(200, zone_state_response);
 
-    tado
-      .setZoneOverlay(1907, 1, "ON", 20, "NEXT_TIME_BLOCK")
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.setZoneOverlay(1907, 1, "ON", 20, "NEXT_TIME_BLOCK");
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should set a device's temperature offset", (done) => {
+  it("Should set a device's temperature offset", async () => {
     nock("https://my.tado.com")
       .put("/api/v2/devices/RU04932458/temperatureOffset")
       .reply(200, (_uri, req) => {
         return req;
       });
 
-    tado
-      .setDeviceTemperatureOffset("RU04932458", 0.2)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.setDeviceTemperatureOffset("RU04932458", 0.2);
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should get identify a device", (done) => {
+  it("Should get identify a device", async () => {
     nock("https://my.tado.com").post("/api/v2/devices/RU04932458/identify").reply(200, {});
 
-    tado
-      .identifyDevice("RU04932458")
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+    const response = await tado.identifyDevice("RU04932458");
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should get getEnergyIQOverview", (done) => {
+  it("Should get getEnergyIQOverview", async () => {
     nock("https://energy-insights.tado.com")
       .get("/api/homes/1907/consumptionOverview?month=2024-10")
       .reply(200, eneryIQOverview_response);
 
-    tado
-      .getEnergyIQOverview(1907, 10, 2024)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-        done();
-      })
-      .catch(done);
+    const response = await tado.getEnergyIQOverview(1907, 10, 2024);
+
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should get getEnergyIQConsumptionDetails", (done) => {
+  it("Should get getEnergyIQConsumptionDetails", async () => {
     nock("https://energy-insights.tado.com")
       .get("/api/homes/1907/consumptionDetails?month=2024-10")
       .reply(200, eneryIQConsumptionDetails_response);
 
-    tado
-      .getEnergyIQConsumptionDetails(1907, 10, 2024)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-        expect(response.summary.averageDailyCostInCents).to.equal(164.7665);
-        expect(response.graphConsumption).to.deep.equal(eneryIQOverview_response);
-        done();
-      })
-      .catch(done);
+    const response = await tado.getEnergyIQConsumptionDetails(1907, 10, 2024);
+
+    expect(typeof response).to.equal("object");
+    expect(response.summary.averageDailyCostInCents).to.equal(164.7665);
+    expect(response.graphConsumption).to.deep.equal(eneryIQOverview_response);
   });
 
-  it("Should get energyIQ Tariff", (done) => {
+  it("Should get energyIQ Tariff", async () => {
     nock("https://energy-insights.tado.com")
       .get("/api/homes/1907/tariffs")
       .reply(200, eneryIQ_tariff_response);
 
-    tado
-      .getEnergyIQTariff(1907)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-        done();
-      })
-      .catch(done);
+    const response = await tado.getEnergyIQTariff(1907);
+
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should update energyIQ Tariff", (done) => {
+  it("Should update energyIQ Tariff", async () => {
     nock("https://energy-insights.tado.com")
       .put("/api/homes/1907/tariffs/tariff-id")
       .reply(200, (_uri, req) => {
         return req;
       });
 
-    tado
-      .updateEnergyIQTariff(1907, "tariff-id", "m3", "1/1/1970", "2/1/1970", 1)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-        done();
-      })
-      .catch(done);
+    const response = await tado.updateEnergyIQTariff(
+      1907,
+      "tariff-id",
+      "m3",
+      "1/1/1970",
+      "2/1/1970",
+      1,
+    );
+
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should get energyIQ meter readings", (done) => {
+  it("Should get energyIQ meter readings", async () => {
     nock("https://energy-insights.tado.com")
       .get("/api/homes/1907/meterReadings")
       .reply(200, eneryIQ_meter_readings_response);
 
-    tado
-      .getEnergyIQMeterReadings(1907)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-        done();
-      })
-      .catch(done);
+    const response = await tado.getEnergyIQMeterReadings(1907);
+
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should add energyIQ meter readings", (done) => {
+  it("Should add energyIQ meter readings", async () => {
     nock("https://energy-insights.tado.com")
       .post("/api/homes/1907/meterReadings")
       .reply(200, (_uri, req) => {
         return req;
       });
 
-    tado
-      .addEnergyIQMeterReading(1907, "2022-01-05", 6813)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-        done();
-      })
-      .catch(done);
+    const response = await tado.addEnergyIQMeterReading(1907, "2022-01-05", 6813);
+
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should get energyIQ savings", (done) => {
+  it("Should get energyIQ savings", async () => {
     nock("https://energy-bob.tado.com")
       .get("/1907/2021-11?country=NLD")
       .reply(200, eneryIQ_savings_response);
 
-    tado
-      .getEnergySavingsReport(1907, 2021, 11, "NLD")
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-        done();
-      })
-      .catch(done);
+    const response = await tado.getEnergySavingsReport(1907, 2021, 11, "NLD");
+
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should allow boosting heating of all rooms", (done) => {
+  it("Should allow boosting heating of all rooms", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/zones/1/capabilities")
       .reply(200, zone_capabilities_response);
@@ -999,78 +743,64 @@ describe("High-level API tests", () => {
       })
       .reply(204, {});
 
-    tado
-      .setZoneOverlays(
-        1907,
-        [
-          {
-            isBoost: true,
-            power: "ON",
-            temperature: {
-              celsius: 25,
-              fahrenheit: 77,
-            },
-            zone_id: 1,
+    const response = await tado.setZoneOverlays(
+      1907,
+      [
+        {
+          isBoost: true,
+          power: "ON",
+          temperature: {
+            celsius: 25,
+            fahrenheit: 77,
           },
-        ],
-        1800,
-      )
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+          zone_id: 1,
+        },
+      ],
+      1800,
+    );
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("Should allow setting overlay with only celsius", (done) => {
+  it("Should allow setting overlay with only celsius", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/zones/1/capabilities")
       .reply(200, zone_capabilities_response);
 
     nock("https://my.tado.com").post("/api/v2/homes/1907/overlay").reply(204, {});
 
-    tado
-      .setZoneOverlays(
-        1907,
-        [
-          {
-            power: "ON",
-            temperature: {
-              celsius: 25,
-            },
-            zone_id: 1,
+    const response = await tado.setZoneOverlays(
+      1907,
+      [
+        {
+          power: "ON",
+          temperature: {
+            celsius: 25,
           },
-        ],
-        "AUTO",
-      )
-      .then((response) => {
-        expect(typeof response).to.equal("object");
+          zone_id: 1,
+        },
+      ],
+      "AUTO",
+    );
 
-        done();
-      })
-      .catch(done);
+    expect(typeof response).to.equal("object");
   });
 
-  it("should get home heating system information", (done) => {
+  it("should get home heating system information", async () => {
     nock("https://my.tado.com")
       .get("/api/v2/homes/1907/heatingSystem")
       .reply(200, heating_system_response);
 
-    tado
-      .getHomeHeatingSystem(1907)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-        expect(response.boiler.id).to.equal(2017);
-        expect(response.boiler.present).to.equal(true);
-        expect(response.boiler.found).to.equal(true);
-        expect(response.underfloorHeating.present).to.equal(false);
-        done();
-      })
-      .catch(done);
+    const response = await tado.getHomeHeatingSystem(1907);
+
+    expect(typeof response).to.equal("object");
+    expect(response.boiler.id).to.equal(2017);
+    expect(response.boiler.present).to.equal(true);
+    expect(response.boiler.found).to.equal(true);
+    expect(response.underfloorHeating.present).to.equal(false);
   });
 
-  it("should get boiler system information", (done) => {
+  it("should get boiler system information", async () => {
     nock("https://ivar.tado.com")
       .post("/graphql", (body): boolean => {
         expect(body.query).to.equal(
@@ -1080,15 +810,11 @@ describe("High-level API tests", () => {
       })
       .reply(200, boiler_information_response);
 
-    tado
-      .getBoilerSystemInformation(2017)
-      .then((response) => {
-        expect(typeof response).to.equal("object");
-        expect(response.modelName).to.equal("ZR/ZSR/ZWR ..-2");
-        expect(response.manufacturers.length).to.equal(1);
-        expect(response.manufacturers[0].name).to.equal("Junkers");
-        done();
-      })
-      .catch(done);
+    const response = await tado.getBoilerSystemInformation(2017);
+
+    expect(typeof response).to.equal("object");
+    expect(response.modelName).to.equal("ZR/ZSR/ZWR ..-2");
+    expect(response.manufacturers.length).to.equal(1);
+    expect(response.manufacturers[0].name).to.equal("Junkers");
   });
 });
