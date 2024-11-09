@@ -67,6 +67,7 @@ const EXPIRATION_WINDOW_IN_SECONDS = 300;
 
 const tado_auth_url = "https://auth.tado.com";
 const tado_url = "https://my.tado.com";
+const tado_x_url = "https://hops.tado.com";
 const tado_config = {
   client: {
     id: "tado-web-app",
@@ -111,11 +112,15 @@ export class Tado {
   #accessToken?: AccessToken | undefined;
   #username?: string;
   #password?: string;
+  #firstLogin: boolean;
+  #isX: boolean;
 
   constructor(username?: string, password?: string) {
     this.#username = username;
     this.#password = password;
     this.#httpsAgent = new Agent({ keepAlive: true });
+    this.#firstLogin = true;
+    this.#isX = false;
   }
 
   async #login(): Promise<void> {
@@ -130,6 +135,20 @@ export class Tado {
     };
 
     this.#accessToken = await client.getToken(tokenParams);
+
+    if (this.#firstLogin) {
+      try {
+        const me = await this.getMe();
+        if (me.homes.length > 0) {
+          const home_id = me.homes[0].id;
+          const home = await this.getHome(home_id);
+          this.#isX = home.generation == "LINE_X";
+        }
+      } catch (err) {
+        console.error(`Could not determine TadoX status: ${err}`);
+      }
+      this.#firstLogin = false;
+    }
   }
 
   /**
@@ -166,6 +185,10 @@ export class Tado {
 
   get accessToken(): AccessToken | undefined {
     return this.#accessToken;
+  }
+
+  get isX(): boolean {
+    return this.#isX;
   }
 
   /**
@@ -215,6 +238,21 @@ export class Tado {
     const response = await axios(request);
 
     return response.data as R;
+  }
+
+  /**
+   * Makes an API call to the provided TadoX URL with the specified method and data.
+   *
+   * @typeParam R - The type of the response
+   * @typeParam T - The type of the request body
+   * @param url - The endpoint to which the request is sent. If the URL contains "https", it will be used as is.
+   * @param method - The HTTP method to use for the request (e.g., "get", "post").
+   * @param data - The payload to send with the request, if applicable.
+   * @returns A promise that resolves to the response data.
+   */
+  async apiCallX<R, T = unknown>(url: string, method: Method = "get", data?: T): Promise<R> {
+    const callUrl = tado_x_url + url;
+    return this.apiCall(callUrl, method, data);
   }
 
   /**
@@ -312,7 +350,11 @@ export class Tado {
    * @returns A promise that resolves to an array of Device objects.
    */
   getDevices(home_id: number): Promise<Device[]> {
-    return this.apiCall(`/api/v2/homes/${home_id}/devices`);
+    if (this.#isX) {
+      return this.apiCallX(`/homes/${home_id}/roomsAndDevices`);
+    } else {
+      return this.apiCall(`/api/v2/homes/${home_id}/devices`);
+    }
   }
 
   /**
@@ -539,7 +581,11 @@ export class Tado {
    * @returns A promise that resolves to an array of Zone objects.
    */
   getZones(home_id: number): Promise<Zone[]> {
-    return this.apiCall(`/api/v2/homes/${home_id}/zones`);
+    if (this.#isX) {
+      return this.apiCallX(`/homes/${home_id}/rooms`);
+    } else {
+      return this.apiCall(`/api/v2/homes/${home_id}/zones`);
+    }
   }
 
   /**
@@ -550,7 +596,11 @@ export class Tado {
    * @returns  A promise that resolves to the state of the specified zone.
    */
   getZoneState(home_id: number, zone_id: number): Promise<ZoneState> {
-    return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state`);
+    if (this.#isX) {
+      return this.apiCallX(`/homes/${home_id}/rooms/${zone_id}`);
+    } else {
+      return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state`);
+    }
   }
 
   /**
@@ -810,7 +860,11 @@ export class Tado {
    * @deprecated Use {@link clearZoneOverlays} instead.
    */
   clearZoneOverlay(home_id: number, zone_id: number): Promise<void> {
-    return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, "delete");
+    if (this.#isX) {
+      return this.apiCallX(`/homes/${home_id}/rooms/${zone_id}/resumeSchedule`, "post", {});
+    } else {
+      return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, "delete");
+    }
   }
 
   /**
@@ -930,7 +984,15 @@ export class Tado {
       };
     }
 
-    return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, "put", config);
+    if (this.#isX) {
+      return this.apiCallX(
+        `/api/v2/homes/${home_id}/rooms/${zone_id}/manualControl`,
+        "post",
+        config,
+      );
+    } else {
+      return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, "put", config);
+    }
   }
 
   /**
@@ -941,8 +1003,14 @@ export class Tado {
    * @returns A promise that resolves when the overlays are cleared.
    */
   async clearZoneOverlays(home_id: number, zone_ids: number[]): Promise<void> {
-    const rooms = zone_ids.join(",");
-    return this.apiCall(`/api/v2/homes/${home_id}/overlay?rooms=${rooms}`, "delete");
+    if (this.#isX) {
+      for (const zone_id of zone_ids) {
+        return this.apiCallX(`/homes/${home_id}/rooms/${zone_id}/resumeSchedule`, "post", {});
+      }
+    } else {
+      const rooms = zone_ids.join(",");
+      return this.apiCall(`/api/v2/homes/${home_id}/overlay?rooms=${rooms}`, "delete");
+    }
   }
 
   /**
@@ -1081,7 +1149,17 @@ export class Tado {
       config.push(overlay_config);
     }
 
-    return this.apiCall(`/api/v2/homes/${home_id}/overlay`, "post", { overlays: config });
+    if (this.#isX) {
+      for (const c of config) {
+        return this.apiCallX(
+          `/api/v2/homes/${home_id}/rooms/${c.room}/manualControl`,
+          "post",
+          c.overlay,
+        );
+      }
+    } else {
+      return this.apiCall(`/api/v2/homes/${home_id}/overlay`, "post", { overlays: config });
+    }
   }
 
   /**

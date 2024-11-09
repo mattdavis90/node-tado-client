@@ -17,6 +17,7 @@ import eneryIQ_savings_response from "./response.eneryIQ.savings.json";
 import eneryIQ_tariff_response from "./response.eneryIQ.tariff.json";
 import heating_system_response from "./response.heatingSystem.json";
 import home_response from "./response.home.json";
+import home_response_x from "./response.home.x.json";
 import incident_detection_response from "./response.incidentDetection.json";
 import installations_response from "./response.installations.json";
 import invitations_response from "./response.invitations.json";
@@ -40,13 +41,14 @@ import zones_response from "./response.zones.json";
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-describe("OAuth2 tests", () => {
-  beforeEach(() => {
+describe("OAuth2 tests", async () => {
+  afterEach(async () => {
     nock.cleanAll();
   });
 
   it("Should login", async () => {
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
+    nock("https://my.tado.com", { allowUnmocked: false });
 
     const tado = new Tado();
     await tado.login("username", "password");
@@ -64,14 +66,20 @@ describe("OAuth2 tests", () => {
   });
 });
 
-describe("Low-level API tests", () => {
-  beforeEach(() => {
+describe("Low-level API tests", async () => {
+  afterEach(async () => {
     nock.cleanAll();
   });
 
   it('Login and get "me"', async () => {
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
-    nock("https://my.tado.com").get("/api/v2/me").reply(200, me_response);
+    nock("https://my.tado.com")
+      .get("/api/v2/me")
+      .reply(200, me_response)
+      .get("/api/v2/me")
+      .reply(200, me_response) // Needed twice otherwise consumed by login
+      .get("/api/v2/homes/1907")
+      .reply(200, home_response);
 
     const tado = new Tado();
     await tado.login("username", "password");
@@ -98,15 +106,24 @@ describe("Low-level API tests", () => {
   });
 });
 
-describe("High-level API tests", () => {
+describe("High-level API tests (v2)", async () => {
   let tado: Tado;
 
   beforeEach(async () => {
-    nock.cleanAll();
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
+    nock("https://my.tado.com")
+      .get("/api/v2/me")
+      .reply(200, me_response)
+      .get("/api/v2/homes/1907")
+      .reply(200, home_response);
 
     tado = new Tado();
     await tado.login("username", "password");
+    expect(tado.isX).to.equal(false);
+  });
+
+  afterEach(async () => {
+    nock.cleanAll();
   });
 
   it("Should get the current user", async () => {
@@ -816,5 +833,74 @@ describe("High-level API tests", () => {
     expect(response.modelName).to.equal("ZR/ZSR/ZWR ..-2");
     expect(response.manufacturers.length).to.equal(1);
     expect(response.manufacturers[0].name).to.equal("Junkers");
+  });
+});
+
+describe("High-level API tests (TadoX)", async () => {
+  let tado: Tado;
+
+  beforeEach(async () => {
+    nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
+    nock("https://my.tado.com")
+      .get("/api/v2/me")
+      .reply(200, me_response)
+      .get("/api/v2/homes/1907")
+      .reply(200, home_response_x);
+
+    tado = new Tado();
+    await tado.login("username", "password");
+    expect(tado.isX).to.equal(true);
+  });
+
+  afterEach(async () => {
+    nock.cleanAll();
+  });
+
+  it("Should get the user's devices", async () => {
+    nock("https://hops.tado.com").get("/homes/1907/roomsAndDevices").reply(200, me_response);
+
+    const response = await tado.getDevices(1907);
+
+    expect(typeof response).to.equal("object");
+  });
+
+  it("Should get zones", async () => {
+    nock("https://hops.tado.com").get("/homes/1907/rooms").reply(200, zones_response);
+
+    const response = await tado.getZones(1907);
+
+    expect(typeof response).to.equal("object");
+  });
+
+  it("Should get a zone's state", async () => {
+    nock("https://hops.tado.com").get("/homes/1907/rooms/1").reply(200, zone_state_response);
+
+    const response = await tado.getZoneState(1907, 1);
+
+    expect(typeof response).to.equal("object");
+  });
+
+  it("Should clear a zone's overlay", async () => {
+    nock("https://hops.tado.com").post("/homes/1907/rooms/1/resumeSchedule").reply(200, {});
+
+    const response = await tado.clearZoneOverlay(1907, 1);
+
+    expect(typeof response).to.equal("object");
+  });
+
+  it("Should set a zone's overlay to Off", async () => {
+    nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/zones/1/capabilities")
+      .reply(200, zone_capabilities_response);
+
+    nock("https://hops.tado.com")
+      .post("/api/v2/homes/1907/rooms/1/manualControl")
+      .reply(200, (_uri, req) => {
+        return req;
+      });
+
+    const response = await tado.setZoneOverlay(1907, 1, "OFF");
+
+    expect(typeof response).to.equal("object");
   });
 });
