@@ -17,7 +17,6 @@ import eneryIQ_savings_response from "./response.eneryIQ.savings.json";
 import eneryIQ_tariff_response from "./response.eneryIQ.tariff.json";
 import heating_system_response from "./response.heatingSystem.json";
 import home_response from "./response.home.json";
-import home_response_x from "./response.home.x.json";
 import incident_detection_response from "./response.incidentDetection.json";
 import installations_response from "./response.installations.json";
 import invitations_response from "./response.invitations.json";
@@ -73,13 +72,7 @@ describe("Low-level API tests", async () => {
 
   it('Login and get "me"', async () => {
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
-    nock("https://my.tado.com")
-      .get("/api/v2/me")
-      .reply(200, me_response)
-      .get("/api/v2/me")
-      .reply(200, me_response) // Needed twice otherwise consumed by login
-      .get("/api/v2/homes/1907")
-      .reply(200, home_response);
+    nock("https://my.tado.com").get("/api/v2/me").reply(200, me_response);
 
     const tado = new Tado();
     await tado.login("username", "password");
@@ -111,11 +104,6 @@ describe("High-level API tests (v2)", async () => {
 
   beforeEach(async () => {
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
-    nock("https://my.tado.com")
-      .get("/api/v2/me")
-      .reply(200, me_response)
-      .get("/api/v2/homes/1907")
-      .reply(200, home_response);
 
     tado = new Tado();
     await tado.login("username", "password");
@@ -840,11 +828,6 @@ describe("High-level API tests (TadoX)", async () => {
 
   beforeEach(async () => {
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
-    nock("https://my.tado.com")
-      .get("/api/v2/me")
-      .reply(200, me_response)
-      .get("/api/v2/homes/1907")
-      .reply(200, home_response_x);
 
     tado = new TadoX();
     await tado.login("username", "password");
