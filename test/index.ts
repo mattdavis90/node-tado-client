@@ -119,7 +119,7 @@ describe("High-level API tests (v2)", async () => {
 
     tado = new Tado();
     await tado.login("username", "password");
-    expect(tado.isX).to.equal(false);
+    expect(tado.isHomeX(1907)).to.equal(false);
   });
 
   afterEach(async () => {
@@ -849,7 +849,7 @@ describe("High-level API tests (TadoX)", async () => {
 
     tado = new Tado();
     await tado.login("username", "password");
-    expect(tado.isX).to.equal(true);
+    expect(tado.isHomeX(1907)).to.equal(true);
   });
 
   afterEach(async () => {
@@ -894,12 +894,61 @@ describe("High-level API tests (TadoX)", async () => {
       .reply(200, zone_capabilities_response);
 
     nock("https://hops.tado.com")
-      .post("/api/v2/homes/1907/rooms/1/manualControl")
+      .post("/homes/1907/rooms/1/manualControl")
       .reply(200, (_uri, req) => {
         return req;
       });
 
     const response = await tado.setZoneOverlay(1907, 1, "OFF");
+
+    expect(typeof response).to.equal("object");
+  });
+
+  it("Should clear multiple zone overlays", async () => {
+    nock("https://hops.tado.com")
+      .post("/homes/1907/rooms/1/resumeSchedule")
+      .reply(200, {})
+      .post("/homes/1907/rooms/2/resumeSchedule")
+      .reply(200, {});
+
+    const response = await tado.clearZoneOverlays(1907, [1, 2]);
+
+    expect(typeof response).to.equal("object");
+  });
+
+  it("Should allow multiple zone overlays", async () => {
+    nock("https://my.tado.com")
+      .get("/api/v2/homes/1907/zones/1/capabilities")
+      .reply(200, zone_capabilities_response)
+      .get("/api/v2/homes/1907/zones/2/capabilities")
+      .reply(200, zone_capabilities_response);
+
+    nock("https://hops.tado.com")
+      .post("/homes/1907/rooms/1/manualControl")
+      .reply(200, {})
+      .post("/homes/1907/rooms/2/manualControl")
+      .reply(200, {});
+
+    const response = await tado.setZoneOverlays(
+      1907,
+      [
+        {
+          power: "ON",
+          temperature: {
+            celsius: 25,
+          },
+          zone_id: 1,
+        },
+        {
+          power: "ON",
+          temperature: {
+            celsius: 25,
+          },
+          zone_id: 2,
+        },
+      ],
+      "AUTO",
+    );
 
     expect(typeof response).to.equal("object");
   });

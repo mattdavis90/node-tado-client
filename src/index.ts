@@ -113,14 +113,16 @@ export class Tado {
   #username?: string;
   #password?: string;
   #firstLogin: boolean;
-  #isX: boolean;
+  #forceX: boolean;
+  #xLookup: { [key: number]: boolean };
 
-  constructor(username?: string, password?: string) {
+  constructor(username?: string, password?: string, forceX?: boolean) {
     this.#username = username;
     this.#password = password;
     this.#httpsAgent = new Agent({ keepAlive: true });
+    this.#forceX = forceX ?? false;
     this.#firstLogin = true;
-    this.#isX = false;
+    this.#xLookup = {};
   }
 
   async #login(): Promise<void> {
@@ -139,10 +141,9 @@ export class Tado {
     if (this.#firstLogin) {
       try {
         const me = await this.getMe();
-        if (me.homes.length > 0) {
-          const home_id = me.homes[0].id;
+        for (const { id: home_id } of me.homes) {
           const home = await this.getHome(home_id);
-          this.#isX = home.generation == "LINE_X";
+          this.#xLookup[home_id] = home.generation == "LINE_X";
         }
       } catch (err) {
         console.error(`Could not determine TadoX status: ${err}`);
@@ -187,8 +188,8 @@ export class Tado {
     return this.#accessToken;
   }
 
-  get isX(): boolean {
-    return this.#isX;
+  isHomeX(home_id: number): boolean {
+    return this.#forceX || this.#xLookup[home_id] || false;
   }
 
   /**
@@ -350,7 +351,7 @@ export class Tado {
    * @returns A promise that resolves to an array of Device objects.
    */
   getDevices(home_id: number): Promise<Device[]> {
-    if (this.#isX) {
+    if (this.isHomeX(home_id)) {
       return this.apiCallX(`/homes/${home_id}/roomsAndDevices`);
     } else {
       return this.apiCall(`/api/v2/homes/${home_id}/devices`);
@@ -581,7 +582,7 @@ export class Tado {
    * @returns A promise that resolves to an array of Zone objects.
    */
   getZones(home_id: number): Promise<Zone[]> {
-    if (this.#isX) {
+    if (this.isHomeX(home_id)) {
       return this.apiCallX(`/homes/${home_id}/rooms`);
     } else {
       return this.apiCall(`/api/v2/homes/${home_id}/zones`);
@@ -596,7 +597,7 @@ export class Tado {
    * @returns  A promise that resolves to the state of the specified zone.
    */
   getZoneState(home_id: number, zone_id: number): Promise<ZoneState> {
-    if (this.#isX) {
+    if (this.isHomeX(home_id)) {
       return this.apiCallX(`/homes/${home_id}/rooms/${zone_id}`);
     } else {
       return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/state`);
@@ -860,7 +861,7 @@ export class Tado {
    * @deprecated Use {@link clearZoneOverlays} instead.
    */
   clearZoneOverlay(home_id: number, zone_id: number): Promise<void> {
-    if (this.#isX) {
+    if (this.isHomeX(home_id)) {
       return this.apiCallX(`/homes/${home_id}/rooms/${zone_id}/resumeSchedule`, "post", {});
     } else {
       return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, "delete");
@@ -984,12 +985,8 @@ export class Tado {
       };
     }
 
-    if (this.#isX) {
-      return this.apiCallX(
-        `/api/v2/homes/${home_id}/rooms/${zone_id}/manualControl`,
-        "post",
-        config,
-      );
+    if (this.isHomeX(home_id)) {
+      return this.apiCallX(`/homes/${home_id}/rooms/${zone_id}/manualControl`, "post", config);
     } else {
       return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`, "put", config);
     }
@@ -1003,7 +1000,7 @@ export class Tado {
    * @returns A promise that resolves when the overlays are cleared.
    */
   async clearZoneOverlays(home_id: number, zone_ids: number[]): Promise<void> {
-    if (this.#isX) {
+    if (this.isHomeX(home_id)) {
       for (const zone_id of zone_ids) {
         return this.apiCallX(`/homes/${home_id}/rooms/${zone_id}/resumeSchedule`, "post", {});
       }
@@ -1149,10 +1146,10 @@ export class Tado {
       config.push(overlay_config);
     }
 
-    if (this.#isX) {
+    if (this.isHomeX(home_id)) {
       for (const c of config) {
         return this.apiCallX(
-          `/api/v2/homes/${home_id}/rooms/${c.room}/manualControl`,
+          `/homes/${home_id}/rooms/${c.room}/manualControl`,
           "post",
           c.overlay,
         );
