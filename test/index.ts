@@ -3,7 +3,7 @@ import type { Me } from "../src";
 import * as chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 import nock from "nock";
-import { Tado } from "../src";
+import { Tado, TadoX } from "../src";
 import auth_response from "./response.auth.json";
 import away_configuration_response from "./response.away.json";
 import boiler_information_response from "./response.boilerInformation.json";
@@ -119,7 +119,6 @@ describe("High-level API tests (v2)", async () => {
 
     tado = new Tado();
     await tado.login("username", "password");
-    expect(tado.isHomeX(1907)).to.equal(false);
   });
 
   afterEach(async () => {
@@ -837,7 +836,7 @@ describe("High-level API tests (v2)", async () => {
 });
 
 describe("High-level API tests (TadoX)", async () => {
-  let tado: Tado;
+  let tado: TadoX;
 
   beforeEach(async () => {
     nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
@@ -847,9 +846,8 @@ describe("High-level API tests (TadoX)", async () => {
       .get("/api/v2/homes/1907")
       .reply(200, home_response_x);
 
-    tado = new Tado();
+    tado = new TadoX();
     await tado.login("username", "password");
-    expect(tado.isHomeX(1907)).to.equal(true);
   });
 
   afterEach(async () => {
@@ -859,7 +857,7 @@ describe("High-level API tests (TadoX)", async () => {
   it("Should get the user's devices", async () => {
     nock("https://hops.tado.com").get("/homes/1907/roomsAndDevices").reply(200, me_response);
 
-    const response = await tado.getDevices(1907);
+    const response = await tado.getRoomsAndDevices(1907);
 
     expect(typeof response).to.equal("object");
   });
@@ -867,7 +865,7 @@ describe("High-level API tests (TadoX)", async () => {
   it("Should get zones", async () => {
     nock("https://hops.tado.com").get("/homes/1907/rooms").reply(200, zones_response);
 
-    const response = await tado.getZones(1907);
+    const response = await tado.getRooms(1907);
 
     expect(typeof response).to.equal("object");
   });
@@ -875,7 +873,7 @@ describe("High-level API tests (TadoX)", async () => {
   it("Should get a zone's state", async () => {
     nock("https://hops.tado.com").get("/homes/1907/rooms/1").reply(200, zone_state_response);
 
-    const response = await tado.getZoneState(1907, 1);
+    const response = await tado.getRoomState(1907, 1);
 
     expect(typeof response).to.equal("object");
   });
@@ -883,7 +881,7 @@ describe("High-level API tests (TadoX)", async () => {
   it("Should clear a zone's overlay", async () => {
     nock("https://hops.tado.com").post("/homes/1907/rooms/1/resumeSchedule").reply(200, {});
 
-    const response = await tado.clearZoneOverlay(1907, 1);
+    const response = await tado.resumeSchedule(1907, 1);
 
     expect(typeof response).to.equal("object");
   });
@@ -899,56 +897,7 @@ describe("High-level API tests (TadoX)", async () => {
         return req;
       });
 
-    const response = await tado.setZoneOverlay(1907, 1, "OFF");
-
-    expect(typeof response).to.equal("object");
-  });
-
-  it("Should clear multiple zone overlays", async () => {
-    nock("https://hops.tado.com")
-      .post("/homes/1907/rooms/1/resumeSchedule")
-      .reply(200, {})
-      .post("/homes/1907/rooms/2/resumeSchedule")
-      .reply(200, {});
-
-    const response = await tado.clearZoneOverlays(1907, [1, 2]);
-
-    expect(typeof response).to.equal("object");
-  });
-
-  it("Should allow multiple zone overlays", async () => {
-    nock("https://my.tado.com")
-      .get("/api/v2/homes/1907/zones/1/capabilities")
-      .reply(200, zone_capabilities_response)
-      .get("/api/v2/homes/1907/zones/2/capabilities")
-      .reply(200, zone_capabilities_response);
-
-    nock("https://hops.tado.com")
-      .post("/homes/1907/rooms/1/manualControl")
-      .reply(200, {})
-      .post("/homes/1907/rooms/2/manualControl")
-      .reply(200, {});
-
-    const response = await tado.setZoneOverlays(
-      1907,
-      [
-        {
-          power: "ON",
-          temperature: {
-            celsius: 25,
-          },
-          zone_id: 1,
-        },
-        {
-          power: "ON",
-          temperature: {
-            celsius: 25,
-          },
-          zone_id: 2,
-        },
-      ],
-      "AUTO",
-    );
+    const response = await tado.manualControl(1907, 1, "OFF");
 
     expect(typeof response).to.equal("object");
   });

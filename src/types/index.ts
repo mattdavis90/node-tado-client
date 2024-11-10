@@ -964,3 +964,8 @@ export type Invitation = {
   inviter: Inviter;
   home: Home;
 };
+
+export type XRoomsAndDevices = {
+  rooms: unknown[];
+  devices: unknown[];
+};
