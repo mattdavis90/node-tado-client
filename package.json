@@ -25,7 +25,7 @@
   "scripts": {
     "build": "tsc",
     "build:docs": "npx typedoc",
-    "test": "nyc mocha --loader=tsx test/index.ts",
+    "test": "nyc mocha --loader=tsx test/*.ts",
     "format": "prettier -w -u .",
     "lint": "eslint .",
     "prepare": "husky"
