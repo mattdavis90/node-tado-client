@@ -2,11 +2,12 @@ import * as chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 import nock from "nock";
 import { TadoX } from "../src";
+import rooms_response from "./response_x/getRooms.json";
+import rooms_and_devices_response from "./response_x/getRoomsAndDevices.json";
+import room_state_response from "./response_x/getRoomState.json";
+import resume_schedule_response from "./response_x/resumeSchedule.json";
 import auth_response from "./response/auth.json";
-import me_response from "./response/me.json";
 import zone_capabilities_response from "./response/zone.capabilities.json";
-import zone_state_response from "./response/zone.state.json";
-import zones_response from "./response/zones.json";
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -27,7 +28,9 @@ describe("High-level API tests (TadoX)", async function () {
     });
 
     it("Should get the user's devices", async function () {
-      nock("https://hops.tado.com").get("/homes/1907/roomsAndDevices").reply(200, me_response);
+      nock("https://hops.tado.com")
+        .get("/homes/1907/roomsAndDevices")
+        .reply(200, rooms_and_devices_response);
 
       const response = await tado.getRoomsAndDevices(1907);
 
@@ -35,7 +38,7 @@ describe("High-level API tests (TadoX)", async function () {
     });
 
     it("Should get zones", async function () {
-      nock("https://hops.tado.com").get("/homes/1907/rooms").reply(200, zones_response);
+      nock("https://hops.tado.com").get("/homes/1907/rooms").reply(200, rooms_response);
 
       const response = await tado.getRooms(1907);
 
@@ -43,7 +46,7 @@ describe("High-level API tests (TadoX)", async function () {
     });
 
     it("Should get a zone's state", async function () {
-      nock("https://hops.tado.com").get("/homes/1907/rooms/1").reply(200, zone_state_response);
+      nock("https://hops.tado.com").get("/homes/1907/rooms/1").reply(200, room_state_response);
 
       const response = await tado.getRoomState(1907, 1);
 
@@ -51,7 +54,9 @@ describe("High-level API tests (TadoX)", async function () {
     });
 
     it("Should clear a zone's overlay", async function () {
-      nock("https://hops.tado.com").post("/homes/1907/rooms/1/resumeSchedule").reply(200, {});
+      nock("https://hops.tado.com")
+        .post("/homes/1907/rooms/1/resumeSchedule")
+        .reply(200, resume_schedule_response);
 
       const response = await tado.resumeSchedule(1907, 1);
 

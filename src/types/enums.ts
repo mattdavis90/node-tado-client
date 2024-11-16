@@ -1,3 +1,5 @@
+export type Power = "ON" | "OFF";
+
 export type Platform = "iOS" | "Android";
 
 export type TemperatureUnit = "CELSIUS";
@@ -146,3 +148,5 @@ export type HeatingInstallationState =
 export type InstallationType = "INSTALL_AC_G1" | "SALE_FITTING_ST_G1" | "REPLACE_BRIDGE";
 
 export type HomeGeneration = "UNKNOWN" | "LINE_X" | "PRE_LINE_X";
+
+export type XConnectionState = "CONNECTED";

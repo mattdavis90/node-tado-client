@@ -1,0 +1,52 @@
+{
+  "rooms": [
+    {
+      "roomId": 2,
+      "roomName": "xxx",
+      "deviceManualControlTermination": {
+        "type": "NEXT_TIME_BLOCK",
+        "durationInSeconds": null
+      },
+      "devices": [
+        {
+          "serialNumber": "xxx",
+          "type": "VA04",
+          "firmwareVersion": "243.1",
+          "connection": {
+            "state": "CONNECTED"
+          },
+          "mountingState": "CALIBRATED",
+          "batteryState": "NORMAL",
+          "childLockEnabled": false,
+          "temperatureAsMeasured": 22.99,
+          "temperatureOffset": -1.5
+        },
+        {
+          "serialNumber": "xxx",
+          "type": "VA04",
+          "firmwareVersion": "243.1",
+          "connection": {
+            "state": "CONNECTED"
+          },
+          "mountingState": "CALIBRATED",
+          "batteryState": "NORMAL",
+          "childLockEnabled": false,
+          "temperatureAsMeasured": 22.91,
+          "temperatureOffset": -1.5
+        }
+      ],
+      "zoneControllerAssignable": false,
+      "zoneControllers": []
+    }
+  ],
+  "otherDevices": [
+    {
+      "serialNumber": "xxx",
+      "type": "IB02",
+      "firmwareVersion": "239.1",
+      "connection": {
+        "state": "CONNECTED"
+      }
+    }
+  ]
+}

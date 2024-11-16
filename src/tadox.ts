@@ -6,6 +6,7 @@ import type {
   Power,
   Termination,
   VerticalSwing,
+  XRoom,
   XRoomsAndDevices,
 } from "./types";
 
@@ -47,7 +48,7 @@ export class TadoX extends Tado {
    * @param home_id - The ID of the home for which to fetch the zones.
    * @returns A promise that resolves to _something_.
    */
-  async getRooms(home_id: number): Promise<unknown> {
+  async getRooms(home_id: number): Promise<XRoom[]> {
     return this.apiCallX(`/homes/${home_id}/rooms`);
   }
 
@@ -58,7 +59,7 @@ export class TadoX extends Tado {
    * @param room_id - The ID of the room within the home.
    * @returns  A promise that resolves to _something_.
    */
-  async getRoomState(home_id: number, room_id: number): Promise<unknown> {
+  async getRoomState(home_id: number, room_id: number): Promise<XRoom> {
     return this.apiCallX(`/homes/${home_id}/rooms/${room_id}`);
   }
 
@@ -69,7 +70,7 @@ export class TadoX extends Tado {
    * @param room_id - The unique identifier of the room within the home.
    * @returns  A promise that resolves when the operation is complete.
    */
-  async resumeSchedule(home_id: number, room_id: number): Promise<void> {
+  async resumeSchedule(home_id: number, room_id: number): Promise<string> {
     return this.apiCallX(`/homes/${home_id}/rooms/${room_id}/resumeSchedule`, "post", {});
   }
 

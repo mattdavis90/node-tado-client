@@ -23,6 +23,7 @@ import {
   OutdoorPollensTypeValue,
   OutdoorQualityLevel,
   Platform,
+  Power,
   StatePresence,
   StripeTypeValue,
   TadoMode,
@@ -31,7 +32,9 @@ import {
   TimeTableDayType,
   VerticalSwing,
   WeatherStateValue,
+  XConnectionState,
   ZoneDeviceDuty,
+  ZoneOverlayTerminationTypeSkillBasedApp,
   ZoneType,
 } from "./enums";
 
@@ -122,7 +125,8 @@ export type Home = {
   isEnergyIqEligible: boolean;
   isHeatSourceInstalled: boolean;
   isHeatPumpInstalled: boolean;
-  supportsFlowTemperatureOptimization: boolean;
+  supportsFlowTemperatureOptimization?: boolean;
+  preventFromSubscribing?: boolean;
 };
 
 export type MeHome = Pick<Home, "id" | "name">;
@@ -149,7 +153,8 @@ export type PushNotificationRegistration = {
 export type MobileDeviceSettings = {
   geoTrackingEnabled: boolean;
   onDemandLogRetrievalEnabled: boolean;
-  pushNotifications: MobileDeviceSettingsPushNotification;
+  pushNotifications?: MobileDeviceSettingsPushNotification;
+  specialOffersEnabled?: boolean;
 };
 
 export type MobileDeviceLocationBearingFromHome = {
@@ -370,8 +375,6 @@ export type Zone = {
   dazzleMode: ZoneDazzleMode;
   openWindowDetection: ZoneOpenWindowDetection;
 };
-
-export type Power = "ON" | "OFF";
 
 export type TimeTableSettings = {
   type: ZoneType;
@@ -965,7 +968,80 @@ export type Invitation = {
   home: Home;
 };
 
+export interface XRoomValue {
+  value: number;
+}
+
+export interface XRoomPercentage {
+  percentage: number;
+}
+
+export type XRoomSensorDataPoints = {
+  insideTemperature: XRoomValue;
+  humidity: XRoomPercentage;
+};
+
+export type XRoomSetting = {
+  power: Power;
+  temperature: XRoomValue;
+};
+
+export type XNextScheduleChange = {
+  start: string;
+  setting: XRoomSetting;
+};
+
+export type XNextTimeBlock = {
+  /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+  start: string;
+};
+
+export type XConnection = {
+  string: XConnectionState;
+};
+
+export type XRoom = {
+  id: number;
+  name: string;
+  sensorDataPoints: XRoomSensorDataPoints;
+  setting: XRoomSetting;
+  manualControlTermination: unknown;
+  boostMode: unknown;
+  heatingPower: XRoomPercentage;
+  connection: XConnection;
+  openWindow: unknown;
+  nextScheduleChange: XNextScheduleChange;
+  nextTimeBlock: XNextTimeBlock;
+  balanceControl: unknown;
+};
+
+export interface XRoomWithDevices {
+  roomId: number;
+  roomName: string;
+  deviceManualControlTermination: XManualControlTermination;
+  devices: XDevice[];
+  zoneControllerAssignable: boolean;
+  zoneControllers: unknown[];
+}
+
+export interface XManualControlTermination {
+  type: ZoneOverlayTerminationTypeSkillBasedApp;
+  durationInSeconds?: number;
+}
+
+export interface XDevice {
+  serialNumber: string;
+  type: string;
+  firmwareVersion: string;
+  connection: XConnection;
+  mountingState?: string;
+  batteryState?: string;
+  childLockEnabled?: boolean;
+  temperatureAsMeasured?: number;
+  temperatureOffset?: number;
+}
+
 export type XRoomsAndDevices = {
-  rooms: unknown[];
-  devices: unknown[];
+  rooms: XRoomWithDevices[];
+  otherDevices: XDevice[];
 };

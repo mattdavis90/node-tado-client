@@ -1,0 +1,40 @@
+{
+  "id": 2,
+  "name": "xxx",
+  "sensorDataPoints": {
+    "insideTemperature": {
+      "value": 22.2
+    },
+    "humidity": {
+      "percentage": 62
+    }
+  },
+  "setting": {
+    "power": "ON",
+    "temperature": {
+      "value": 21
+    }
+  },
+  "manualControlTermination": null,
+  "boostMode": null,
+  "heatingPower": {
+    "percentage": 0
+  },
+  "connection": {
+    "state": "CONNECTED"
+  },
+  "openWindow": null,
+  "nextScheduleChange": {
+    "start": "2024-11-15T23:00:00Z",
+    "setting": {
+      "power": "ON",
+      "temperature": {
+        "value": 18
+      }
+    }
+  },
+  "nextTimeBlock": {
+    "start": "2024-11-15T23:00:00Z"
+  },
+  "balanceControl": null
+}
