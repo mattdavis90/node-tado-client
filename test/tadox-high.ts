@@ -60,7 +60,7 @@ describe("High-level API tests (TadoX)", async function () {
 
       const response = await tado.resumeSchedule(1907, 1);
 
-      expect(typeof response).to.equal("object");
+      expect(typeof response).to.equal("string");
     });
 
     it("Should set a zone's overlay to Off", async function () {
