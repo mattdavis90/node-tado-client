@@ -110,6 +110,7 @@ export class TadoX extends Tado {
       ac_mode,
       verticalSwing,
       horizontalSwing,
+      true,
     );
     return this.apiCallX(`/homes/${home_id}/rooms/${zone_id}/manualControl`, "post", config);
   }

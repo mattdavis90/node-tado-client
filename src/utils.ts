@@ -9,6 +9,7 @@ import type {
   SetZoneOverlayArg,
   Termination,
   VerticalSwing,
+  XRoomSetting,
   ZoneOverlayTermination,
 } from "./types";
 
@@ -23,15 +24,16 @@ export async function getSingleZoneOverlayConfig(
   ac_mode?: ACMode,
   verticalSwing?: VerticalSwing,
   horizontalSwing?: HorizontalSwing,
+  isX: boolean = false,
 ): Promise<{
-  setting: DeepPartial<SetZoneOverlayArg>;
+  setting: DeepPartial<SetZoneOverlayArg | XRoomSetting>;
   termination?: Partial<ZoneOverlayTermination>;
   type: "MANUAL";
 }> {
   const zone_capabilities = await tado.getZoneCapabilities(home_id, zone_id);
 
   const config: {
-    setting: DeepPartial<SetZoneOverlayArg>;
+    setting: DeepPartial<SetZoneOverlayArg | XRoomSetting>;
     termination?: Partial<ZoneOverlayTermination>;
     type: "MANUAL";
   } = {
@@ -48,7 +50,11 @@ export async function getSingleZoneOverlayConfig(
       (config.setting.type == "HEATING" || config.setting.type == "HOT_WATER") &&
       temperature
     ) {
-      config.setting.temperature = { celsius: temperature };
+      if (!isX) {
+        config.setting.temperature = { celsius: temperature };
+      } else {
+        config.setting.temperature = { value: temperature };
+      }
     }
 
     if (zone_capabilities.type == "AIR_CONDITIONING") {
@@ -71,7 +77,11 @@ export async function getSingleZoneOverlayConfig(
         config.setting.mode?.toLowerCase() == "dry"
       ) {
         if (temperature) {
-          config.setting.temperature = { celsius: temperature };
+          if (!isX) {
+            config.setting.temperature = { celsius: temperature };
+          } else {
+            config.setting.temperature = { value: temperature };
+          }
         }
 
         if (fan_speed && config.setting.mode?.toLowerCase() != "dry") {

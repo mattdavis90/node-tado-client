@@ -984,6 +984,13 @@ export type XRoomSensorDataPoints = {
 export type XRoomSetting = {
   power: Power;
   temperature: XRoomValue;
+  // No idea if the below are supposed to be here or not
+  type?: ZoneType;
+  mode?: ACMode;
+  verticalSwing?: VerticalSwing;
+  horizontalSwing?: HorizontalSwing;
+  fanSpeed?: FanSpeed;
+  fanLevel?: FanLevel;
 };
 
 export type XNextScheduleChange = {
