@@ -179,24 +179,24 @@ describe("High-level API tests", () => {
 
   it("Should get early start enabled value", async () => {
     nock("https://my.tado.com")
-      .get("/api/v2/homes/1907/earlyStart")
+      .get("/api/v2/homes/1907/zones/1/earlyStart")
       .reply(200, early_start_response);
 
-    const response = await tado.isEarlyStartEnabled(1907);
+    const response = await tado.isZoneEarlyStartEnabled(1907, 1);
 
     expect(response).to.equal(true);
   });
 
   it("Should set early state enabled value", async () => {
     nock("https://my.tado.com")
-      .put("/api/v2/homes/1907/earlyStart", (body) => {
+      .put("/api/v2/homes/1907/zones/1/earlyStart", (body) => {
         expect(Object.keys(body)).to.deep.equal(["enabled"]);
         expect(body.enabled).to.equal(false);
         return true;
       })
       .reply(204, "");
 
-    const response = await tado.setEarlyStart(1907, false);
+    const response = await tado.setZoneEarlyStart(1907, 1, false);
 
     expect(response).to.equal("");
   });
