@@ -275,27 +275,24 @@ export class Tado {
   /**
    * Checks if the early start feature is enabled for a given home.
    *
-   * @param home_id - The unique identifier of the home.
+   * @param _home_id - The unique identifier of the home.
    * @returns A promise that resolves to a boolean indicating whether the early start feature is enabled.
+   * @deprecated This method will always return false. Use {@link isZoneEarlyStartEnabled} instead.
    */
-  async isEarlyStartEnabled(home_id: number): Promise<boolean> {
-    const { enabled } = await this.apiCall<{ enabled: boolean }>(
-      `/api/v2/homes/${home_id}/earlyStart`,
-    );
-    return enabled;
+  async isEarlyStartEnabled(_home_id: number): Promise<boolean> {
+    return false;
   }
 
   /**
    * Sets the early start feature for a specified home.
    *
-   * @param home_id - The unique identifier of the home.
-   * @param enabled - A boolean indicating whether the early start feature should be enabled or disabled.
+   * @param _home_id - The unique identifier of the home.
+   * @param _enabled - A boolean indicating whether the early start feature should be enabled or disabled.
    * @returns A promise that resolves when the early start setting has been successfully updated.
+   * @deprecated This method will do nothing. Use {@link setZoneEarlyStart} instead.
    */
-  setEarlyStart(home_id: number, enabled: boolean): Promise<void> {
-    return this.apiCall(`/api/v2/homes/${home_id}/earlyStart`, "PUT", {
-      enabled: enabled,
-    });
+  setEarlyStart(_home_id: number, _enabled: boolean): Promise<void> {
+    return Promise.resolve();
   }
 
   /**
@@ -576,6 +573,34 @@ export class Tado {
    */
   getZoneCapabilities(home_id: number, zone_id: number): Promise<ZoneCapabilities> {
     return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/capabilities`);
+  }
+
+  /**
+   * Checks if the early start feature is enabled for a given zone.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @param zone_id - The ID of the zone whose early start feature status is to be checked.
+   * @returns A promise that resolves to a boolean indicating whether the early start feature is enabled.
+   */
+  async isZoneEarlyStartEnabled(home_id: number, zone_id: number): Promise<boolean> {
+    const { enabled } = await this.apiCall<{ enabled: boolean }>(
+      `/api/v2/homes/${home_id}/zones/${zone_id}/earlyStart`,
+    );
+    return enabled;
+  }
+
+  /**
+   * Sets the early start feature for a specified zone.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @param zone_id - The ID of the zone whose early start feature status is to be set.
+   * @param enabled - A boolean indicating whether the early start feature should be enabled or disabled.
+   * @returns A promise that resolves when the early start setting has been successfully updated.
+   */
+  setZoneEarlyStart(home_id: number, zone_id: number, enabled: boolean): Promise<void> {
+    return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/earlyStart`, "PUT", {
+      enabled: enabled,
+    });
   }
 
   /**
