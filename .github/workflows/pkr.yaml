@@ -1,0 +1,18 @@
+name: Publish All Commits
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup build environment
+        uses: ./.github/actions/setup
+
+      - name: Build
+        run: pnpm build
+
+      - run: pnpx pkg-pr-new publish
