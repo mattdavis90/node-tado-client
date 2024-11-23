@@ -4,7 +4,6 @@ import type {
   AirComfortDetailed,
   BoilerSystemInformation,
   Country,
-  Device,
   EnergyIQConsumptionDetails,
   EnergyIQMeterReadings,
   EnergyIQOverview,
@@ -29,7 +28,6 @@ import type {
   RunningTimesSummaryOnly,
   State,
   StatePresence,
-  Temperature,
   User,
   Weather,
 } from "./types";
@@ -553,67 +551,6 @@ export class BaseTado {
     }
 
     return false;
-  }
-
-  /**
-   * Retrieves a list of devices associated with the given home ID.
-   *
-   * @param home_id - The unique identifier of the home.
-   * @returns A promise that resolves to an array of Device objects.
-   */
-  getDevices(home_id: number): Promise<Device[]> {
-    return this.apiCall(`/api/v2/homes/${home_id}/devices`);
-  }
-
-  /**
-   * Fetches the temperature offset of a device using its serial number.
-   *
-   * @param serial_no - The serial number of the device.
-   * @returns A promise that resolves to the temperature offset of the device.
-   */
-  getDeviceTemperatureOffset(serial_no: string): Promise<Temperature> {
-    return this.apiCall(`/api/v2/devices/${serial_no}/temperatureOffset`);
-  }
-
-  /**
-   * Sets the temperature offset for a specified device.
-   *
-   * @param serial_no - The serial number of the device.
-   * @param temperatureOffset - The temperature offset to be set, in degrees Celsius.
-   * @returns A promise that resolves to the updated temperature object.
-   */
-  setDeviceTemperatureOffset(
-    serial_no: string,
-    temperatureOffset: number,
-  ): Promise<Temperature> {
-    const config = {
-      celsius: temperatureOffset,
-    };
-
-    return this.apiCall(`/api/v2/devices/${serial_no}/temperatureOffset`, "put", config);
-  }
-
-  /**
-   * Identifies a device using its serial number.
-   *
-   * @param serial_no - The serial number of the device.
-   * @returns A promise that resolves when the device has been successfully identified.
-   */
-  identifyDevice(serial_no: string): Promise<void> {
-    return this.apiCall(`/api/v2/devices/${serial_no}/identify`, "post");
-  }
-
-  /**
-   * Sets the child lock feature for a specified device.
-   *
-   * @param serial_no - The serial number of the device.
-   * @param child_lock - Boolean value to enable or disable the child lock.
-   * @returns A promise that resolves when the child lock has been set.
-   */
-  setChildlock(serial_no: string, child_lock: boolean): Promise<void> {
-    return this.apiCall(`/api/v2/devices/${serial_no}/childLock`, "PUT", {
-      childLockEnabled: child_lock,
-    });
   }
 
   /**

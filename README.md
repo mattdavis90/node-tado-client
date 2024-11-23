@@ -86,8 +86,6 @@ tado.apiCall(url, method = 'get', data = {});
 tado.getMe();
 tado.getHome(home_id);
 tado.getWeather(home_id);
-tado.getDevices(home_id);
-tado.getDeviceTemperatureOffset(device_id);
 tado.getInstallations(home_id);
 tado.getUsers(home_id);
 tado.getState(home_id);
@@ -95,8 +93,6 @@ tado.getMobileDevices(home_id);
 tado.getMobileDevice(home_id, device_id);
 tado.getMobileDeviceSettings(home_id, device_id);
 tado.isAnyoneAtHome(home_id);
-tado.setDeviceTemperatureOffset(device_id, temperatureOffset);
-tado.identifyDevice(device_id);
 tado.setPresence(home_id, presence);
 tado.updatePresence(home_id);
 tado.getAirComfort(home_id);
@@ -125,6 +121,10 @@ tado.clearZoneOverlays(home_id, [zone_id, ...]);
 tado.setZoneOverlays(home_id, [overlays, ...], termination);
 tado.getZoneDefaultOverlay(home_id, zone_id);
 tado.setZoneDefaultOverlay(home_id, zone_id, overlay);
+tado.getDevices(home_id);
+tado.getDeviceTemperatureOffset(device_id);
+tado.setDeviceTemperatureOffset(device_id, temperatureOffset);
+tado.identifyDevice(device_id);
 
 /***********************************/
 /* High-level methods (TadoX only) */
