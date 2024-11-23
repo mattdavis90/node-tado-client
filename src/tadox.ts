@@ -1,5 +1,6 @@
 import type {
   ACMode,
+  DeepPartial,
   FanLevel,
   FanSpeed,
   HorizontalSwing,
@@ -8,11 +9,12 @@ import type {
   VerticalSwing,
   XRoom,
   XRoomsAndDevices,
+  XRoomSetting,
+  ZoneOverlayTermination,
 } from "./types";
 
 import { Method } from "axios";
 import { Tado } from "./tado";
-import * as utils from "./utils";
 
 const tado_x_url = "https://hops.tado.com";
 
@@ -78,7 +80,7 @@ export class TadoX extends Tado {
    * Sets manual control for a specific room in a home.
    *
    * @param home_id - The identifier of the home.
-   * @param zone_id - The identifier of the room within the home.
+   * @param room_id - The identifier of the room within the home.
    * @param power - The power state, either 'ON' or 'OFF'.
    * @param temperature - The desired temperature for the overlay, in celsius.
    * @param termination - The termination condition for the overlay. Options include 'MANUAL', 'AUTO', 'NEXT_TIME_BLOCK', or a number representing duration in seconds.
@@ -90,7 +92,7 @@ export class TadoX extends Tado {
    */
   async manualControl(
     home_id: number,
-    zone_id: number,
+    room_id: number,
     power: Power,
     temperature?: number,
     termination?: Termination | undefined | number,
@@ -99,19 +101,96 @@ export class TadoX extends Tado {
     verticalSwing?: VerticalSwing,
     horizontalSwing?: HorizontalSwing,
   ): Promise<unknown> {
-    const config = utils.getSingleZoneOverlayConfig(
-      this,
-      home_id,
-      zone_id,
-      power,
-      temperature,
-      termination,
-      fan_speed,
-      ac_mode,
-      verticalSwing,
-      horizontalSwing,
-      true,
-    );
-    return this.apiCallX(`/homes/${home_id}/rooms/${zone_id}/manualControl`, "post", config);
+    // NOTE: If you update this code please also update `setZoneOverlay` in `tado.js`
+    const room_state = await this.getRoomState(home_id, room_id);
+
+    const config: {
+      setting: DeepPartial<XRoomSetting>;
+      termination?: Partial<ZoneOverlayTermination>;
+      type: "MANUAL";
+    } = {
+      setting: {
+        type: room_state.setting.type,
+      },
+      type: "MANUAL",
+    };
+
+    if (power.toUpperCase() == "ON") {
+      config.setting.power = "ON";
+
+      if (
+        (config.setting.type == "HEATING" || config.setting.type == "HOT_WATER") &&
+        temperature
+      ) {
+        config.setting.temperature = { value: temperature };
+      }
+
+      if (room_state.setting.type == "AIR_CONDITIONING") {
+        if (ac_mode) {
+          config.setting.mode = ac_mode.toUpperCase() as ACMode;
+        }
+
+        if (verticalSwing) {
+          config.setting.verticalSwing = verticalSwing;
+        }
+
+        if (horizontalSwing) {
+          config.setting.horizontalSwing = horizontalSwing;
+        }
+
+        if (
+          config.setting.mode?.toLowerCase() == "heat" ||
+          config.setting.mode?.toLowerCase() == "cool" ||
+          config.setting.mode?.toLowerCase() == "auto" ||
+          config.setting.mode?.toLowerCase() == "dry"
+        ) {
+          if (temperature) {
+            config.setting.temperature = { value: temperature };
+          }
+
+          if (fan_speed && config.setting.mode?.toLowerCase() != "dry") {
+            if (room_state.setting.fanLevel !== undefined) {
+              config.setting.fanLevel = fan_speed.toUpperCase() as FanLevel;
+            } else {
+              config.setting.fanSpeed = fan_speed.toUpperCase() as FanSpeed;
+            }
+          }
+        }
+      }
+    } else {
+      config.setting.power = "OFF";
+    }
+
+    if (!termination) {
+      termination = "MANUAL";
+    }
+
+    if (typeof termination === "string" && !isNaN(parseInt(termination))) {
+      termination = parseInt(termination);
+    }
+
+    if (typeof termination === "number") {
+      config.type = "MANUAL";
+      config.termination = {
+        typeSkillBasedApp: "TIMER",
+        durationInSeconds: termination,
+      };
+    } else if (termination.toLowerCase() == "manual") {
+      config.type = "MANUAL";
+      config.termination = {
+        typeSkillBasedApp: "MANUAL",
+      };
+    } else if (termination.toLowerCase() == "auto") {
+      config.termination = {
+        type: "TADO_MODE",
+      };
+    } else if (termination.toLowerCase() == "next_time_block") {
+      config.type = "MANUAL";
+      config.termination = {
+        typeSkillBasedApp: "NEXT_TIME_BLOCK",
+      };
+    }
+
+    return this.apiCallX(`/homes/${home_id}/rooms/${room_id}/manualControl`, "post", config);
   }
 }

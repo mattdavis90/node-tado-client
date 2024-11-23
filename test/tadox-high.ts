@@ -7,7 +7,6 @@ import rooms_and_devices_response from "./response_x/getRoomsAndDevices.json";
 import room_state_response from "./response_x/getRoomState.json";
 import resume_schedule_response from "./response_x/resumeSchedule.json";
 import auth_response from "./response/auth.json";
-import zone_capabilities_response from "./response/zone.capabilities.json";
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -64,9 +63,7 @@ describe("High-level API tests (TadoX)", async function () {
     });
 
     it("Should set a zone's overlay to Off", async function () {
-      nock("https://my.tado.com")
-        .get("/api/v2/homes/1907/zones/1/capabilities")
-        .reply(200, zone_capabilities_response);
+      nock("https://hops.tado.com").get("/homes/1907/rooms/1").reply(200, room_state_response);
 
       nock("https://hops.tado.com")
         .post("/homes/1907/rooms/1/manualControl")
