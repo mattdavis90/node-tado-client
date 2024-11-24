@@ -150,3 +150,7 @@ export type InstallationType = "INSTALL_AC_G1" | "SALE_FITTING_ST_G1" | "REPLACE
 export type HomeGeneration = "UNKNOWN" | "LINE_X" | "PRE_LINE_X";
 
 export type XConnectionState = "CONNECTED";
+
+export type XFeature = "careAndProtect" | "geofencing" | "openWindowDetection";
+
+export type XQuickAction = "allOff" | "resumeSchedule";

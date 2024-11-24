@@ -33,6 +33,7 @@ import {
   VerticalSwing,
   WeatherStateValue,
   XConnectionState,
+  XFeature,
   ZoneDeviceDuty,
   ZoneOverlayTerminationTypeSkillBasedApp,
   ZoneType,
@@ -1058,4 +1059,8 @@ export interface XDevice {
 export type XRoomsAndDevices = {
   rooms: XRoomWithDevices[];
   otherDevices: XDevice[];
+};
+
+export type XFeatures = {
+  availableFeatures: XFeature[];
 };

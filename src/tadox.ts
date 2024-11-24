@@ -7,6 +7,8 @@ import type {
   Power,
   Termination,
   VerticalSwing,
+  XFeatures,
+  XQuickAction,
   XRoom,
   XRoomsAndDevices,
   XRoomSetting,
@@ -35,6 +37,16 @@ export class TadoX extends Tado {
   }
 
   /**
+   * Fetches the features supported by the home.
+   *
+   * @param home_id - The ID of the home for which to fetch the zones.
+   * @returns A promise that resolves to a list of features.
+   */
+  async getFeatures(home_id: number): Promise<XFeatures> {
+    return this.apiCallX(`/homes/${home_id}/features`);
+  }
+
+  /**
    * Retrieves a list of rooms and devices associated with the given home ID.
    *
    * @param home_id - The unique identifier of the home.
@@ -48,7 +60,7 @@ export class TadoX extends Tado {
    * Fetches the rooms for a given home.
    *
    * @param home_id - The ID of the home for which to fetch the zones.
-   * @returns A promise that resolves to _something_.
+   * @returns A promise that resolves to a list of room states.
    */
   async getRooms(home_id: number): Promise<XRoom[]> {
     return this.apiCallX(`/homes/${home_id}/rooms`);
@@ -59,10 +71,21 @@ export class TadoX extends Tado {
    *
    * @param home_id - The ID of the home.
    * @param room_id - The ID of the room within the home.
-   * @returns  A promise that resolves to _something_.
+   * @returns  A promise that resolves to a room's state.
    */
   async getRoomState(home_id: number, room_id: number): Promise<XRoom> {
     return this.apiCallX(`/homes/${home_id}/rooms/${room_id}`);
+  }
+
+  /**
+   * Perform a predefined quick action on all rooms.
+   *
+   * @param home_id - The ID of the home.
+   * @param action - The action to perform.
+   * @returns  A promise that resolves on completion.
+   */
+  async performQuickAction(home_id: number, action: XQuickAction): Promise<string> {
+    return this.apiCallX(`/homes/${home_id}/quickActions/${action}`);
   }
 
   /**
