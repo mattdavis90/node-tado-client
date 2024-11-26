@@ -537,8 +537,8 @@ export type StepTemperature = {
 export type ZoneCapabilitiesAC = {
   fanLevel: FanLevel;
   temperatures?: ZoneCapabilitiesTemperatures;
-  verticalSwing: ACVerticalSwing;
-  horizontalSwing: ACHorizontalSwing;
+  verticalSwing?: ACVerticalSwing;
+  horizontalSwing?: ACHorizontalSwing;
 };
 
 export type ZoneCapabilitiesTemperatures = {
