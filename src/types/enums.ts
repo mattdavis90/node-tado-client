@@ -153,4 +153,4 @@ export type XConnectionState = "CONNECTED";
 
 export type XFeature = "careAndProtect" | "geofencing" | "openWindowDetection";
 
-export type XQuickAction = "allOff" | "resumeSchedule";
+export type XQuickAction = "allOff" | "resumeSchedule" | "boost";
