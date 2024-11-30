@@ -122,6 +122,7 @@ export class TadoX extends Tado {
     if (temperature) {
       overlay.setting.temperature = {
         value: temperature,
+        precision: 0.1,
       };
     }
 

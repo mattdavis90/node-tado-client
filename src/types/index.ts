@@ -978,6 +978,7 @@ export type Invitation = {
 
 export interface XRoomValue {
   value: number;
+  precision?: number;
 }
 
 export interface XRoomPercentage {

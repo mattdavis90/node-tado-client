@@ -73,7 +73,91 @@ describe("High-level API tests (TadoX)", async function () {
 
       const response = await tado.manualControl(1907, 1, "OFF", "MANUAL");
 
-      expect(typeof response).to.equal("object");
+      expect(response).to.deep.equal({
+        setting: {
+          power: "OFF",
+          temperature: null,
+        },
+        termination: {
+          type: "MANUAL",
+        },
+      });
+    });
+
+    it("Should set a zone's overlay to 18C manual termination", async function () {
+      nock("https://hops.tado.com").get("/homes/1907/rooms/1").reply(200, room_state_response);
+
+      nock("https://hops.tado.com")
+        .post("/homes/1907/rooms/1/manualControl")
+        .reply(200, (_uri, req) => {
+          return req;
+        });
+
+      const response = await tado.manualControl(1907, 1, "ON", "MANUAL", 18);
+
+      expect(response).to.deep.equal({
+        setting: {
+          power: "ON",
+          temperature: {
+            value: 18,
+            precision: 0.1,
+          },
+        },
+        termination: {
+          type: "MANUAL",
+        },
+      });
+    });
+
+    it("Should set a zone's overlay to 18C next_time_block", async function () {
+      nock("https://hops.tado.com").get("/homes/1907/rooms/1").reply(200, room_state_response);
+
+      nock("https://hops.tado.com")
+        .post("/homes/1907/rooms/1/manualControl")
+        .reply(200, (_uri, req) => {
+          return req;
+        });
+
+      const response = await tado.manualControl(1907, 1, "ON", "NEXT_TIME_BLOCK", 18);
+
+      expect(response).to.deep.equal({
+        setting: {
+          power: "ON",
+          temperature: {
+            value: 18,
+            precision: 0.1,
+          },
+        },
+        termination: {
+          type: "NEXT_TIME_BLOCK",
+        },
+      });
+    });
+
+    it("Should set a zone's overlay to 18C timed", async function () {
+      nock("https://hops.tado.com").get("/homes/1907/rooms/1").reply(200, room_state_response);
+
+      nock("https://hops.tado.com")
+        .post("/homes/1907/rooms/1/manualControl")
+        .reply(200, (_uri, req) => {
+          return req;
+        });
+
+      const response = await tado.manualControl(1907, 1, "ON", 3600, 18);
+
+      expect(response).to.deep.equal({
+        setting: {
+          power: "ON",
+          temperature: {
+            value: 18,
+            precision: 0.1,
+          },
+        },
+        termination: {
+          type: "TIMER",
+          durationInSeconds: 3600,
+        },
+      });
     });
   });
 });
