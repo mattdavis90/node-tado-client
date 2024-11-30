@@ -308,15 +308,17 @@ export class Tado extends BaseTado {
       }
 
       if (zone_capabilities.type == "AIR_CONDITIONING") {
+        const ac_capability = zone_capabilities.FAN || zone_capabilities.AUTO;
+
         if (ac_mode) {
           config.setting.mode = ac_mode.toUpperCase() as ACMode;
         }
 
-        if (verticalSwing) {
+        if (verticalSwing && ac_capability.verticalSwing) {
           config.setting.verticalSwing = verticalSwing;
         }
 
-        if (horizontalSwing) {
+        if (horizontalSwing && ac_capability.horizontalSwing) {
           config.setting.horizontalSwing = horizontalSwing;
         }
 
@@ -331,7 +333,7 @@ export class Tado extends BaseTado {
           }
 
           if (fan_speed && config.setting.mode?.toLowerCase() != "dry") {
-            if ((zone_capabilities.FAN || zone_capabilities.AUTO).fanLevel !== undefined) {
+            if (ac_capability.fanLevel !== undefined) {
               config.setting.fanLevel = fan_speed.toUpperCase() as FanLevel;
             } else {
               config.setting.fanSpeed = fan_speed.toUpperCase() as FanSpeed;
