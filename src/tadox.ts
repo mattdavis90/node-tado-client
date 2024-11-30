@@ -1,18 +1,11 @@
 import type {
-  ACMode,
-  DeepPartial,
-  FanLevel,
-  FanSpeed,
-  HorizontalSwing,
   Power,
-  Termination,
-  VerticalSwing,
   XFeatures,
+  XOverlay,
   XQuickAction,
   XRoom,
   XRoomsAndDevices,
-  XRoomSetting,
-  ZoneOverlayTermination,
+  XTermination,
 } from "./types";
 
 import { Method } from "axios";
@@ -85,7 +78,7 @@ export class TadoX extends Tado {
    * @returns  A promise that resolves on completion.
    */
   async performQuickAction(home_id: number, action: XQuickAction): Promise<string> {
-    return this.apiCallX(`/homes/${home_id}/quickActions/${action}`);
+    return this.apiCallX(`/homes/${home_id}/quickActions/${action}`, "POST");
   }
 
   /**
@@ -106,114 +99,43 @@ export class TadoX extends Tado {
    * @param room_id - The identifier of the room within the home.
    * @param power - The power state, either 'ON' or 'OFF'.
    * @param temperature - The desired temperature for the overlay, in celsius.
-   * @param termination - The termination condition for the overlay. Options include 'MANUAL', 'AUTO', 'NEXT_TIME_BLOCK', or a number representing duration in seconds.
-   * @param fan_speed - The desired fan speed or level.
-   * @param ac_mode - The air conditioning mode (e.g., 'COOL', 'HEAT').
-   * @param verticalSwing - The vertical swing setting for air conditioning.
-   * @param horizontalSwing - The horizontal swing setting for air conditioning.
+   * @param termination - The termination condition for the overlay. Options include 'MANUAL', 'NEXT_TIME_BLOCK', or a number representing duration in seconds.
    * @returns  A promise that resolves to the created zone overlay.
    */
   async manualControl(
     home_id: number,
     room_id: number,
     power: Power,
-    temperature?: number,
-    termination?: Termination | undefined | number,
-    fan_speed?: FanSpeed | FanLevel,
-    ac_mode?: ACMode,
-    verticalSwing?: VerticalSwing,
-    horizontalSwing?: HorizontalSwing,
+    temperature: number,
+    termination: XTermination | number,
   ): Promise<unknown> {
-    // NOTE: If you update this code please also update `setZoneOverlay` in `tado.js`
-    const room_state = await this.getRoomState(home_id, room_id);
-
-    const config: {
-      setting: DeepPartial<XRoomSetting>;
-      termination?: Partial<ZoneOverlayTermination>;
-      type: "MANUAL";
-    } = {
+    const overlay: XOverlay = {
       setting: {
-        type: room_state.setting.type,
+        power,
+        temperature: {
+          value: temperature,
+        },
       },
-      type: "MANUAL",
+      termination: {
+        type: "MANUAL",
+      },
     };
-
-    if (power.toUpperCase() == "ON") {
-      config.setting.power = "ON";
-
-      if (
-        (config.setting.type == "HEATING" || config.setting.type == "HOT_WATER") &&
-        temperature
-      ) {
-        config.setting.temperature = { value: temperature };
-      }
-
-      if (room_state.setting.type == "AIR_CONDITIONING") {
-        if (ac_mode) {
-          config.setting.mode = ac_mode.toUpperCase() as ACMode;
-        }
-
-        if (verticalSwing) {
-          config.setting.verticalSwing = verticalSwing;
-        }
-
-        if (horizontalSwing) {
-          config.setting.horizontalSwing = horizontalSwing;
-        }
-
-        if (
-          config.setting.mode?.toLowerCase() == "heat" ||
-          config.setting.mode?.toLowerCase() == "cool" ||
-          config.setting.mode?.toLowerCase() == "auto" ||
-          config.setting.mode?.toLowerCase() == "dry"
-        ) {
-          if (temperature) {
-            config.setting.temperature = { value: temperature };
-          }
-
-          if (fan_speed && config.setting.mode?.toLowerCase() != "dry") {
-            if (room_state.setting.fanLevel !== undefined) {
-              config.setting.fanLevel = fan_speed.toUpperCase() as FanLevel;
-            } else {
-              config.setting.fanSpeed = fan_speed.toUpperCase() as FanSpeed;
-            }
-          }
-        }
-      }
-    } else {
-      config.setting.power = "OFF";
-    }
-
-    if (!termination) {
-      termination = "MANUAL";
-    }
 
     if (typeof termination === "string" && !isNaN(parseInt(termination))) {
       termination = parseInt(termination);
     }
 
     if (typeof termination === "number") {
-      config.type = "MANUAL";
-      config.termination = {
-        typeSkillBasedApp: "TIMER",
+      overlay.termination = {
+        type: "TIMER",
         durationInSeconds: termination,
       };
-    } else if (termination.toLowerCase() == "manual") {
-      config.type = "MANUAL";
-      config.termination = {
-        typeSkillBasedApp: "MANUAL",
-      };
-    } else if (termination.toLowerCase() == "auto") {
-      config.termination = {
-        type: "TADO_MODE",
-      };
     } else if (termination.toLowerCase() == "next_time_block") {
-      config.type = "MANUAL";
-      config.termination = {
-        typeSkillBasedApp: "NEXT_TIME_BLOCK",
+      overlay.termination = {
+        type: "NEXT_TIME_BLOCK",
       };
     }
 
-    return this.apiCallX(`/homes/${home_id}/rooms/${room_id}/manualControl`, "post", config);
+    return this.apiCallX(`/homes/${home_id}/rooms/${room_id}/manualControl`, "post", overlay);
   }
 }

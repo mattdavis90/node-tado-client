@@ -28,6 +28,8 @@ export type ACHorizontalSwing = "RIGHT" | "MID" | "LEFT" | "ON" | "MID_RIGHT" | 
 
 export type Termination = "AUTO" | "NEXT_TIME_BLOCK" | "MANUAL";
 
+export type XTermination = "NEXT_TIME_BLOCK" | "MANUAL";
+
 export type OutdoorQualityLevel = "EXCELLENT" | "NONE";
 
 export type WeatherStateValue =

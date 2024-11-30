@@ -992,13 +992,6 @@ export type XRoomSensorDataPoints = {
 export type XRoomSetting = {
   power: Power;
   temperature: XRoomValue;
-  // No idea if the below are supposed to be here or not
-  type?: ZoneType;
-  mode?: ACMode;
-  verticalSwing?: VerticalSwing;
-  horizontalSwing?: HorizontalSwing;
-  fanSpeed?: FanSpeed;
-  fanLevel?: FanLevel;
 };
 
 export type XNextScheduleChange = {
@@ -1063,4 +1056,19 @@ export type XRoomsAndDevices = {
 
 export type XFeatures = {
   availableFeatures: XFeature[];
+};
+
+export type XTerminationConfig =
+  | {
+      type: "NEXT_TIME_BLOCK" | "MANUAL";
+    }
+  | {
+      type: "TIMER";
+      durationInSeconds: number;
+    };
+
+export type XOverlay = {
+  setting: XRoomSetting;
+  termination: XTerminationConfig;
+  isBoost?: boolean;
 };
