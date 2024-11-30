@@ -98,28 +98,32 @@ export class TadoX extends Tado {
    * @param home_id - The identifier of the home.
    * @param room_id - The identifier of the room within the home.
    * @param power - The power state, either 'ON' or 'OFF'.
-   * @param temperature - The desired temperature for the overlay, in celsius.
    * @param termination - The termination condition for the overlay. Options include 'MANUAL', 'NEXT_TIME_BLOCK', or a number representing duration in seconds.
+   * @param temperature - The desired temperature for the overlay, in celsius.
    * @returns  A promise that resolves to the created zone overlay.
    */
   async manualControl(
     home_id: number,
     room_id: number,
     power: Power,
-    temperature: number,
     termination: XTermination | number,
+    temperature?: number,
   ): Promise<unknown> {
     const overlay: XOverlay = {
       setting: {
         power,
-        temperature: {
-          value: temperature,
-        },
+        temperature: null,
       },
       termination: {
         type: "MANUAL",
       },
     };
+
+    if (temperature) {
+      overlay.setting.temperature = {
+        value: temperature,
+      };
+    }
 
     if (typeof termination === "string" && !isNaN(parseInt(termination))) {
       termination = parseInt(termination);

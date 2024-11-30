@@ -71,7 +71,7 @@ describe("High-level API tests (TadoX)", async function () {
           return req;
         });
 
-      const response = await tado.manualControl(1907, 1, "OFF");
+      const response = await tado.manualControl(1907, 1, "OFF", "MANUAL");
 
       expect(typeof response).to.equal("object");
     });

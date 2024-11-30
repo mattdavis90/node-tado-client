@@ -1068,7 +1068,10 @@ export type XTerminationConfig =
     };
 
 export type XOverlay = {
-  setting: XRoomSetting;
+  setting: {
+    power: Power;
+    temperature: XRoomValue | null;
+  };
   termination: XTerminationConfig;
   isBoost?: boolean;
 };
