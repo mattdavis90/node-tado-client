@@ -1,7 +1,7 @@
 import * as chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 import nock from "nock";
-import { Tado, TadoX } from "../src";
+import { Tado } from "../src";
 import auth_response from "./response/auth.json";
 import away_configuration_response from "./response/away.json";
 import boiler_information_response from "./response/boilerInformation.json";
@@ -44,12 +44,6 @@ describe("High-level API tests (v2)", function () {
       title: "Tado",
       getTado: (): Tado => {
         return new Tado();
-      },
-    },
-    {
-      title: "TadoX",
-      getTado: (): Tado => {
-        return new TadoX();
       },
     },
   ];

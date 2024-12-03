@@ -1076,3 +1076,16 @@ export type XOverlay = {
   termination: XTerminationConfig;
   isBoost?: boolean;
 };
+
+export type ActionableDevice = {
+  serialNumber: string;
+  needsMounting: boolean;
+  isOffline: boolean;
+  batteryState: DeviceBatteryState;
+};
+
+export type XRoomAwayConfiguration = {
+  roomId: number;
+  mode: Power;
+  awayTemperatureCelsius: number;
+};

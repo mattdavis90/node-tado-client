@@ -1,15 +1,16 @@
-import type {
+import { Method } from "axios";
+import { Tado } from "./tado";
+import {
+  ActionableDevice,
   Power,
   XFeatures,
   XOverlay,
   XQuickAction,
   XRoom,
+  XRoomAwayConfiguration,
   XRoomsAndDevices,
   XTermination,
 } from "./types";
-
-import { Method } from "axios";
-import { Tado } from "./tado";
 
 const tado_x_url = "https://hops.tado.com";
 
@@ -37,6 +38,16 @@ export class TadoX extends Tado {
    */
   async getFeatures(home_id: number): Promise<XFeatures> {
     return this.apiCallX(`/homes/${home_id}/features`);
+  }
+
+  /**
+   * Retrieve actionable devices.
+   *
+   * @param home_id - The ID of the home for which to fetch the zones.
+   * @returns A promise that resolves to a list of actionable devices.
+   */
+  async getActionableDevices(home_id: number): Promise<ActionableDevice[]> {
+    return this.apiCallX(`/homes/${home_id}/actionableDevices`);
   }
 
   /**
@@ -78,7 +89,7 @@ export class TadoX extends Tado {
    * @returns  A promise that resolves on completion.
    */
   async performQuickAction(home_id: number, action: XQuickAction): Promise<string> {
-    return this.apiCallX(`/homes/${home_id}/quickActions/${action}`, "POST");
+    return this.apiCallX(`/homes/${home_id}/quickActions/${action}`, "POST", {});
   }
 
   /**
@@ -142,5 +153,84 @@ export class TadoX extends Tado {
     }
 
     return this.apiCallX(`/homes/${home_id}/rooms/${room_id}/manualControl`, "post", overlay);
+  }
+
+  /**
+   * Set device child lock status.
+   *
+   * @param home_id - The ID of the home for which to fetch the zones.
+   * @param serial_no - The serial number of the device.
+   * @param child_lock - Boolean value to enable or disable the child lock.
+   * @returns A promise that resolves when the operation is complete.
+   */
+  // @ts-expect-error TS2416
+  async setChildlock(home_id: number, serial_no: string, child_lock: boolean): Promise<void> {
+    return this.apiCallX(`/homes/${home_id}/roomsAndDevices/devices/${serial_no}`, "patch", {
+      childLockEnabled: child_lock,
+    });
+  }
+
+  /**
+   * Set device child lock status.
+   *
+   * @param home_id - The ID of the home for which to fetch the zones.
+   * @param serial_no - The serial number of the device.
+   * @param temperatureOffset - The temperature offset to be set, in degrees Celsius.
+   * @returns A promise that resolves when the operation is complete.
+   */
+  // @ts-expect-error TS2416
+  async setDeviceTemperatureOffset(
+    home_id: number,
+    serial_no: string,
+    temperatureOffset: number,
+  ): Promise<void> {
+    return this.apiCallX(`/homes/${home_id}/roomsAndDevices/devices/${serial_no}`, "patch", {
+      temperatureOffset: temperatureOffset,
+    });
+  }
+
+  /**
+   * Retrieves the away configuration for a specific home and zone.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @param room_id - The unique identifier of the zone within the home.
+   * @returns A promise that resolves to the away configuration object.
+   */
+  // @ts-expect-error TS2416
+  async getAwayConfiguration(
+    home_id: number,
+    room_id: number,
+  ): Promise<XRoomAwayConfiguration> {
+    return this.apiCallX(`/homes/${home_id}/settings/away/rooms/${room_id}`);
+  }
+
+  /**
+   * Sets the away configuration for a specified zone in the home.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @param room_id - The unique identifier of the zone within the home.
+   * @param config - The configuration settings for away mode.
+   * @returns A promise that resolves when the configuration has been successfully set.
+   */
+  // @ts-expect-error TS2416
+  async setAwayConfiguration(
+    home_id: number,
+    room_id: number,
+    config: Omit<XRoomAwayConfiguration, "roomId">,
+  ): Promise<XRoomAwayConfiguration> {
+    return this.apiCallX(`/homes/${home_id}/settings/away/rooms/${room_id}`, "put", config);
+  }
+
+  /**
+   * Check if home is hot water capable.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @returns True if the home is hot water capable, false otherwise.
+   */
+  async isDomesticHotWaterCapable(home_id: number): Promise<boolean> {
+    const response: { isDomesticHotWaterCapable: boolean } = await this.apiCallX(
+      `/homes/${home_id}/programmer/domesticHotWater`,
+    );
+    return response.isDomesticHotWaterCapable;
   }
 }
