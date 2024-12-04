@@ -16,6 +16,26 @@ import { BaseTado } from "./base";
 
 const tado_x_url = "https://hops.tado.com";
 
+/**
+ * TadoX class provides functions to interact with the TadoX API, including
+ * user authentication and various home and device management operations.
+ *
+ * @example Fetch user information (javascript)
+ * ```javascript
+ * // Import the TadoX client
+ * const { TadoX } = require("node-tado-client");
+ *
+ * // Create a new TadoX instance
+ * var tado = new TadoX();
+ *
+ * // Login to the Tado Web API
+ * tado.login("username", "password").then(() => {
+ *     tado.getMe().then((resp) => {
+ *         console.log(resp);
+ *     });
+ * });
+ * ```
+ */
 export class TadoX extends BaseTado {
   /**
    * Makes an API call to the provided TadoX URL with the specified method and data.
