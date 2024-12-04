@@ -1089,3 +1089,10 @@ export type XRoomAwayConfiguration = {
   mode: Power;
   awayTemperatureCelsius: number;
 };
+
+export type XHomeSummary = {
+  roomCount: number;
+  isHeatSourceInstalled: boolean;
+  isHeatPumpInstalled: boolean;
+  supportsFlowTemperatureOptimization: boolean;
+};

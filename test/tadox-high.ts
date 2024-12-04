@@ -8,6 +8,7 @@ import features_response from "./response_x/features.json";
 import rooms_response from "./response_x/getRooms.json";
 import rooms_and_devices_response from "./response_x/getRoomsAndDevices.json";
 import room_state_response from "./response_x/getRoomState.json";
+import home_response from "./response_x/home.json";
 import resume_schedule_response from "./response_x/resumeSchedule.json";
 import auth_response from "./response/auth.json";
 
@@ -27,6 +28,15 @@ describe("High-level API tests (TadoX)", async function () {
 
     afterEach(async function () {
       nock.cleanAll();
+    });
+
+    it("Should get home summary", async function () {
+      nock("https://hops.tado.com").get("/homes/1907").reply(200, home_response);
+
+      const response = await tado.getHomeSummary(1907);
+
+      expect(typeof response).to.equal("object");
+      expect(response.roomCount).to.equal(2);
     });
 
     it("Should get the user's devices", async function () {

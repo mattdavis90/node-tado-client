@@ -4,6 +4,7 @@ import {
   ActionableDevice,
   Power,
   XFeatures,
+  XHomeSummary,
   XOverlay,
   XQuickAction,
   XRoom,
@@ -28,6 +29,16 @@ export class TadoX extends Tado {
   async apiCallX<R, T = unknown>(url: string, method: Method = "get", data?: T): Promise<R> {
     const callUrl = tado_x_url + url;
     return this.apiCall(callUrl, method, data);
+  }
+
+  /**
+   * Fetches a subset of the home info.
+   *
+   * @param home_id - The ID of the home for which to fetch the zones.
+   * @returns A promise that resolves to home summary data.
+   */
+  async getHomeSummary(home_id: number): Promise<XHomeSummary> {
+    return this.apiCallX(`/homes/${home_id}`);
   }
 
   /**
