@@ -242,6 +242,34 @@ export class Tado extends BaseTado {
   }
 
   /**
+   * Checks if the early start feature is enabled for a given zone.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @param zone_id - The ID of the zone whose early start feature status is to be checked.
+   * @returns A promise that resolves to a boolean indicating whether the early start feature is enabled.
+   */
+  async isZoneEarlyStartEnabled(home_id: number, zone_id: number): Promise<boolean> {
+    const { enabled } = await this.apiCall<{ enabled: boolean }>(
+      `/api/v2/homes/${home_id}/zones/${zone_id}/earlyStart`,
+    );
+    return enabled;
+  }
+
+  /**
+   * Sets the early start feature for a specified zone.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @param zone_id - The ID of the zone whose early start feature status is to be set.
+   * @param enabled - A boolean indicating whether the early start feature should be enabled or disabled.
+   * @returns A promise that resolves when the early start setting has been successfully updated.
+   */
+  setZoneEarlyStart(home_id: number, zone_id: number, enabled: boolean): Promise<void> {
+    return this.apiCall(`/api/v2/homes/${home_id}/zones/${zone_id}/earlyStart`, "PUT", {
+      enabled: enabled,
+    });
+  }
+
+  /**
    * Clears the overlay for a specific zone in a home.
    *
    * @param home_id - The unique identifier of the home.
