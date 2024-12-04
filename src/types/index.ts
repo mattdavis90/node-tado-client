@@ -23,6 +23,7 @@ import {
   OutdoorPollensTypeValue,
   OutdoorQualityLevel,
   Platform,
+  Power,
   StatePresence,
   StripeTypeValue,
   TadoMode,
@@ -31,11 +32,21 @@ import {
   TimeTableDayType,
   VerticalSwing,
   WeatherStateValue,
+  XConnectionState,
+  XFeature,
   ZoneDeviceDuty,
+  ZoneOverlayTerminationTypeSkillBasedApp,
   ZoneType,
 } from "./enums";
 
 export * from "./enums";
+
+/**
+ * TadoError extends the base Error class to represent errors specific to the Tado ecosystem.
+ * This custom error class can be used to differentiate between general errors
+ * and those that are Tado-specific, enabling more precise error handling and debugging.
+ */
+export class TadoError extends Error {}
 
 // utils
 export type DeepPartial<T> = T extends object
@@ -122,7 +133,8 @@ export type Home = {
   isEnergyIqEligible: boolean;
   isHeatSourceInstalled: boolean;
   isHeatPumpInstalled: boolean;
-  supportsFlowTemperatureOptimization: boolean;
+  supportsFlowTemperatureOptimization?: boolean;
+  preventFromSubscribing?: boolean;
 };
 
 export type MeHome = Pick<Home, "id" | "name">;
@@ -149,7 +161,8 @@ export type PushNotificationRegistration = {
 export type MobileDeviceSettings = {
   geoTrackingEnabled: boolean;
   onDemandLogRetrievalEnabled: boolean;
-  pushNotifications: MobileDeviceSettingsPushNotification;
+  pushNotifications?: MobileDeviceSettingsPushNotification;
+  specialOffersEnabled?: boolean;
 };
 
 export type MobileDeviceLocationBearingFromHome = {
@@ -370,8 +383,6 @@ export type Zone = {
   dazzleMode: ZoneDazzleMode;
   openWindowDetection: ZoneOpenWindowDetection;
 };
-
-export type Power = "ON" | "OFF";
 
 export type TimeTableSettings = {
   type: ZoneType;
@@ -963,4 +974,125 @@ export type Invitation = {
   lastSent: string; // ISO 8601 format date-time
   inviter: Inviter;
   home: Home;
+};
+
+export interface XRoomValue {
+  value: number;
+  precision?: number;
+}
+
+export interface XRoomPercentage {
+  percentage: number;
+}
+
+export type XRoomSensorDataPoints = {
+  insideTemperature: XRoomValue;
+  humidity: XRoomPercentage;
+};
+
+export type XRoomSetting = {
+  power: Power;
+  temperature: XRoomValue;
+};
+
+export type XNextScheduleChange = {
+  start: string;
+  setting: XRoomSetting;
+};
+
+export type XNextTimeBlock = {
+  /** `YYYY-MM-DDTHH:mm:ss` format datetime */
+  start: string;
+};
+
+export type XConnection = {
+  string: XConnectionState;
+};
+
+export type XRoom = {
+  id: number;
+  name: string;
+  sensorDataPoints: XRoomSensorDataPoints;
+  setting: XRoomSetting;
+  manualControlTermination: unknown;
+  boostMode: unknown;
+  heatingPower: XRoomPercentage;
+  connection: XConnection;
+  openWindow: unknown;
+  nextScheduleChange: XNextScheduleChange;
+  nextTimeBlock: XNextTimeBlock;
+  balanceControl: unknown;
+};
+
+export interface XRoomWithDevices {
+  roomId: number;
+  roomName: string;
+  deviceManualControlTermination: XManualControlTermination;
+  devices: XDevice[];
+  zoneControllerAssignable: boolean;
+  zoneControllers: unknown[];
+}
+
+export interface XManualControlTermination {
+  type: ZoneOverlayTerminationTypeSkillBasedApp;
+  durationInSeconds?: number;
+}
+
+export interface XDevice {
+  serialNumber: string;
+  type: string;
+  firmwareVersion: string;
+  connection: XConnection;
+  mountingState?: string;
+  batteryState?: string;
+  childLockEnabled?: boolean;
+  temperatureAsMeasured?: number;
+  temperatureOffset?: number;
+}
+
+export type XRoomsAndDevices = {
+  rooms: XRoomWithDevices[];
+  otherDevices: XDevice[];
+};
+
+export type XFeatures = {
+  availableFeatures: XFeature[];
+};
+
+export type XTerminationConfig =
+  | {
+      type: "NEXT_TIME_BLOCK" | "MANUAL";
+    }
+  | {
+      type: "TIMER";
+      durationInSeconds: number;
+    };
+
+export type XOverlay = {
+  setting: {
+    power: Power;
+    temperature: XRoomValue | null;
+  };
+  termination: XTerminationConfig;
+  isBoost?: boolean;
+};
+
+export type ActionableDevice = {
+  serialNumber: string;
+  needsMounting: boolean;
+  isOffline: boolean;
+  batteryState: DeviceBatteryState;
+};
+
+export type XRoomAwayConfiguration = {
+  roomId: number;
+  mode: Power;
+  awayTemperatureCelsius: number;
+};
+
+export type XHomeSummary = {
+  roomCount: number;
+  isHeatSourceInstalled: boolean;
+  isHeatPumpInstalled: boolean;
+  supportsFlowTemperatureOptimization: boolean;
 };

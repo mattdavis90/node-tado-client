@@ -80,48 +80,22 @@ The following API calls are available
 tado.login(username, password);
 tado.apiCall(url, method = 'get', data = {});
 
-/**********************/
-/* High-level methods */
-/**********************/
+/****************************************/
+/* High-level methods (Tado and Tado-X) */
+/****************************************/
 tado.getMe();
 tado.getHome(home_id);
 tado.getWeather(home_id);
-tado.getDevices(home_id);
-tado.getDeviceTemperatureOffset(device_id);
 tado.getInstallations(home_id);
 tado.getUsers(home_id);
 tado.getState(home_id);
 tado.getMobileDevices(home_id);
 tado.getMobileDevice(home_id, device_id);
 tado.getMobileDeviceSettings(home_id, device_id);
-tado.getZones(home_id);
-tado.getZoneState(home_id, zone_id);
-tado.getZoneCapabilities(home_id, zone_id);
-tado.getZoneOverlay(home_id, zone_id);
-tado.getZoneDayReport(home_id, zone_id, reportDate)
-tado.getTimeTables(home_id, zone_id);
-tado.getAwayConfiguration(home_id, zone_id);
-tado.getTimeTable(home_id, zone_id, timetable_id);
 tado.isAnyoneAtHome(home_id);
-tado.setDeviceTemperatureOffset(device_id, temperatureOffset);
-tado.identifyDevice(device_id);
 tado.setPresence(home_id, presence);
 tado.updatePresence(home_id);
-tado.setWindowDetection(home_id, zone_id, enabled, timeout);
 tado.getAirComfort(home_id);
-tado.clearZoneOverlays(home_id, [zone_id, ...]);
-tado.setZoneOverlays(home_id, [overlays, ...], termination);
-tado.getZoneDefaultOverlay(home_id, zone_id);
-tado.setZoneDefaultOverlay(home_id, zone_id, overlay);
-/**********************/
-/* Deprecated methods */
-/**********************/
-tado.clearZoneOverlay(home_id, zone_id);
-tado.setZoneOverlay(home_id, zone_id, power, temperature, termination);
-
-/**********************/
-/* EnergyIQ & Savings methods */
-/**********************/
 tado.getEnergyIQ(home_id);
 tado.getEnergyIQTariff(home_id);
 tado.addEnergyIQTariff(home_id, unit, startDate, endDate, tariffInCents);
@@ -130,6 +104,42 @@ tado.getEnergyIQMeterReadings(home_id);
 tado.addEnergyIQMeterReading(home_id, date, reading);
 tado.deleteEnergyIQMeterReading(home_id, reading_id);
 tado.getEnergySavingsReport(home_id, year, month, countryCode); // countryCode should match home country, it can be retrieved from getHome(home_id).address.country
+
+/**********************************/
+/* High-level methods (Tado only) */
+/**********************************/
+tado.getZones(home_id);
+tado.getZoneState(home_id, zone_id);
+tado.getZoneCapabilities(home_id, zone_id);
+tado.getZoneOverlay(home_id, zone_id);
+tado.getZoneDayReport(home_id, zone_id, reportDate)
+tado.getTimeTables(home_id, zone_id);
+tado.getAwayConfiguration(home_id, zone_id);
+tado.getTimeTable(home_id, zone_id, timetable_id);
+tado.setWindowDetection(home_id, zone_id, enabled, timeout);
+tado.clearZoneOverlays(home_id, [zone_id, ...]);
+tado.setZoneOverlays(home_id, [overlays, ...], termination);
+tado.getZoneDefaultOverlay(home_id, zone_id);
+tado.setZoneDefaultOverlay(home_id, zone_id, overlay);
+tado.getDevices(home_id);
+tado.getDeviceTemperatureOffset(device_id);
+tado.setDeviceTemperatureOffset(device_id, temperatureOffset);
+tado.identifyDevice(device_id);
+
+/***********************************/
+/* High-level methods (TadoX only) */
+/***********************************/
+tado.getRoomsAndDevice(home_id);
+tado.getRooms(home_id);
+tado.getRoomState(home_id, room_id);
+tado.resumeSchedule(home_id, room_id);
+tado.manualControl(home_id, room_id, power, temperature termination);
+
+/**********************************/
+/* Deprecated methods (Tado only) */
+/**********************************/
+tado.clearZoneOverlay(home_id, zone_id);
+tado.setZoneOverlay(home_id, zone_id, power, temperature, termination);
 ```
 
 ### Setting Zone Overlays

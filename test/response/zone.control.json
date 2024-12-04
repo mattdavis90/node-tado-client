@@ -1,0 +1,82 @@
+{
+  "type": "HEATING",
+  "earlyStartEnabled": true,
+  "heatingCircuit": 1,
+  "duties": {
+    "type": "HEATING",
+    "leader": {
+      "deviceType": "SU02",
+      "serialNo": "SUXXXXXXXXXX",
+      "shortSerialNo": "SUXXXXXXXXXX",
+      "currentFwVersion": "215.1",
+      "connectionState": {
+        "value": true,
+        "timestamp": "2024-12-04T12:25:09.979Z"
+      },
+      "characteristics": {
+        "capabilities": ["INSIDE_TEMPERATURE_MEASUREMENT", "IDENTIFY"]
+      },
+      "batteryState": "NORMAL"
+    },
+    "drivers": [
+      {
+        "deviceType": "VA02",
+        "serialNo": "VAXXXXXXXXXX",
+        "shortSerialNo": "VAXXXXXXXXXX",
+        "currentFwVersion": "215.1",
+        "connectionState": {
+          "value": true,
+          "timestamp": "2024-12-04T12:28:36.113Z"
+        },
+        "characteristics": {
+          "capabilities": ["INSIDE_TEMPERATURE_MEASUREMENT", "IDENTIFY"]
+        },
+        "mountingState": {
+          "value": "CALIBRATED",
+          "timestamp": "2024-11-25T20:27:01.346Z"
+        },
+        "mountingStateWithError": "CALIBRATED",
+        "batteryState": "NORMAL",
+        "orientation": "HORIZONTAL",
+        "childLockEnabled": false
+      }
+    ],
+    "uis": [
+      {
+        "deviceType": "SU02",
+        "serialNo": "SUXXXXXXXXXX",
+        "shortSerialNo": "SUXXXXXXXXXX",
+        "currentFwVersion": "215.1",
+        "connectionState": {
+          "value": true,
+          "timestamp": "2024-12-04T12:25:09.979Z"
+        },
+        "characteristics": {
+          "capabilities": ["INSIDE_TEMPERATURE_MEASUREMENT", "IDENTIFY"]
+        },
+        "batteryState": "NORMAL"
+      },
+      {
+        "deviceType": "VA02",
+        "serialNo": "VAXXXXXXXXXX",
+        "shortSerialNo": "VAXXXXXXXXXX",
+        "currentFwVersion": "215.1",
+        "connectionState": {
+          "value": true,
+          "timestamp": "2024-12-04T12:28:36.113Z"
+        },
+        "characteristics": {
+          "capabilities": ["INSIDE_TEMPERATURE_MEASUREMENT", "IDENTIFY"]
+        },
+        "mountingState": {
+          "value": "CALIBRATED",
+          "timestamp": "2024-11-25T20:27:01.346Z"
+        },
+        "mountingStateWithError": "CALIBRATED",
+        "batteryState": "NORMAL",
+        "orientation": "HORIZONTAL",
+        "childLockEnabled": false
+      }
+    ]
+  }
+}

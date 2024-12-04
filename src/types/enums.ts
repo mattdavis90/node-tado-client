@@ -1,3 +1,5 @@
+export type Power = "ON" | "OFF";
+
 export type Platform = "iOS" | "Android";
 
 export type TemperatureUnit = "CELSIUS";
@@ -25,6 +27,8 @@ export type ACVerticalSwing = "ON" | "MID" | "AUTO" | "UP" | "DOWN" | "MID_UP" |
 export type ACHorizontalSwing = "RIGHT" | "MID" | "LEFT" | "ON" | "MID_RIGHT" | "MID_LEFT";
 
 export type Termination = "AUTO" | "NEXT_TIME_BLOCK" | "MANUAL";
+
+export type XTermination = "NEXT_TIME_BLOCK" | "MANUAL";
 
 export type OutdoorQualityLevel = "EXCELLENT" | "NONE";
 
@@ -146,3 +150,9 @@ export type HeatingInstallationState =
 export type InstallationType = "INSTALL_AC_G1" | "SALE_FITTING_ST_G1" | "REPLACE_BRIDGE";
 
 export type HomeGeneration = "UNKNOWN" | "LINE_X" | "PRE_LINE_X";
+
+export type XConnectionState = "CONNECTED";
+
+export type XFeature = "careAndProtect" | "geofencing" | "openWindowDetection";
+
+export type XQuickAction = "allOff" | "resumeSchedule" | "boost";
