@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import * as chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 import nock from "nock";
@@ -30,9 +31,12 @@ import timetables_response from "./response/timetables.json";
 import users_response from "./response/users.json";
 import weather_response from "./response/weather.json";
 import zone_capabilities_response from "./response/zone.capabilities.json";
+import zone_control_response from "./response/zone.control.json";
 import zone_day_report from "./response/zone.dayReport.json";
+import zone_default_overlay_response from "./response/zone.defaultOverlay.json";
 import zone_overlay_response from "./response/zone.overlay.json";
 import zone_state_response from "./response/zone.state.json";
+import zone_states_response from "./response/zone.states.json";
 import zones_response from "./response/zones.json";
 
 chai.use(chaiAsPromised);
@@ -412,6 +416,29 @@ describe("High-level API tests (v2)", function () {
         expect(typeof response).to.equal("object");
       });
 
+      it("Should handle 404 when getting zone's overlay", async function () {
+        nock("https://my.tado.com")
+          .get("/api/v2/homes/1907/zones/1/overlay")
+          .reply(404, "Not Found");
+
+        const response = await tado.getZoneOverlay(1907, 1);
+
+        expect(response).deep.equal({});
+      });
+
+      it("Should raise non-404 exceptions when getting zone's overlay", async function () {
+        nock("https://my.tado.com")
+          .get("/api/v2/homes/1907/zones/1/overlay")
+          .reply(400, "Bad Request");
+
+        try {
+          await tado.getZoneOverlay(1907, 1);
+          throw new Error("Exception was not thrown");
+        } catch (error) {
+          expect(error instanceof AxiosError && error.response?.status !== 404);
+        }
+      });
+
       it("should get a zone's timetables", async function () {
         nock("https://my.tado.com")
           .get("/api/v2/homes/1907/zones/1/schedule/activeTimetable")
@@ -776,6 +803,141 @@ describe("High-level API tests (v2)", function () {
         expect(response.modelName).to.equal("ZR/ZSR/ZWR ..-2");
         expect(response.manufacturers.length).to.equal(1);
         expect(response.manufacturers[0].name).to.equal("Junkers");
+      });
+
+      it("should set device child lock", async function () {
+        const device_serial_number = "RU04932458";
+
+        nock("https://my.tado.com")
+          .put(`/api/v2/devices/${device_serial_number}/childLock`)
+          .reply(204);
+
+        const response = await tado.setChildlock(device_serial_number, true);
+
+        expect(response).to.equal("");
+      });
+
+      it("should get zone control", async function () {
+        const home_id = 1907;
+        const zone_id = 1;
+
+        nock("https://my.tado.com")
+          .get(`/api/v2/homes/${home_id}/zones/${zone_id}/control`)
+          .reply(200, zone_control_response);
+
+        const response = await tado.getZoneControl(home_id, zone_id);
+
+        expect(typeof response).to.equal("object");
+        expect(response.type).to.equal("HEATING");
+        expect(response.earlyStartEnabled).to.equal(true);
+        expect(response.heatingCircuit).to.equal(1);
+      });
+
+      it("should get zone states", async function () {
+        const home_id = 1907;
+
+        nock("https://my.tado.com")
+          .get(`/api/v2/homes/${home_id}/zoneStates`)
+          .reply(200, zone_states_response);
+
+        const response = await tado.getZoneStates(home_id);
+
+        expect(typeof response).to.equal("object");
+      });
+
+      it("should set window detection (true)", async function () {
+        const home_id = 1907;
+        const zone_id = 1;
+
+        nock("https://my.tado.com")
+          .put(`/api/v2/homes/${home_id}/zones/${zone_id}/openWindowDetection`)
+          .reply(204);
+
+        const response = await tado.setWindowDetection(home_id, zone_id, true, 10);
+
+        expect(response).to.equal("");
+      });
+
+      it("should set window detection (false)", async function () {
+        const home_id = 1907;
+        const zone_id = 1;
+
+        nock("https://my.tado.com")
+          .put(`/api/v2/homes/${home_id}/zones/${zone_id}/openWindowDetection`)
+          .reply(204);
+
+        const response = await tado.setWindowDetection(home_id, zone_id, false);
+
+        expect(response).to.equal("");
+      });
+
+      it("should set open window mode (true)", async function () {
+        const home_id = 1907;
+        const zone_id = 1;
+
+        nock("https://my.tado.com")
+          .post(`/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow/activate`)
+          .reply(204);
+
+        const response = await tado.setOpenWindowMode(home_id, zone_id, true);
+
+        expect(response).to.equal("");
+      });
+
+      it("should set open window mode (false)", async function () {
+        const home_id = 1907;
+        const zone_id = 1;
+
+        nock("https://my.tado.com")
+          .delete(`/api/v2/homes/${home_id}/zones/${zone_id}/state/openWindow`)
+          .reply(204);
+
+        const response = await tado.setOpenWindowMode(home_id, zone_id, false);
+
+        expect(response).to.equal("");
+      });
+
+      it("should clear zone overlays", async function () {
+        const home_id = 1907;
+        const zone_ids = [1, 2, 3];
+        const rooms = zone_ids.join(",");
+
+        nock("https://my.tado.com")
+          .delete(`/api/v2/homes/${home_id}/overlay?rooms=${rooms}`)
+          .reply(204);
+
+        const response = await tado.clearZoneOverlays(home_id, zone_ids);
+
+        expect(response).to.equal("");
+      });
+
+      it("should get zone default overlay", async function () {
+        const home_id = 1907;
+        const zone_id = 1;
+
+        nock("https://my.tado.com")
+          .get(`/api/v2/homes/${home_id}/zones/${zone_id}/defaultOverlay`)
+          .reply(200, zone_default_overlay_response);
+
+        const response = await tado.getZoneDefaultOverlay(home_id, zone_id);
+
+        expect(typeof response).to.equal("object");
+        expect(response.terminationCondition.type).to.equal("TADO_MODE");
+      });
+
+      it("should set zone default overlay", async function () {
+        const home_id = 1907;
+        const zone_id = 1;
+
+        nock("https://my.tado.com")
+          .put(`/api/v2/homes/${home_id}/zones/${zone_id}/defaultOverlay`)
+          .reply(204);
+
+        const response = await tado.setZoneDefaultOverlay(home_id, zone_id, {
+          terminationCondition: { type: "TADO_MODE" },
+        });
+
+        expect(response).to.equal("");
       });
     });
   });
