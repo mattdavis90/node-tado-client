@@ -7,6 +7,7 @@ import auth_response from "./response/auth.json";
 import away_configuration_response from "./response/away.json";
 import devices_response from "./response/devices.json";
 import devices_offset_response from "./response/devices.offset.json";
+import early_start_response from "./response/earlyStart.json";
 import timetable_response from "./response/timetable.json";
 import timetables_response from "./response/timetables.json";
 import zone_capabilities_response from "./response/zone.capabilities.json";
@@ -96,6 +97,30 @@ describe("High-level API tests (v2)", function () {
       const response = await tado.getZoneDayReport(1907, 1, "2023-01-19");
 
       expect(typeof response).to.equal("object");
+    });
+
+    it("Should get early start enabled value", async () => {
+      nock("https://my.tado.com")
+        .get("/api/v2/homes/1907/zones/1/earlyStart")
+        .reply(200, early_start_response);
+
+      const response = await tado.isZoneEarlyStartEnabled(1907, 1);
+
+      expect(response).to.equal(true);
+    });
+
+    it("Should set early state enabled value", async () => {
+      nock("https://my.tado.com")
+        .put("/api/v2/homes/1907/zones/1/earlyStart", (body) => {
+          expect(Object.keys(body)).to.deep.equal(["enabled"]);
+          expect(body.enabled).to.equal(false);
+          return true;
+        })
+        .reply(204, "");
+
+      const response = await tado.setZoneEarlyStart(1907, 1, false);
+
+      expect(response).to.equal("");
     });
 
     it("Should get a zone's overlay", async function () {
