@@ -1,6 +1,4 @@
-import { Method } from "axios";
-import { Tado } from "./tado";
-import {
+import type {
   ActionableDevice,
   Power,
   XFeatures,
@@ -13,9 +11,12 @@ import {
   XTermination,
 } from "./types";
 
+import { Method } from "axios";
+import { BaseTado } from "./base";
+
 const tado_x_url = "https://hops.tado.com";
 
-export class TadoX extends Tado {
+export class TadoX extends BaseTado {
   /**
    * Makes an API call to the provided TadoX URL with the specified method and data.
    *
@@ -174,7 +175,6 @@ export class TadoX extends Tado {
    * @param child_lock - Boolean value to enable or disable the child lock.
    * @returns A promise that resolves when the operation is complete.
    */
-  // @ts-expect-error TS2416
   async setChildlock(home_id: number, serial_no: string, child_lock: boolean): Promise<void> {
     return this.apiCallX(`/homes/${home_id}/roomsAndDevices/devices/${serial_no}`, "patch", {
       childLockEnabled: child_lock,
@@ -189,7 +189,6 @@ export class TadoX extends Tado {
    * @param temperatureOffset - The temperature offset to be set, in degrees Celsius.
    * @returns A promise that resolves when the operation is complete.
    */
-  // @ts-expect-error TS2416
   async setDeviceTemperatureOffset(
     home_id: number,
     serial_no: string,
@@ -207,7 +206,6 @@ export class TadoX extends Tado {
    * @param room_id - The unique identifier of the zone within the home.
    * @returns A promise that resolves to the away configuration object.
    */
-  // @ts-expect-error TS2416
   async getAwayConfiguration(
     home_id: number,
     room_id: number,
@@ -223,7 +221,6 @@ export class TadoX extends Tado {
    * @param config - The configuration settings for away mode.
    * @returns A promise that resolves when the configuration has been successfully set.
    */
-  // @ts-expect-error TS2416
   async setAwayConfiguration(
     home_id: number,
     room_id: number,
