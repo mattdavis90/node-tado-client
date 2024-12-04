@@ -115,15 +115,12 @@ export class Tado extends BaseTado {
     home_id: number,
     zone_id: number,
   ): Promise<ZoneOverlay | Record<string, never>> {
-    try {
-      return this.apiCall<ZoneOverlay>(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`);
-    } catch (error) {
-      if (error instanceof AxiosError && error.response?.status === 404) {
-        return {};
-      }
-
-      throw error;
-    }
+    return this.apiCall<ZoneOverlay>(`/api/v2/homes/${home_id}/zones/${zone_id}/overlay`).catch(
+      (error) => {
+        if (error instanceof AxiosError && error.response?.status === 404) return {};
+        throw error;
+      },
+    );
   }
 
   /**
