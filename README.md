@@ -14,7 +14,7 @@ _DEPRECATION notice: The Zone Overlay API calls are being deprecated, see below 
 
 ```javascript
 // Import the Tado client
-const { Tado } = require("node-tado-client");
+const { Tado } = require("node-tado-client"); // or TadoX
 
 // Create a new Tado instance
 var tado = new Tado();
@@ -168,17 +168,17 @@ It is not required to use upper case in the values, the library will convert the
 
 The `termination` argument should be one of the following:
 
--   A positive integer - this will be interpreted as the number of seconds to set the overlay for
--   "auto" - this will put the overlay into "TADO_MODE"
-    -   _Note: This uses the default termination type set on the zone_
--   "next_time_block" - overlay until the next scheduled event
--   Anything else - the overlay will exist indefinitely and will need manually clearing
+- A positive integer - this will be interpreted as the number of seconds to set the overlay for
+- "auto" - this will put the overlay into "TADO_MODE"
+    - _Note: This uses the default termination type set on the zone_
+- "next_time_block" - overlay until the next scheduled event
+- Anything else - the overlay will exist indefinitely and will need manually clearing
 
 ### Setting Geo Presence
 
 The `setPresence` method call takes the following arguments
 
--   _presence_ - **home**, **away** or **auto**
+- _presence_ - **home**, **away** or **auto**
 
 **Documentation of deprecated methods**
 
@@ -186,6 +186,6 @@ The `setZoneOverlay` method call takes the following arguments
 
 **Note:** It will automatically determine the type of system that it is affecting
 
--   _power_ - **on** or **off** (case insensitive) [**default:** off]
--   _temperature_ - _Integer_ temperature in Celsius, if affecting a HEATING system
--   _termination_ - _Integer_ , **auto**, **next_time_block**, or **manual** (case insensitive, integer denotes a timer in seconds) [**default:** manual]
+- _power_ - **on** or **off** (case insensitive) [**default:** off]
+- _temperature_ - _Integer_ temperature in Celsius, if affecting a HEATING system
+- _termination_ - _Integer_ , **auto**, **next_time_block**, or **manual** (case insensitive, integer denotes a timer in seconds) [**default:** manual]
