@@ -1096,3 +1096,17 @@ export type XHomeSummary = {
   isHeatPumpInstalled: boolean;
   supportsFlowTemperatureOptimization: boolean;
 };
+
+export type FlowTemperatureOptimization = {
+  maxFlowTemperature: number;
+  maxFlowTemperatureConstraints: {
+    min: number;
+    max: number;
+  };
+  openThermDeviceSerialNumber: string;
+  hasMultipleBoilerControlDevices: boolean;
+  autoAdaptation: {
+    enabled: boolean;
+    maxFlowTemperature: number;
+  };
+};
