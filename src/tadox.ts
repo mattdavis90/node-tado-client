@@ -1,5 +1,6 @@
 import type {
   ActionableDevice,
+  FlowTemperatureOptimization,
   Power,
   XFeatures,
   XHomeSummary,
@@ -260,5 +261,60 @@ export class TadoX extends BaseTado {
       `/homes/${home_id}/programmer/domesticHotWater`,
     );
     return response.isDomesticHotWaterCapable;
+  }
+
+  /**
+   * Get the Flow Temperature Optimization settings.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @returns Flow Temperature Optimization settings.
+   */
+  async getFlowTemperatureOptimization(home_id: number): Promise<FlowTemperatureOptimization> {
+    return this.apiCallX(
+      `https://hops.tado.com/homes/${home_id}/settings/flowTemperatureOptimization`,
+    );
+  }
+
+  /**
+   * Enable Flow Temperature Optimization settings.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @returns if changed.
+   */
+  async enableFlowTemperatureOptimization(home_id: number): Promise<string> {
+    return this.apiCallX(
+      `https://hops.tado.com/homes/${home_id}/settings/flowTemperatureOptimization`,
+      "patch",
+      { autoAdaptation: { enabled: true } },
+    );
+  }
+
+  /**
+   * Disable Flow Temperature Optimization settings.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @returns if changed.
+   */
+  async disableFlowTemperatureOptimization(home_id: number): Promise<string> {
+    return this.apiCallX(
+      `https://hops.tado.com/homes/${home_id}/settings/flowTemperatureOptimization`,
+      "patch",
+      { autoAdaptation: { enabled: false } },
+    );
+  }
+
+  /**
+   * Set the Flow Temperature Optimization max temperature.
+   *
+   * @param home_id - The unique identifier of the home.
+   * @param temperature - The max. temperature.
+   * @returns if changed.
+   */
+  async setFlowTemperatureOptimization(home_id: number, temperature: number): Promise<string> {
+    return this.apiCallX(
+      `https://hops.tado.com/homes/${home_id}/settings/flowTemperatureOptimization`,
+      "patch",
+      { maxFlowTemperature: temperature },
+    );
   }
 }
