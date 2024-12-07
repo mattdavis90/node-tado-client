@@ -270,9 +270,7 @@ export class TadoX extends BaseTado {
    * @returns Flow Temperature Optimization settings.
    */
   async getFlowTemperatureOptimization(home_id: number): Promise<FlowTemperatureOptimization> {
-    return this.apiCallX(
-      `https://hops.tado.com/homes/${home_id}/settings/flowTemperatureOptimization`,
-    );
+    return this.apiCallX(`/homes/${home_id}/settings/flowTemperatureOptimization`);
   }
 
   /**
@@ -282,11 +280,9 @@ export class TadoX extends BaseTado {
    * @returns if changed.
    */
   async enableFlowTemperatureOptimization(home_id: number): Promise<string> {
-    return this.apiCallX(
-      `https://hops.tado.com/homes/${home_id}/settings/flowTemperatureOptimization`,
-      "patch",
-      { autoAdaptation: { enabled: true } },
-    );
+    return this.apiCallX(`/homes/${home_id}/settings/flowTemperatureOptimization`, "patch", {
+      autoAdaptation: { enabled: true },
+    });
   }
 
   /**
@@ -296,11 +292,9 @@ export class TadoX extends BaseTado {
    * @returns if changed.
    */
   async disableFlowTemperatureOptimization(home_id: number): Promise<string> {
-    return this.apiCallX(
-      `https://hops.tado.com/homes/${home_id}/settings/flowTemperatureOptimization`,
-      "patch",
-      { autoAdaptation: { enabled: false } },
-    );
+    return this.apiCallX(`/homes/${home_id}/settings/flowTemperatureOptimization`, "patch", {
+      autoAdaptation: { enabled: false },
+    });
   }
 
   /**
@@ -311,10 +305,8 @@ export class TadoX extends BaseTado {
    * @returns if changed.
    */
   async setFlowTemperatureOptimization(home_id: number, temperature: number): Promise<string> {
-    return this.apiCallX(
-      `https://hops.tado.com/homes/${home_id}/settings/flowTemperatureOptimization`,
-      "patch",
-      { maxFlowTemperature: temperature },
-    );
+    return this.apiCallX(`/homes/${home_id}/settings/flowTemperatureOptimization`, "patch", {
+      maxFlowTemperature: temperature,
+    });
   }
 }
