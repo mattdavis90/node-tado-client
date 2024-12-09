@@ -53,12 +53,12 @@
     "globals": "^15.13.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.2.10",
-    "mocha": "^10.8.2",
+    "mocha": "^11.0.1",
     "nock": "^13.5.6",
     "nyc": "^17.1.0",
     "prettier": "^3.4.2",
     "tsx": "^4.19.2",
-    "typedoc": "^0.26.11",
+    "typedoc": "^0.27.4",
     "typescript": "^5.7.2"
   },
   "lint-staged": {
