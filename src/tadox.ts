@@ -1,5 +1,6 @@
 import type {
   ActionableDevice,
+  AirComfort,
   FlowTemperatureOptimization,
   Power,
   XFeatures,
@@ -308,5 +309,18 @@ export class TadoX extends BaseTado {
     return this.apiCallX(`/homes/${home_id}/settings/flowTemperatureOptimization`, "patch", {
       maxFlowTemperature: temperature,
     });
+  }
+
+  /**
+   * Retrieves the air comfort details for a given home.
+   *
+   * @param home_id - The ID of the home for which to get the air comfort details.
+   * @returns A promise that resolves to an AirComfort object containing the air comfort details.
+   */
+  async getAirComfort(home_id: number): Promise<AirComfort> {
+    const resp = (await this.apiCallX(`/api/v2/homes/${home_id}/airComfort`)) as {
+      data: AirComfort;
+    };
+    return resp.data;
   }
 }
