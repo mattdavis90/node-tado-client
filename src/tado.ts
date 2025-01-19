@@ -1,5 +1,6 @@
 import type {
   ACMode,
+  AirComfort,
   AwayConfiguration,
   DeepPartial,
   DefaultOverlay,
@@ -713,5 +714,15 @@ export class Tado extends BaseTado {
     return this.apiCall(`/api/v2/devices/${serial_no}/childLock`, "PUT", {
       childLockEnabled: child_lock,
     });
+  }
+
+  /**
+   * Retrieves the air comfort details for a given home.
+   *
+   * @param home_id - The ID of the home for which to get the air comfort details.
+   * @returns A promise that resolves to an AirComfort object containing the air comfort details.
+   */
+  getAirComfort(home_id: number): Promise<AirComfort> {
+    return this.apiCall(`/api/v2/homes/${home_id}/airComfort`);
   }
 }

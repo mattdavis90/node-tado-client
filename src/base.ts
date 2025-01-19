@@ -1,6 +1,5 @@
 import type {
   AddEnergiIQMeterReadingResponse,
-  AirComfort,
   AirComfortDetailed,
   BoilerSystemInformation,
   Country,
@@ -577,16 +576,6 @@ export class BaseTado {
     } else {
       return "already up to date";
     }
-  }
-
-  /**
-   * Retrieves the air comfort details for a given home.
-   *
-   * @param home_id - The ID of the home for which to get the air comfort details.
-   * @returns A promise that resolves to an AirComfort object containing the air comfort details.
-   */
-  getAirComfort(home_id: number): Promise<AirComfort> {
-    return this.apiCall(`/api/v2/homes/${home_id}/airComfort`);
   }
 
   /**
