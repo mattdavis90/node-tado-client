@@ -36,7 +36,7 @@ import type {
 
 import { Agent } from "https";
 import axios, { Method } from "axios";
-import { TadoError } from "./types";
+import { AuthTimeout, InvalidRefreshToken, NotAuthenticated, TadoError } from "./types";
 
 const tado_url = "https://my.tado.com";
 const client_id = "1bb50063-6b0c-4d11-bd99-387f4a91cc46";
@@ -46,19 +46,9 @@ const grant_type = "urn:ietf:params:oauth:grant-type:device_code";
 export class BaseTado {
   #httpsAgent: Agent;
   #token?: Token | undefined;
-  #silent: boolean;
 
-  constructor(refreshToken?: string, silent: boolean = false) {
+  constructor() {
     this.#httpsAgent = new Agent({ keepAlive: true });
-    this.#silent = silent;
-
-    if (refreshToken) {
-      this.#token = {
-        access_token: "",
-        refresh_token: refreshToken,
-        expiry: new Date(0),
-      };
-    }
   }
 
   #parseDeviceToken(deviceToken: DeviceToken): Token {
@@ -93,27 +83,6 @@ export class BaseTado {
     });
   }
 
-  async #deviceAuth(): Promise<Token> {
-    const [verify, tokenPromise] = await this.initiateDeviceAuth();
-
-    if (!this.#silent) {
-      console.log("------------------------------------------------");
-      console.log("Device authentication required.");
-      console.log("Please visit the following website in a browser.");
-      console.log("");
-      console.log(`  ${verify.verification_uri_complete}`);
-      console.log("");
-      console.log(
-        `Checks will occur every ${verify.interval}s up to a maximum of ${verify.expires_in}s`,
-      );
-      console.log("------------------------------------------------");
-    }
-
-    const token = await tokenPromise;
-    this.#token = token;
-    return token;
-  }
-
   async #waitForAuth(
     device_code: string,
     interval: number,
@@ -129,10 +98,28 @@ export class BaseTado {
       }
     }
 
-    throw new Error("Timeout waiting for user input");
+    throw new AuthTimeout("Timeout waiting for user input");
   }
 
-  async initiateDeviceAuth(): Promise<[DeviceVerification, Promise<Token>]> {
+  async authenticate(
+    refreshToken?: string,
+    timeout?: number,
+  ): Promise<[DeviceVerification | undefined, Promise<Token>]> {
+    if (refreshToken) {
+      this.#token = {
+        access_token: "",
+        refresh_token: refreshToken,
+        expiry: new Date(0),
+      };
+
+      try {
+        const token = await this.getToken();
+        return [undefined, new Promise((resolve) => resolve(token))];
+      } catch {
+        // Refresh token is no good
+      }
+    }
+
     const verify = await axios<DeviceVerification>({
       url: "https://login.tado.com/oauth2/device_authorize",
       method: "POST",
@@ -142,8 +129,14 @@ export class BaseTado {
       },
     });
 
+    if (timeout !== undefined) {
+      timeout = Math.min(timeout, verify.data.expires_in);
+    } else {
+      timeout = verify.data.expires_in;
+    }
+
     const token = new Promise<Token>((resolve, reject) => {
-      this.#waitForAuth(verify.data.device_code, verify.data.interval, verify.data.expires_in)
+      this.#waitForAuth(verify.data.device_code, verify.data.interval, timeout)
         .then(resolve)
         .catch(reject);
     });
@@ -153,9 +146,9 @@ export class BaseTado {
 
   async getToken(): Promise<Token> {
     if (!this.#token) {
-      const token = await this.#deviceAuth();
-      this.#token = token;
-      return token;
+      throw new NotAuthenticated(
+        "Tado is not authenticated. Please call the authenticate method.",
+      );
     }
 
     const now = new Date();
@@ -176,9 +169,9 @@ export class BaseTado {
         this.#token = token;
         return token;
       } catch {
-        const token = await this.#deviceAuth();
-        this.#token = token;
-        return token;
+        throw new InvalidRefreshToken(
+          "The refresh token has expired. Please call the authenticate method.",
+        );
       }
     } else {
       return this.#token;
