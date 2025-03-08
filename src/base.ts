@@ -92,6 +92,43 @@ export class BaseTado {
   }
 
   async #deviceAuth(): Promise<Token> {
+    const [verify, tokenPromise] = await this.initiateDeviceAuth();
+
+    console.log("------------------------------------------------");
+    console.log("Device authentication required.");
+    console.log("Please visit the following website in a browser.");
+    console.log("");
+    console.log(`  ${verify.verification_uri_complete}`);
+    console.log("");
+    console.log(
+      `Checks will occur every ${verify.interval}s up to a maximum of ${verify.expires_in}s`,
+    );
+    console.log("------------------------------------------------");
+
+    const token = await tokenPromise;
+    this.#token = token;
+    return token;
+  }
+
+  async #waitForAuth(
+    device_code: string,
+    interval: number,
+    expires_in: number,
+  ): Promise<Token> {
+    for (let i = 0; i < expires_in; i += interval) {
+      try {
+        const token = await this.#checkDevice(device_code, interval * 1000);
+        this.#token = token;
+        return token;
+      } catch {
+        // Keep trying, we'll throw later
+      }
+    }
+
+    throw new Error("Timeout waiting for user input");
+  }
+
+  async initiateDeviceAuth(): Promise<[DeviceVerification, Promise<Token>]> {
     const verify = await axios<DeviceVerification>({
       url: "https://login.tado.com/oauth2/device_authorize",
       method: "POST",
@@ -101,32 +138,13 @@ export class BaseTado {
       },
     });
 
-    console.log("------------------------------------------------");
-    console.log("Device authentication required.");
-    console.log("Please visit the following website in a browser.");
-    console.log("");
-    console.log(`  ${verify.data.verification_uri_complete}`);
-    console.log("");
-    console.log(
-      `Checks will occur every ${verify.data.interval}s up to a maximum of ${verify.data.expires_in}s`,
-    );
-    console.log("------------------------------------------------");
+    const token = new Promise<Token>((resolve, reject) => {
+      this.#waitForAuth(verify.data.device_code, verify.data.interval, verify.data.expires_in)
+        .then(resolve)
+        .catch(reject);
+    });
 
-    // Wait for user to click buttons
-    for (let i = 0; i < verify.data.expires_in; i += verify.data.interval) {
-      try {
-        const token = await this.#checkDevice(
-          verify.data.device_code,
-          verify.data.interval * 1000,
-        );
-        this.#token = token;
-        return token;
-      } catch {
-        // Keep trying, we'll throw later
-      }
-    }
-
-    throw new Error("Timeout waiting for user input");
+    return [verify.data, token];
   }
 
   async getToken(): Promise<Token> {
