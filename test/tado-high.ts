@@ -388,7 +388,7 @@ describe("High-level API tests (v2)", function () {
         1800,
       );
 
-      expect(typeof response).to.equal("object");
+      expect(typeof response).to.equal("string");
     });
 
     it("Should allow setting overlay with only celsius", async function () {
@@ -412,7 +412,7 @@ describe("High-level API tests (v2)", function () {
         "AUTO",
       );
 
-      expect(typeof response).to.equal("object");
+      expect(typeof response).to.equal("string");
     });
 
     it("should set device child lock", async function () {
