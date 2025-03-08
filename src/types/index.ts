@@ -39,6 +39,7 @@ import {
   ZoneType,
 } from "./enums";
 
+export * from "./auth";
 export * from "./enums";
 
 /**

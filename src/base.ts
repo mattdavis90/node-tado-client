@@ -3,6 +3,8 @@ import type {
   AirComfortDetailed,
   BoilerSystemInformation,
   Country,
+  DeviceToken,
+  DeviceVerification,
   EnergyIQConsumptionDetails,
   EnergyIQMeterReadings,
   EnergyIQOverview,
@@ -27,106 +29,138 @@ import type {
   RunningTimesSummaryOnly,
   State,
   StatePresence,
+  Token,
   User,
   Weather,
 } from "./types";
 
 import { Agent } from "https";
 import axios, { Method } from "axios";
-import { AccessToken, ResourceOwnerPassword } from "simple-oauth2";
 import { TadoError } from "./types";
 
-const EXPIRATION_WINDOW_IN_SECONDS = 300;
-
-const tado_auth_url = "https://auth.tado.com";
 const tado_url = "https://my.tado.com";
-const tado_config = {
-  client: {
-    id: "tado-web-app",
-    secret: "wZaRN7rpjn3FoNyF5IFuxg9uMzYJcvOoQ8QWiIqS3hfk6gLhVlG57j5YNoZL2Rtc",
-  },
-  auth: {
-    tokenHost: tado_auth_url,
-  },
-};
-
-const client = new ResourceOwnerPassword(tado_config);
+const client_id = "1bb50063-6b0c-4d11-bd99-387f4a91cc46";
+const scope = "offline_access";
+const grant_type = "urn:ietf:params:oauth:grant-type:device_code";
 
 export class BaseTado {
   #httpsAgent: Agent;
-  #accessToken?: AccessToken | undefined;
-  #username?: string;
-  #password?: string;
+  #token?: Token | undefined;
 
-  constructor(username?: string, password?: string) {
-    this.#username = username;
-    this.#password = password;
+  constructor(refreshToken?: string) {
     this.#httpsAgent = new Agent({ keepAlive: true });
+
+    if (refreshToken) {
+      this.#token = {
+        access_token: "",
+        refresh_token: refreshToken,
+        expiry: new Date(0),
+      };
+    }
   }
 
-  async #login(): Promise<void> {
-    if (!this.#username || !this.#password) {
-      throw new Error("Please login before using Tado!");
-    }
+  #parseDeviceToken(deviceToken: DeviceToken): Token {
+    const expiry = new Date();
+    expiry.setSeconds(expiry.getSeconds() + deviceToken.expires_in - 5); // Minus 5 seconds grace
 
-    const tokenParams = {
-      username: this.#username,
-      password: this.#password,
-      scope: "home.user",
+    return {
+      access_token: deviceToken.access_token,
+      refresh_token: deviceToken.refresh_token,
+      expiry,
     };
-
-    this.#accessToken = await client.getToken(tokenParams);
   }
 
-  /**
-   * Refreshes the access token if it has expired or is about to expire.
-   *
-   * The method checks if an access token is available. If not, it attempts to login to obtain one.
-   * If the token is within the expiration window, it tries to refresh the token.
-   * In case of a failure during the refresh, it sets the token to null and attempts to login again.
-   *
-   * @returns A promise that resolves when the token has been refreshed or re-obtained.
-   * @throws {@link TadoError} if no access token is available after attempting to login.
-   */
-  async #refreshToken(): Promise<void> {
-    if (!this.#accessToken) {
-      await this.#login();
-    }
+  async #checkDevice(device_code: string, timeout: number): Promise<Token> {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        axios<DeviceToken>({
+          url: "https://login.tado.com/oauth2/token",
+          method: "POST",
+          params: {
+            client_id,
+            device_code: device_code,
+            grant_type,
+          },
+        })
+          .then((resp) => {
+            const deviceToken = resp.data;
+            resolve(this.#parseDeviceToken(deviceToken));
+          })
+          .catch(reject);
+      }, timeout);
+    });
+  }
 
-    if (!this.#accessToken) {
-      throw new TadoError(`No access token available, even after login in.`);
-    }
+  async #deviceAuth(): Promise<Token> {
+    const verify = await axios<DeviceVerification>({
+      url: "https://login.tado.com/oauth2/device_authorize",
+      method: "POST",
+      params: {
+        client_id,
+        scope,
+      },
+    });
 
-    // If the start of the window has passed, refresh the token
-    const shouldRefresh = this.#accessToken.expired(EXPIRATION_WINDOW_IN_SECONDS);
+    console.log("------------------------------------------------");
+    console.log("Device authentication required.");
+    console.log("Please visit the following website in a browser.");
+    console.log("");
+    console.log(`  ${verify.data.verification_uri_complete}`);
+    console.log("");
+    console.log(
+      `Checks will occur every ${verify.data.interval}s up to a maximum of ${verify.data.expires_in}s`,
+    );
+    console.log("------------------------------------------------");
 
-    if (shouldRefresh) {
+    // Wait for user to click buttons
+    for (let i = 0; i < verify.data.expires_in; i += verify.data.interval) {
       try {
-        this.#accessToken = await this.#accessToken.refresh();
-      } catch (_error) {
-        this.#accessToken = undefined;
-        await this.#login();
+        const token = await this.#checkDevice(
+          verify.data.device_code,
+          verify.data.interval * 1000,
+        );
+        this.#token = token;
+        return token;
+      } catch {
+        // Keep trying, we'll throw later
       }
     }
+
+    throw new Error("Timeout waiting for user input");
   }
 
-  get accessToken(): AccessToken | undefined {
-    return this.#accessToken;
-  }
+  async getToken(): Promise<Token> {
+    if (!this.#token) {
+      const token = await this.#deviceAuth();
+      this.#token = token;
+      return token;
+    }
 
-  /**
-   * Authenticates a user using the provided public client credentials, username and password.
-   * For more information see
-   * [https://support.tado.com/en/articles/8565472-how-do-i-update-my-rest-api-authentication-method-to-oauth-2](https://support.tado.com/en/articles/8565472-how-do-i-update-my-rest-api-authentication-method-to-oauth-2).
-   *
-   * @param username - The username of the user attempting to login.
-   * @param password - The password of the user attempting to login.
-   * @returns A promise that resolves when the login process is complete.
-   */
-  async login(username: string, password: string): Promise<void> {
-    this.#username = username;
-    this.#password = password;
-    await this.#login();
+    const now = new Date();
+
+    if (this.#token.expiry < now) {
+      try {
+        const resp = await axios<DeviceToken>({
+          url: "https://login.tado.com/oauth2/token",
+          method: "POST",
+          params: {
+            client_id,
+            grant_type: "refresh_token",
+            refresh_token: this.#token.refresh_token,
+          },
+        });
+
+        const token = this.#parseDeviceToken(resp.data);
+        this.#token = token;
+        return token;
+      } catch {
+        const token = await this.#deviceAuth();
+        this.#token = token;
+        return token;
+      }
+    } else {
+      return this.#token;
+    }
   }
 
   /**
@@ -140,7 +174,7 @@ export class BaseTado {
    * @returns A promise that resolves to the response data.
    */
   async apiCall<R, T = unknown>(url: string, method: Method = "get", data?: T): Promise<R> {
-    await this.#refreshToken();
+    const token = await this.getToken();
 
     let callUrl = tado_url + url;
     if (url.includes("https")) {
@@ -151,16 +185,15 @@ export class BaseTado {
       method: method,
       data: data,
       headers: {
-        Authorization: "Bearer " + this.#accessToken?.token.access_token,
+        Authorization: `Bearer ${token.access_token}`,
       },
       httpsAgent: this.#httpsAgent,
     };
     if (method !== "get" && method !== "GET") {
       request.data = data;
     }
-    const response = await axios(request);
-
-    return response.data as R;
+    const response = await axios<R>(request);
+    return response.data;
   }
 
   /**
