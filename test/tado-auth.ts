@@ -15,13 +15,13 @@ describe("OAuth2 tests", function () {
     {
       title: "Tado",
       getTado: (): BaseTado => {
-        return new Tado(undefined, true);
+        return new Tado();
       },
     },
     {
       title: "TadoX",
       getTado: (): BaseTado => {
-        return new TadoX(undefined, true);
+        return new TadoX();
       },
     },
   ];
@@ -43,7 +43,8 @@ describe("OAuth2 tests", function () {
         nock("https://my.tado.com", { allowUnmocked: false });
 
         const tado = getTado();
-        const token = await tado.getToken();
+        const [_, futureToken] = await tado.authenticate();
+        const token = await futureToken;
 
         expect(typeof token).to.equal("object");
         expect(token.access_token).to.equal("eyJraW0UQ");

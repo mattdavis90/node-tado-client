@@ -36,7 +36,9 @@ describe("High-level API tests (v2)", function () {
         .query(true)
         .reply(200, auth_response);
 
-      tado = new Tado(undefined, true);
+      tado = new Tado();
+      const [_, futureToken] = await tado.authenticate();
+      await futureToken;
     });
 
     afterEach(async function () {

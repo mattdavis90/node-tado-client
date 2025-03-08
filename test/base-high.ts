@@ -35,13 +35,13 @@ describe("High-level API tests (common)", function () {
     {
       title: "Tado",
       getTado: (): BaseTado => {
-        return new Tado(undefined, true);
+        return new Tado();
       },
     },
     {
       title: "TadoX",
       getTado: (): BaseTado => {
-        return new TadoX(undefined, true);
+        return new TadoX();
       },
     },
   ];
@@ -60,6 +60,8 @@ describe("High-level API tests (common)", function () {
           .reply(200, auth_response);
 
         tado = getTado();
+        const [_, futureToken] = await tado.authenticate();
+        await futureToken;
       });
 
       afterEach(async function () {

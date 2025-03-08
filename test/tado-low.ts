@@ -17,13 +17,13 @@ describe("Low-level API tests", function () {
     {
       title: "Tado",
       getTado: (): BaseTado => {
-        return new Tado(undefined, true);
+        return new Tado();
       },
     },
     {
       title: "TadoX",
       getTado: (): BaseTado => {
-        return new TadoX(undefined, true);
+        return new TadoX();
       },
     },
   ];
@@ -45,6 +45,9 @@ describe("Low-level API tests", function () {
         nock("https://my.tado.com").get("/api/v2/me").reply(200, me_response);
 
         const tado = getTado();
+        const [_, futureToken] = await tado.authenticate();
+        await futureToken;
+
         const response = await tado.apiCall<Me>("/api/v2/me");
 
         expect(typeof response).to.equal("object");
@@ -61,7 +64,9 @@ describe("Low-level API tests", function () {
           .reply(200, auth_response);
         nock("https://my.tado.com").get("/api/v2/me").reply(500, {});
 
-        const tado = new Tado(undefined, true);
+        const tado = new Tado();
+        const [_, futureToken] = await tado.authenticate();
+        await futureToken;
 
         await expect(tado.apiCall<Me>("/api/v2/me")).to.be.rejectedWith(Error);
       });

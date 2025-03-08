@@ -29,7 +29,9 @@ describe("High-level API tests (TadoX)", async function () {
         .query(true)
         .reply(200, auth_response);
 
-      tado = new TadoX(undefined, true);
+      tado = new TadoX();
+      const [_, futureToken] = await tado.authenticate();
+      await futureToken;
     });
 
     afterEach(async function () {
