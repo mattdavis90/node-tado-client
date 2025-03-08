@@ -5,6 +5,7 @@ import { Tado, TadoX } from "../src";
 import { BaseTado } from "../src/base";
 import auth_response from "./response/auth.json";
 import boiler_information_response from "./response/boilerInformation.json";
+import device_authorise from "./response/device_authorise.json";
 import early_start_response from "./response/earlyStart.json";
 import eneryIQConsumptionDetails_response from "./response/energyIQConsumptionDetails.json";
 import eneryIQOverview_response from "./response/energyIQOverview.json";
@@ -34,13 +35,13 @@ describe("High-level API tests (common)", function () {
     {
       title: "Tado",
       getTado: (): BaseTado => {
-        return new Tado();
+        return new Tado(undefined, true);
       },
     },
     {
       title: "TadoX",
       getTado: (): BaseTado => {
-        return new TadoX();
+        return new TadoX(undefined, true);
       },
     },
   ];
@@ -50,10 +51,15 @@ describe("High-level API tests (common)", function () {
       let tado: BaseTado;
 
       beforeEach(async function () {
-        nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
+        nock("https://login.tado.com")
+          .post("/oauth2/device_authorize")
+          .query(true)
+          .reply(200, device_authorise)
+          .post("/oauth2/token")
+          .query(true)
+          .reply(200, auth_response);
 
         tado = getTado();
-        await tado.login("username", "password");
       });
 
       afterEach(async function () {

@@ -11,6 +11,7 @@ import room_state_response from "./response_x/getRoomState.json";
 import home_response from "./response_x/home.json";
 import resume_schedule_response from "./response_x/resumeSchedule.json";
 import auth_response from "./response/auth.json";
+import device_authorise from "./response/device_authorise.json";
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -20,10 +21,15 @@ describe("High-level API tests (TadoX)", async function () {
     let tado: TadoX;
 
     beforeEach(async function () {
-      nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
+      nock("https://login.tado.com")
+        .post("/oauth2/device_authorize")
+        .query(true)
+        .reply(200, device_authorise)
+        .post("/oauth2/token")
+        .query(true)
+        .reply(200, auth_response);
 
-      tado = new TadoX();
-      await tado.login("username", "password");
+      tado = new TadoX(undefined, true);
     });
 
     afterEach(async function () {

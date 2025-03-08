@@ -1,10 +1,12 @@
 import type { Me } from "../src";
+import type { BaseTado } from "../src/base";
 
 import * as chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 import nock from "nock";
 import { Tado, TadoX } from "../src";
 import auth_response from "./response/auth.json";
+import device_authorise from "./response/device_authorise.json";
 import me_response from "./response/me.json";
 
 chai.use(chaiAsPromised);
@@ -14,14 +16,14 @@ describe("Low-level API tests", function () {
   const tests = [
     {
       title: "Tado",
-      getTado: (): Tado => {
-        return new Tado();
+      getTado: (): BaseTado => {
+        return new Tado(undefined, true);
       },
     },
     {
       title: "TadoX",
-      getTado: (): Tado => {
-        return new TadoX();
+      getTado: (): BaseTado => {
+        return new TadoX(undefined, true);
       },
     },
   ];
@@ -33,29 +35,33 @@ describe("Low-level API tests", function () {
       });
 
       it('Login and get "me"', async function () {
-        nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
+        nock("https://login.tado.com")
+          .post("/oauth2/device_authorize")
+          .query(true)
+          .reply(200, device_authorise)
+          .post("/oauth2/token")
+          .query(true)
+          .reply(200, auth_response);
         nock("https://my.tado.com").get("/api/v2/me").reply(200, me_response);
 
         const tado = getTado();
-        await tado.login("username", "password");
         const response = await tado.apiCall<Me>("/api/v2/me");
 
         expect(typeof response).to.equal("object");
         expect(response.name).to.equal("John Doe");
       });
 
-      it('Don\'t login and get "me"', async function () {
-        const tado = new Tado();
-
-        await expect(tado.apiCall<Me>("/api/v2/me")).to.be.rejectedWith(Error);
-      });
-
       it('Login and fail to get "me"', async function () {
-        nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
+        nock("https://login.tado.com")
+          .post("/oauth2/device_authorize")
+          .query(true)
+          .reply(200, device_authorise)
+          .post("/oauth2/token")
+          .query(true)
+          .reply(200, auth_response);
         nock("https://my.tado.com").get("/api/v2/me").reply(500, {});
 
-        const tado = new Tado();
-        await tado.login("username", "password");
+        const tado = new Tado(undefined, true);
 
         await expect(tado.apiCall<Me>("/api/v2/me")).to.be.rejectedWith(Error);
       });

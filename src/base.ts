@@ -46,9 +46,11 @@ const grant_type = "urn:ietf:params:oauth:grant-type:device_code";
 export class BaseTado {
   #httpsAgent: Agent;
   #token?: Token | undefined;
+  #silent: boolean;
 
-  constructor(refreshToken?: string) {
+  constructor(refreshToken?: string, silent: boolean = false) {
     this.#httpsAgent = new Agent({ keepAlive: true });
+    this.#silent = silent;
 
     if (refreshToken) {
       this.#token = {
@@ -94,16 +96,18 @@ export class BaseTado {
   async #deviceAuth(): Promise<Token> {
     const [verify, tokenPromise] = await this.initiateDeviceAuth();
 
-    console.log("------------------------------------------------");
-    console.log("Device authentication required.");
-    console.log("Please visit the following website in a browser.");
-    console.log("");
-    console.log(`  ${verify.verification_uri_complete}`);
-    console.log("");
-    console.log(
-      `Checks will occur every ${verify.interval}s up to a maximum of ${verify.expires_in}s`,
-    );
-    console.log("------------------------------------------------");
+    if (!this.#silent) {
+      console.log("------------------------------------------------");
+      console.log("Device authentication required.");
+      console.log("Please visit the following website in a browser.");
+      console.log("");
+      console.log(`  ${verify.verification_uri_complete}`);
+      console.log("");
+      console.log(
+        `Checks will occur every ${verify.interval}s up to a maximum of ${verify.expires_in}s`,
+      );
+      console.log("------------------------------------------------");
+    }
 
     const token = await tokenPromise;
     this.#token = token;
