@@ -101,6 +101,10 @@ export class BaseTado {
     throw new AuthTimeout("Timeout waiting for user input");
   }
 
+  get token(): Token | undefined {
+    return this.#token;
+  }
+
   async authenticate(
     refreshToken?: string,
     timeout?: number,
