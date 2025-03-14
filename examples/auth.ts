@@ -2,6 +2,8 @@ import { Tado } from "../src";
 
 async function main(): Promise<void> {
   const tado = new Tado();
+  tado.setTokenCallback(console.log);
+
   const [verify, futureToken] = await tado.authenticate("refresh_token");
 
   if (verify) {
@@ -20,9 +22,6 @@ async function main(): Promise<void> {
 
   const me = await tado.getMe();
   console.log(me);
-
-  const token = await tado.getToken();
-  console.log(token);
 }
 
 main();

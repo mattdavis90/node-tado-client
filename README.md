@@ -171,6 +171,44 @@ tado.clearZoneOverlay(home_id, zone_id);
 tado.setZoneOverlay(home_id, zone_id, power, temperature, termination);
 ```
 
+### Authentication Semantics
+
+The new device flow could be slightly frustrating for headless apps so I've
+tried to cover all use cases and make the use as ergonomic as possible. The
+`authenticate` method below must be called before anything else
+
+```typescript
+async authenticate(
+    refreshToken?: string,
+    timeout?: number,
+  ): Promise<[DeviceVerification | undefined, Promise<Token>]> {
+```
+
+- If a refresh token is provided
+    - Try to use it, otherwise revert to device auth flow
+    - If it works then return [undefined, Promise<Token>] - where the Promise
+      will immediately resolve
+- No refresh token provided
+    - Start a device auth flow
+    - Device auth flow will return the DeviceVerification object that has the
+      relevant URL, and a Promise<Token> that will resolve on successful
+      authentication. It uses a timeout of `Math.min(timeout, tado.expires_in)`
+
+All auth errors should be identifiable now;
+
+- `NotAuthenticated` - if the authenticate method call wasn't made yet
+- `InvalidRefreshToken` - either the supplied refresh token has expired, was
+  incorrectly typed, or you haven't made an API call in the last 30 days (see
+  note 1 below)
+- `AuthTimeout` - you didn't hit the device auth URL quick enough
+
+There's also now an example in `examples/auth.ts` because it may be a little
+fiddly.
+
+_Note 1. I haven't implemented any background polling to refresh the refresh
+token - you'll need to call the API once every 30 days (That's how long refresh
+tokens are currently useable)_
+
 ### Setting Zone Overlays
 
 The `setZoneOverlay` and `clearZoneOverlay` methods have been deprecated in favour of `setZoneOverlays` and `clearZoneOverlays` respectively.
