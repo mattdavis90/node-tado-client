@@ -1,14 +1,23 @@
 # node-tado-client
 
+> [!IMPORTANT]  
+> Tado has changed how authentication works! They no longer accept
+> username/password based authentication. As such, this library has switched to
+> the Oauth device flow. This is effective as of v1.0.0. Please upgrade ASAP to
+> avoid broken integrations
+
 [Documentation](https://mattdavis90.github.io/node-tado-client/)
 
 A Tado API client for Node
 
-Based on the work of SCPhillips on his [blog](http://blog.scphillips.com/posts/2017/01/the-tado-api-v2/)
+Based on the work of SCPhillips on his
+[blog](http://blog.scphillips.com/posts/2017/01/the-tado-api-v2/)
 
-_Please note: This is based on reverse engineering the Tado Web App's API and hence may be unstable_
+_Please note: This is based on reverse engineering the Tado Web App's API and
+hence may be unstable_
 
-_DEPRECATION notice: The Zone Overlay API calls are being deprecated, see below for further information_
+_DEPRECATION notice: The Zone Overlay API calls are being deprecated, see below
+for further information_
 
 ## Usage
 
@@ -19,14 +28,29 @@ const { Tado } = require("node-tado-client"); // or TadoX
 // Create a new Tado instance
 var tado = new Tado();
 
-// Login to the Tado Web API
-tado.login("username", "password").then(() => {
-    tado.getMe().then((resp) => {
-        console.log(resp);
-    });
-});
+// Register a callback function for token changes
+tado.setTokenCallback(console.log);
+
+// Authenticate with the Tado Web API
+// The refreshToken is optional, if you have a previous session still active
+const [verify, futureToken] = await tado.authenticate("refreshToken");
+if (verify) {
+    console.log("------------------------------------------------");
+    console.log("Device authentication required.");
+    console.log("Please visit the following website in a browser.");
+    console.log("");
+    console.log(`  ${verify.verification_uri_complete}`);
+    console.log("");
+    console.log(
+        `Checks will occur every ${verify.interval}s up to a maximum of ${verify.expires_in}s`,
+    );
+    console.log("------------------------------------------------");
+}
+await futureToken;
 
 // Get the User's information
+const me = await tado.getMe();
+console.log(me);
 ```
 
 This call will return something similar to the following Javascript object.
@@ -75,9 +99,14 @@ The following API calls are available
 
 ```javascript
 /*********************/
+/* Authentication */
+/*********************/
+tado.authenticate(refreshToken?, interval?);
+tado.setTokenCallback(cb);
+
+/*********************/
 /* Low-level methods */
 /*********************/
-tado.login(username, password);
 tado.apiCall(url, method = 'get', data = {});
 
 /****************************************/
