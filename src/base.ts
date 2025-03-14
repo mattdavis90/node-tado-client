@@ -46,6 +46,7 @@ const grant_type = "urn:ietf:params:oauth:grant-type:device_code";
 export class BaseTado {
   #httpsAgent: Agent;
   #token?: Token | undefined;
+  #tokenCallback?: (token: Token) => void;
 
   constructor() {
     this.#httpsAgent = new Agent({ keepAlive: true });
@@ -92,6 +93,7 @@ export class BaseTado {
       try {
         const token = await this.#checkDevice(device_code, interval * 1000);
         this.#token = token;
+        this.#tokenCallback?.(token);
         return token;
       } catch {
         // Keep trying, we'll throw later
@@ -101,10 +103,69 @@ export class BaseTado {
     throw new AuthTimeout("Timeout waiting for user input");
   }
 
+  async #getToken(): Promise<Token> {
+    if (!this.#token) {
+      throw new NotAuthenticated(
+        "Tado is not authenticated. Please call the authenticate method.",
+      );
+    }
+
+    const now = new Date();
+
+    if (this.#token.expiry < now) {
+      try {
+        const resp = await axios<DeviceToken>({
+          url: "https://login.tado.com/oauth2/token",
+          method: "POST",
+          params: {
+            client_id,
+            grant_type: "refresh_token",
+            refresh_token: this.#token.refresh_token,
+          },
+        });
+
+        const token = this.#parseDeviceToken(resp.data);
+        this.#token = token;
+        this.#tokenCallback?.(token);
+        return token;
+      } catch {
+        throw new InvalidRefreshToken(
+          "The refresh token has expired. Please call the authenticate method.",
+        );
+      }
+    } else {
+      return this.#token;
+    }
+  }
+
+  /**
+   * Get the latest Oauth Token and Refresh Token
+   *
+   * @returns The latest token
+   */
   get token(): Token | undefined {
     return this.#token;
   }
 
+  /**
+   * Set the callback function that is called when the Oauth token changes.
+   *
+   * @param cb - Optional, The callback function
+   */
+  setTokenCallback(cb?: (token: Token) => void): void {
+    this.#tokenCallback = cb;
+  }
+
+  /**
+   * Authenticate with the Oauth server. A refresh token may be supplied to bypass the device auth
+   * flow if it is still valid, otherwise the device flow is initiaited.
+   *
+   * @param refreshToken - Optional, Attempt to use this refresh token to re-authenticate
+   * @param timeout - Optional, Ignore the Tado provided timeout for device auth and use this value
+   * @returns A promise that resolves to either a `DeviceVerification` object for device auth flows
+   * and a promise of a token, or an undefined auth flow and a promise of a token, if the refresh token
+   * was supplied
+   */
   async authenticate(
     refreshToken?: string,
     timeout?: number,
@@ -117,7 +178,7 @@ export class BaseTado {
       };
 
       try {
-        const token = await this.getToken();
+        const token = await this.#getToken();
         return [undefined, new Promise((resolve) => resolve(token))];
       } catch {
         // Refresh token is no good
@@ -148,40 +209,6 @@ export class BaseTado {
     return [verify.data, token];
   }
 
-  async getToken(): Promise<Token> {
-    if (!this.#token) {
-      throw new NotAuthenticated(
-        "Tado is not authenticated. Please call the authenticate method.",
-      );
-    }
-
-    const now = new Date();
-
-    if (this.#token.expiry < now) {
-      try {
-        const resp = await axios<DeviceToken>({
-          url: "https://login.tado.com/oauth2/token",
-          method: "POST",
-          params: {
-            client_id,
-            grant_type: "refresh_token",
-            refresh_token: this.#token.refresh_token,
-          },
-        });
-
-        const token = this.#parseDeviceToken(resp.data);
-        this.#token = token;
-        return token;
-      } catch {
-        throw new InvalidRefreshToken(
-          "The refresh token has expired. Please call the authenticate method.",
-        );
-      }
-    } else {
-      return this.#token;
-    }
-  }
-
   /**
    * Makes an API call to the provided URL with the specified method and data.
    *
@@ -193,7 +220,7 @@ export class BaseTado {
    * @returns A promise that resolves to the response data.
    */
   async apiCall<R, T = unknown>(url: string, method: Method = "get", data?: T): Promise<R> {
-    const token = await this.getToken();
+    const token = await this.#getToken();
 
     let callUrl = tado_url + url;
     if (url.includes("https")) {
