@@ -150,7 +150,7 @@ export class BaseTado {
   /**
    * Set the callback function that is called when the Oauth token changes.
    *
-   * @param cb - Optional, The callback function
+   * @param cb - The callback function
    */
   setTokenCallback(cb?: (token: Token) => void): void {
     this.#tokenCallback = cb;
@@ -160,8 +160,8 @@ export class BaseTado {
    * Authenticate with the Oauth server. A refresh token may be supplied to bypass the device auth
    * flow if it is still valid, otherwise the device flow is initiaited.
    *
-   * @param refreshToken - Optional, Attempt to use this refresh token to re-authenticate
-   * @param timeout - Optional, Ignore the Tado provided timeout for device auth and use this value
+   * @param refreshToken - Attempt to use this refresh token to re-authenticate
+   * @param timeout - Ignore the Tado provided timeout for device auth and use this value
    * @returns A promise that resolves to either a `DeviceVerification` object for device auth flows
    * and a promise of a token, or an undefined auth flow and a promise of a token, if the refresh token
    * was supplied

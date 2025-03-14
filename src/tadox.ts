@@ -30,12 +30,28 @@ const tado_x_url = "https://hops.tado.com";
  * // Create a new TadoX instance
  * var tado = new TadoX();
  *
- * // Login to the Tado Web API
- * tado.login("username", "password").then(() => {
- *     tado.getMe().then((resp) => {
- *         console.log(resp);
- *     });
- * });
+ * // Set a cllabck to catch token changes
+ * tado.setTokenCallback(console.log);
+ *
+ * // Authenticate with the Tado API
+ *  const [verify, futureToken] = await tado.authenticate("refresh_token");
+ *
+ *  if (verify) {
+ *    console.log("------------------------------------------------");
+ *    console.log("Device authentication required.");
+ *    console.log("Please visit the following website in a browser.");
+ *    console.log("");
+ *    console.log(`  ${verify.verification_uri_complete}`);
+ *    console.log("");
+ *    console.log(
+ *      `Checks will occur every ${verify.interval}s up to a maximum of ${verify.expires_in}s`,
+ *    );
+ *    console.log("------------------------------------------------");
+ *  }
+ *  await futureToken;
+ *
+ *  const me = await tado.getMe();
+ *  console.log(me);
  * ```
  */
 export class TadoX extends BaseTado {
