@@ -1,8 +1,11 @@
+import type { BaseTado } from "../src/base";
+
 import * as chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 import nock from "nock";
 import { Tado, TadoX } from "../src";
 import auth_response from "./response/auth.json";
+import device_authorise from "./response/device_authorise.json";
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -11,13 +14,13 @@ describe("OAuth2 tests", function () {
   const tests = [
     {
       title: "Tado",
-      getTado: (): Tado => {
+      getTado: (): BaseTado => {
         return new Tado();
       },
     },
     {
       title: "TadoX",
-      getTado: (): Tado => {
+      getTado: (): BaseTado => {
         return new TadoX();
       },
     },
@@ -30,22 +33,21 @@ describe("OAuth2 tests", function () {
       });
 
       it("Should login", async function () {
-        nock("https://auth.tado.com").post("/oauth/token").reply(200, auth_response);
+        nock("https://login.tado.com", { allowUnmocked: false })
+          .post("/oauth2/device_authorize")
+          .query(true)
+          .reply(200, device_authorise)
+          .post("/oauth2/token")
+          .query(true)
+          .reply(200, auth_response);
         nock("https://my.tado.com", { allowUnmocked: false });
 
         const tado = getTado();
-        await tado.login("username", "password");
+        const [_, futureToken] = await tado.authenticate();
+        const token = await futureToken;
 
-        expect(typeof tado.accessToken).to.equal("object");
-        expect(tado.accessToken?.token.access_token).to.equal("eyJraW0UQ");
-        expect(tado.accessToken?.token.token_type).to.equal("bearer");
-      });
-
-      it("Should fail to login", async function () {
-        nock("https://auth.tado.com").post("/oauth/token").reply(500, {});
-
-        const tado = getTado();
-        await expect(tado.login("username", "password")).to.be.rejectedWith(Error);
+        expect(typeof token).to.equal("object");
+        expect(token.access_token).to.equal("eyJraW0UQ");
       });
     });
   });

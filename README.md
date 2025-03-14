@@ -1,14 +1,23 @@
 # node-tado-client
 
+> [!IMPORTANT]  
+> Tado has changed how authentication works! They no longer accept
+> username/password based authentication. As such, this library has switched to
+> the Oauth device flow. This is effective as of v1.0.0. Please upgrade ASAP to
+> avoid broken integrations
+
 [Documentation](https://mattdavis90.github.io/node-tado-client/)
 
 A Tado API client for Node
 
-Based on the work of SCPhillips on his [blog](http://blog.scphillips.com/posts/2017/01/the-tado-api-v2/)
+Based on the work of SCPhillips on his
+[blog](http://blog.scphillips.com/posts/2017/01/the-tado-api-v2/)
 
-_Please note: This is based on reverse engineering the Tado Web App's API and hence may be unstable_
+_Please note: This is based on reverse engineering the Tado Web App's API and
+hence may be unstable_
 
-_DEPRECATION notice: The Zone Overlay API calls are being deprecated, see below for further information_
+_DEPRECATION notice: The Zone Overlay API calls are being deprecated, see below
+for further information_
 
 ## Usage
 
@@ -19,14 +28,29 @@ const { Tado } = require("node-tado-client"); // or TadoX
 // Create a new Tado instance
 var tado = new Tado();
 
-// Login to the Tado Web API
-tado.login("username", "password").then(() => {
-    tado.getMe().then((resp) => {
-        console.log(resp);
-    });
-});
+// Register a callback function for token changes
+tado.setTokenCallback(console.log);
+
+// Authenticate with the Tado Web API
+// The refreshToken is optional, if you have a previous session still active
+const [verify, futureToken] = await tado.authenticate("refreshToken");
+if (verify) {
+    console.log("------------------------------------------------");
+    console.log("Device authentication required.");
+    console.log("Please visit the following website in a browser.");
+    console.log("");
+    console.log(`  ${verify.verification_uri_complete}`);
+    console.log("");
+    console.log(
+        `Checks will occur every ${verify.interval}s up to a maximum of ${verify.expires_in}s`,
+    );
+    console.log("------------------------------------------------");
+}
+await futureToken;
 
 // Get the User's information
+const me = await tado.getMe();
+console.log(me);
 ```
 
 This call will return something similar to the following Javascript object.
@@ -75,9 +99,14 @@ The following API calls are available
 
 ```javascript
 /*********************/
+/* Authentication */
+/*********************/
+tado.authenticate(refreshToken?, interval?);
+tado.setTokenCallback(cb);
+
+/*********************/
 /* Low-level methods */
 /*********************/
-tado.login(username, password);
 tado.apiCall(url, method = 'get', data = {});
 
 /****************************************/
@@ -141,6 +170,44 @@ tado.manualControl(home_id, room_id, power, temperature termination);
 tado.clearZoneOverlay(home_id, zone_id);
 tado.setZoneOverlay(home_id, zone_id, power, temperature, termination);
 ```
+
+### Authentication Semantics
+
+The new device flow could be slightly frustrating for headless apps so I've
+tried to cover all use cases and make the use as ergonomic as possible. The
+`authenticate` method below must be called before anything else
+
+```typescript
+async authenticate(
+    refreshToken?: string,
+    timeout?: number,
+  ): Promise<[DeviceVerification | undefined, Promise<Token>]> {
+```
+
+- If a refresh token is provided
+    - Try to use it, otherwise revert to device auth flow
+    - If it works then return [undefined, Promise<Token>] - where the Promise
+      will immediately resolve
+- No refresh token provided
+    - Start a device auth flow
+    - Device auth flow will return the DeviceVerification object that has the
+      relevant URL, and a Promise<Token> that will resolve on successful
+      authentication. It uses a timeout of `Math.min(timeout, tado.expires_in)`
+
+All auth errors should be identifiable now;
+
+- `NotAuthenticated` - if the authenticate method call wasn't made yet
+- `InvalidRefreshToken` - either the supplied refresh token has expired, was
+  incorrectly typed, or you haven't made an API call in the last 30 days (see
+  note 1 below)
+- `AuthTimeout` - you didn't hit the device auth URL quick enough
+
+There's also now an example in `examples/auth.ts` because it may be a little
+fiddly.
+
+_Note 1. I haven't implemented any background polling to refresh the refresh
+token - you'll need to call the API once every 30 days (That's how long refresh
+tokens are currently useable)_
 
 ### Setting Zone Overlays
 

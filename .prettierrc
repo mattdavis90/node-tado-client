@@ -2,21 +2,26 @@
   "trailingComma": "all",
   "printWidth": 96,
   "semi": true,
-  "plugins": ["@ianvs/prettier-plugin-sort-imports"],
-  "importOrder": [
-    "<TYPES>^(node:)",
-    "<TYPES>",
-    "<TYPES>^[.]",
-    "",
-    "<BUILTIN_MODULES>",
-    "<THIRD_PARTY_MODULES>",
-    "^[./]"
-  ],
   "overrides": [
     {
       "files": "*.md",
       "options": {
         "tabWidth": 4
+      }
+    },
+    {
+      "files": "*.ts",
+      "options": {
+        "plugins": ["@ianvs/prettier-plugin-sort-imports"],
+        "importOrder": [
+          "<TYPES>^(node:)",
+          "<TYPES>",
+          "<TYPES>^[.]",
+          "",
+          "<BUILTIN_MODULES>",
+          "<THIRD_PARTY_MODULES>",
+          "^[./]"
+        ]
       }
     }
   ]
