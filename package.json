@@ -1,6 +1,6 @@
 {
   "name": "node-tado-client",
-  "version": "0.21.3",
+  "version": "1.0.0",
   "description": "A Tado client for nodejs",
   "repository": {
     "type": "git",
