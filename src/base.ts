@@ -36,6 +36,7 @@ import type {
 
 import { Agent } from "https";
 import axios, { Method } from "axios";
+import { Semaphore } from "./semaphore";
 import { AuthTimeout, InvalidRefreshToken, NotAuthenticated, TadoError } from "./types";
 
 const tado_url = "https://my.tado.com";
@@ -47,9 +48,11 @@ export class BaseTado {
   #httpsAgent: Agent;
   #token?: Token | undefined;
   #tokenCallback?: (token: Token) => void;
+  #semaphore: Semaphore;
 
   constructor() {
     this.#httpsAgent = new Agent({ keepAlive: true });
+    this.#semaphore = new Semaphore(1);
   }
 
   #parseDeviceToken(deviceToken: DeviceToken): Token {
@@ -104,37 +107,43 @@ export class BaseTado {
   }
 
   async #getToken(): Promise<Token> {
-    if (!this.#token) {
-      throw new NotAuthenticated(
-        "Tado is not authenticated. Please call the authenticate method.",
-      );
-    }
+    try {
+      await this.#semaphore.acquire();
 
-    const now = new Date();
-
-    if (this.#token.expiry < now) {
-      try {
-        const resp = await axios<DeviceToken>({
-          url: "https://login.tado.com/oauth2/token",
-          method: "POST",
-          params: {
-            client_id,
-            grant_type: "refresh_token",
-            refresh_token: this.#token.refresh_token,
-          },
-        });
-
-        const token = this.#parseDeviceToken(resp.data);
-        this.#token = token;
-        this.#tokenCallback?.(token);
-        return token;
-      } catch {
-        throw new InvalidRefreshToken(
-          "The refresh token has expired. Please call the authenticate method.",
+      if (!this.#token) {
+        throw new NotAuthenticated(
+          "Tado is not authenticated. Please call the authenticate method.",
         );
       }
-    } else {
-      return this.#token;
+
+      const now = new Date();
+
+      if (this.#token.expiry < now) {
+        try {
+          const resp = await axios<DeviceToken>({
+            url: "https://login.tado.com/oauth2/token",
+            method: "POST",
+            params: {
+              client_id,
+              grant_type: "refresh_token",
+              refresh_token: this.#token.refresh_token,
+            },
+          });
+
+          const token = this.#parseDeviceToken(resp.data);
+          this.#token = token;
+          this.#tokenCallback?.(token);
+          return token;
+        } catch {
+          throw new InvalidRefreshToken(
+            "The refresh token has expired. Please call the authenticate method.",
+          );
+        }
+      } else {
+        return this.#token;
+      }
+    } finally {
+      this.#semaphore.release();
     }
   }
 
