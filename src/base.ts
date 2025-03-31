@@ -219,6 +219,33 @@ export class BaseTado {
   }
 
   /**
+   * Authenticate with the Oauth server. An existing token may be supplied to bypass the device auth
+   * flow if it is still valid, otherwise the device flow is initiaited.
+   *
+   * @param existingToken - Attempt to use the provided token to re-authenticate
+   * @param timeout - Ignore the Tado provided timeout for device auth and use this value
+   * @returns A promise that resolves to either a `DeviceVerification` object for device auth flows
+   * and a promise of a token, or an undefined auth flow and a promise of a token, if the refresh token
+   * was supplied
+   */
+  async authenticateWithToken(
+    existingToken?: Token,
+    timeout?: number,
+  ): Promise<[DeviceVerification | undefined, Promise<Token>]> {
+    const now = new Date();
+
+    if (existingToken?.expiry && existingToken.expiry > now) {
+      this.#token = existingToken;
+      try {
+        return [undefined, new Promise((resolve) => resolve(existingToken))];
+      } catch {
+        // Refresh token is no good
+      }
+    }
+    return this.authenticate(existingToken?.refresh_token, timeout);
+  }
+
+  /**
    * Makes an API call to the provided URL with the specified method and data.
    *
    * @typeParam R - The type of the response

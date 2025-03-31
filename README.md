@@ -102,6 +102,7 @@ The following API calls are available
 /* Authentication */
 /*********************/
 tado.authenticate(refreshToken?, interval?);
+tado.authenticateWithToken(token?, interval?);
 tado.setTokenCallback(cb);
 
 /*********************/
