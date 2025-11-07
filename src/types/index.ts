@@ -53,6 +53,18 @@ export type DeepPartial<T> = T extends object
 type Nullable<T> = T | null;
 
 // tado
+
+export interface RateLimit {
+  policy: {
+    quota: number;
+    window: number;
+  };
+  current: {
+    remaining: number;
+    resetsIn?: number;
+  };
+}
+
 /** Example: `'en'`  */
 export type Locale = string;
 

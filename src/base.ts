@@ -24,6 +24,7 @@ import type {
   MobileDeviceSettings,
   PushNotificationRegistration,
   PushNotificationRegistrationData,
+  RateLimit,
   RunningTimeAggregation,
   RunningTimes,
   RunningTimesSummaryOnly,
@@ -35,7 +36,7 @@ import type {
 } from "./types";
 
 import { Agent } from "https";
-import axios, { Method } from "axios";
+import axios, { AxiosHeaders, Method } from "axios";
 import { Semaphore } from "./semaphore";
 import { AuthTimeout, InvalidRefreshToken, NotAuthenticated, TadoError } from "./types";
 
@@ -49,6 +50,7 @@ export class BaseTado {
   #token?: Token | undefined;
   #tokenCallback?: (token: Token) => void;
   #semaphore: Semaphore;
+  #ratelimit: RateLimit | undefined = undefined;
 
   constructor() {
     this.#httpsAgent = new Agent({ keepAlive: true });
@@ -166,6 +168,15 @@ export class BaseTado {
   }
 
   /**
+   * Get the Tado API rate limit information
+   *
+   * @returns `RateLimit` if an API call has occured
+   */
+  get ratelimit(): RateLimit | undefined {
+    return this.#ratelimit;
+  }
+
+  /**
    * Authenticate with the Oauth server. A refresh token may be supplied to bypass the device auth
    * flow if it is still valid, otherwise the device flow is initiaited.
    *
@@ -248,6 +259,52 @@ export class BaseTado {
       request.data = data;
     }
     const response = await axios<R>(request);
+
+    const headers = response.headers;
+    if (headers instanceof AxiosHeaders) {
+      let ratelimit: RateLimit = {
+        policy: {
+          quota: 0,
+          window: 0,
+        },
+        current: {
+          remaining: 0,
+          resetsIn: undefined,
+        },
+      };
+
+      headers
+        .get("ratelimit-policy")
+        ?.toString()
+        .split(";")
+        .forEach((v) => {
+          if (v.includes("=")) {
+            const parts = v.split("=");
+            if (parts[0] == "q") {
+              ratelimit.policy.quota = Number.parseInt(parts[1]);
+            } else if (parts[0] == "w") {
+              ratelimit.policy.window = Number.parseInt(parts[1]);
+            }
+          }
+        });
+      headers
+        .get("ratelimit")
+        ?.toString()
+        .split(";")
+        .forEach((v) => {
+          if (v.includes("=")) {
+            const parts = v.split("=");
+            if (parts[0] == "r") {
+              ratelimit.current.remaining = Number.parseInt(parts[1]);
+            } else if (parts[0] == "t") {
+              ratelimit.current.resetsIn = Number.parseInt(parts[1]);
+            }
+          }
+        });
+
+      this.#ratelimit = ratelimit;
+    }
+
     return response.data;
   }
 
