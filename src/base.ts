@@ -262,7 +262,7 @@ export class BaseTado {
 
     const headers = response.headers;
     if (headers instanceof AxiosHeaders) {
-      let ratelimit: RateLimit = {
+      const ratelimit: RateLimit = {
         policy: {
           quota: 0,
           window: 0,
