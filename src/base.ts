@@ -172,7 +172,7 @@ export class BaseTado {
    *
    * @returns `RateLimit` if an API call has occured
    */
-  get ratelimit(): RateLimit | undefined {
+  getRatelimit(): RateLimit | undefined {
     return this.#ratelimit;
   }
 
