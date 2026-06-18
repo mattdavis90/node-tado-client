@@ -18,10 +18,16 @@ async function main(): Promise<void> {
     );
     console.log("------------------------------------------------");
   }
-  await futureToken;
+  const token = await futureToken;
 
   const me = await tado.getMe();
   console.log(me);
+
+  const [_, futureToken2] = await tado.authenticateWithToken(token);
+  const token2 = await futureToken2;
+  console.log("new token: ", token2);
+  const me2 = await tado.getMe();
+  console.log(me2);
 }
 
 main();
